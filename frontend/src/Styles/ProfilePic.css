@@ -1,0 +1,111 @@
+/* ProfilepicModal.css */
+.profilepic-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .profilepic-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+  }
+  
+  .profilepic-modal-container {
+    position: relative;
+    z-index: 1001;
+    width: 90%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .profilepic-modal-content {
+    background-color: #2d3748;
+    border-radius: 12px;
+    padding: 20px;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .profilepic-modal-header {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .profilepic-modal-close-button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .profilepic-modal-close-button:hover {
+    color: #cbd5e0;
+  }
+  
+  .profilepic-modal-body {
+    margin-top: 20px;
+  }
+  
+  .profilepic-modal-image {
+    max-height: 70vh;
+    width: auto;
+    border-radius: 8px;
+  }
+  
+  .profilepic-modal-crop-button {
+    background-color: #4299e1;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+  
+  .profilepic-modal-crop-button:hover {
+    background-color: #3182ce;
+  }
+  
+  .profilepic-modal-canvas {
+    display: none;
+    border: 1px solid #000;
+    object-fit: contain;
+    width: 150px;
+    height: 150px;
+    margin-top: 16px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .profilepic-modal-container {
+      width: 95%;
+    }
+  
+    .profilepic-modal-image {
+      max-height: 50vh;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .profilepic-modal-image {
+      max-height: 40vh;
+    }
+  
+    .profilepic-modal-crop-button {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+  }

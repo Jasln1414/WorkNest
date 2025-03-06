@@ -1,0 +1,71 @@
+/* Header container */
+header {
+  display: flex;
+  justify-content: space-between; /* Position elements on opposite ends */
+  align-items: center; /* Center the items vertically */
+  padding: 20px;
+  background-color: white; /* White background for the header */
+  color: #2c3e50; /* Dark text color */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+/* Logo container */
+.logo {
+  display: flex;
+  align-items: center; /* Vertically align logo and text */
+}
+
+/* Logo image */
+.logo img {
+  width: 40px; /* Logo size */
+  height: 40px;
+  margin-right: 10px; /* Space between logo and text */
+}
+
+/* Logo text */
+.logo h1 {
+  font-size: 24px; /* Font size for the name */
+  font-weight: bold;
+  color: #2c3e50; /* Dark text color */
+}
+
+/* Navigation container */
+nav {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+}
+
+/* Style for buttons */
+nav button {
+  background-color: #2c3e50; /* Dark background for buttons */
+  color: white; /* Light text for buttons */
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px; /* Rounded corners for the buttons */
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for buttons */
+nav button:hover {
+  background-color: #e67e22; /* Hover color */
+}
+
+/* Add responsiveness for smaller screens */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column; /* Stack items vertically on small screens */
+    text-align: center;
+  }
+
+  nav {
+    flex-direction: column; /* Stack buttons vertically on smaller screens */
+    gap: 10px; /* Space between stacked buttons */
+    margin-top: 10px; /* Add margin between logo and buttons */
+  }
+
+  nav button {
+    width: 100%; /* Make buttons full-width on smaller screens */
+  }
+}

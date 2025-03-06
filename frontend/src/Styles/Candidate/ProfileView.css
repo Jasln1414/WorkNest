@@ -1,0 +1,156 @@
+/* Header Container */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px; /* Reduced padding to minimize height */
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 100px; /* Fixed height for the header */
+  overflow: hidden; /* Prevent overflow */
+}
+
+/* Logo Container */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-image img {
+  width: 60px; /* Fixed width for the logo */
+  height: 60px; /* Fixed height for the logo */
+  border-radius: 50%;
+  object-fit: cover; /* Ensure the image fits properly */
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: #007bff;
+  margin: 0;
+}
+
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-grow: 1; /* Allow the nav-links to take up available space */
+  justify-content: center; /* Center the navigation links */
+  margin: 0 20px; /* Add margin to separate from logo and profile */
+}
+
+.nav-links a,
+.nav-links span {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.nav-links a:hover,
+.nav-links span:hover {
+  color: #007bff;
+}
+
+/* Header Actions (Profile Picture) */
+.header-actions {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Ensure it takes the full height of the header */
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Ensure it takes the full height of the header */
+}
+
+.profile-image {
+  width: 60px; /* Fixed width for the profile picture */
+  height: 60px; /* Fixed height for the profile picture */
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #007bff;
+  object-fit: cover; /* Ensure the image fits properly */
+}
+
+.profile-image.default {
+  border: 2px solid #ccc;
+}
+
+/* Dropdown Menu */
+.ant-dropdown-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ant-dropdown-menu-item {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: #f0f4ff;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 10px;
+    height: 50px; /* Smaller height for mobile */
+  }
+
+  .logo-text {
+    font-size: 18px;
+  }
+
+  .nav-links {
+    gap: 10px;
+  }
+
+  .nav-links a,
+  .nav-links span {
+    font-size: 14px;
+  }
+
+  .logo-image img {
+    width: 35px; /* Smaller logo for mobile */
+    height: 35px;
+  }
+
+  .profile-image {
+    width: 35px; /* Smaller profile picture for mobile */
+    height: 35px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text {
+    display: none; /* Hide logo text on very small screens */
+  }
+
+  .nav-links {
+    gap: 5px;
+    margin: 0 10px; /* Reduce margin for very small screens */
+  }
+
+  .nav-links a,
+  .nav-links span {
+    font-size: 12px;
+  }
+
+  .logo-image img {
+    width: 30px; /* Even smaller logo for very small screens */
+    height: 30px;
+  }
+
+  .profile-image {
+    width: 30px; /* Even smaller profile picture for very small screens */
+    height: 30px;
+  }
+}

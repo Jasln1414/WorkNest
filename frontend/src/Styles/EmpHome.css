@@ -1,0 +1,189 @@
+/* SideBar.css */
+
+/* Main container */
+.emp-home-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f4f7fc;
+  padding: 20px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-right: 20px;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+/* Loading and error messages */
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 20px;
+}
+
+.error-message {
+  color: red;
+}
+
+/* Job card */
+.job-card {
+ height: 290px;
+
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.job-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.job-detail {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.job-status-active {
+  color: #10b981;
+}
+
+/* No jobs message */
+.no-jobs-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.no-jobs-message {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.no-jobs-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.no-jobs-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.post-job-button {
+  background: linear-gradient(135deg, #4f46e5, #6a11cb);
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.post-job-button:hover {
+  background: linear-gradient(135deg, #6a11cb, #4f46e5);
+}
+
+
+.job-card {
+  width: 350px; /* Increased width */
+  height: 320px; /* Adjusted height */
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fdfdfd; /* Light background for contrast */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.job-title {
+  font-size: 1.35rem; /* Slightly larger */
+  font-weight: 700; /* Bolder for emphasis */
+  color: #222; /* Darker shade */
+  background-color: #ffeb3b; /* Light yellow highlight */
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.job-detail {
+  margin-top: 12px;
+  font-size: 1rem;
+  color: #444;
+  background-color: #369ae1; /* Light blue background for better contrast */
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.job-status-active {
+  color: #10b981;
+  font-weight: 600;
+  background-color: #d1fae5; /* Light green for active jobs */
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+/* No jobs message */
+.no-jobs-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.no-jobs-message {
+  background-color: #fff3e0; /* Soft orange background */
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.no-jobs-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #d84315; /* Dark orange for better readability */
+}
+
+.no-jobs-text {
+  font-size: 1rem;
+  color: #666;
+  background-color: #fbe9e7; /* Light red background */
+  padding: 8px;
+  border-radius: 5px;
+  display: inline-block;
+}

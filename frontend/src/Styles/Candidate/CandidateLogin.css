@@ -1,0 +1,230 @@
+/* Candidate Login Overlay */
+.candidate-login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px; /* Added padding for mobile responsiveness */
+  }
+  
+  /* Candidate Login Content */
+  .candidate-login-content {
+    background-color: #fff;
+    padding: 40px; /* Increased padding */
+    border-radius: 12px; /* Slightly larger border radius */
+    width: 100%;
+    max-width: 500px; /* Increased max-width */
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
+  }
+  
+  /* Candidate Login Close Icon */
+  .candidate-login-close-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .candidate-login-close-icon:hover {
+    color: #333;
+  }
+  
+  /* Candidate Login Form */
+  .candidate-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+  
+  /* Candidate Login Title */
+  .candidate-login-title {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 30px;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  /* Candidate Form Group */
+  .candidate-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 15px; /* Added margin-bottom for spacing between form groups */
+  }
+  
+  /* Candidate Form Input Labels */
+  .candidate-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  /* Candidate Form Input */
+  .candidate-form-input {
+    width: 100%; /* Full width */
+    padding: 12px; /* Increased padding */
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Slightly larger border radius */
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin-top: 10px; /* Added margin-top for spacing above inputs */
+  }
+  
+  .candidate-form-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+  
+  /* Candidate Input Error */
+  .candidate-input-error {
+    border-color: #ff4d4f;
+  }
+  
+  /* Candidate Error Message */
+  .candidate-error-message {
+    color: #ff4d4f;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  
+  /* Candidate Form Error */
+  .candidate-form-error {
+    color: #ff4d4f;
+    text-align: center;
+    font-size: 14px;
+    background-color: #fff2f0;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  /* Candidate Forgot Password */
+  .candidate-forgot-password {
+    text-align: right;
+    margin-top: -10px; /* Slight adjustment */
+    margin-bottom: 15px;
+  }
+  
+  /* Candidate Forgot Password Button */
+  .candidate-forgot-password-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.3s ease;
+    padding: 5px;
+    margin-top: 10px; /* Added margin-top for spacing above the forgot password button */
+  }
+  
+  .candidate-forgot-password-button:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+  
+  /* Candidate Submit Button with Gradient */
+  .candidate-submit-button {
+    width: 100%; /* Full width */
+    padding: 12px;
+    background: linear-gradient(135deg, #007bff, #00bfff); /* Gradient background */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px; /* Increased margin-top for spacing above the button */
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2); /* Subtle shadow */
+  }
+  
+  .candidate-submit-button:hover {
+    background: linear-gradient(135deg, #0056b3, #0099cc); /* Darker gradient on hover */
+    box-shadow: 0 6px 8px rgba(0, 123, 255, 0.3); /* Slightly larger shadow on hover */
+    transform: translateY(-1px); /* Slight lift effect */
+  }
+  
+  .candidate-submit-button:active {
+    transform: translateY(0); /* Reset lift effect on click */
+  }
+  
+  /* Candidate Submit Button Disabled */
+  .candidate-submit-button:disabled {
+    background: linear-gradient(135deg, #b3d7ff, #cceeff); /* Lighter gradient for disabled state */
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+  
+  /* Candidate Signup Text */
+  .candidate-signup-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  
+  /* Candidate Signup Text Button */
+  .candidate-signup-text button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 5px;
+    margin-top: 10px; /* Added margin-top for spacing above the signup button */
+  }
+  
+  .candidate-signup-text button:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 480px) {
+    .candidate-login-content {
+      padding: 30px 20px;
+      margin: 0 10px;
+    }
+  
+    .candidate-login-title {
+      font-size: 22px;
+    }
+  
+    .candidate-form-input {
+      padding: 10px;
+      margin-top: 8px; /* Slightly reduced margin for smaller screens */
+    }
+  
+    .candidate-submit-button {
+      margin-top: 15px; /* Slightly reduced margin for smaller screens */
+    }
+  
+    .candidate-forgot-password-button {
+      margin-top: 8px; /* Slightly reduced margin for smaller screens */
+    }
+  
+    .candidate-signup-text button {
+      margin-top: 8px; /* Slightly reduced margin for smaller screens */
+    }
+  }

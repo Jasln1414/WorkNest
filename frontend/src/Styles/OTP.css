@@ -1,0 +1,305 @@
+/* Base styles for OTP modal */
+.otp-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark background with transparency */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure modal appears above other content */
+    animation: fadeIn 0.4s ease;
+  }
+  
+  .otp-modal-content {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    width: 90%;
+    max-width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+                0 1px 3px rgba(0, 0, 0, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+    padding: 2.5rem;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  .otp-modal-content h2 {
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    position: relative;
+  }
+  
+  .otp-modal-content h2:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #4776E6, #8E54E9);
+    border-radius: 3px;
+  }
+  
+  /* Form styling */
+  .otp-form {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .otp-input-group {
+    margin-bottom: 1.2rem;
+    width: 100%;
+  }
+  
+  .otp-input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #4a5568;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .otp-input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #2d3748;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) inset;
+    box-sizing: border-box;
+  }
+  
+  .otp-input-group input:focus {
+    outline: none;
+    border-color: #6c5ce7;
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+  }
+  
+  .otp-input-group input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+  
+  /* Button styling */
+  .otp-button-group {
+    margin-top: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  .otp-submit-btn {
+    background: linear-gradient(135deg, #4776E6, #8E54E9);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+    box-sizing: border-box;
+  }
+  
+  .otp-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+  }
+  
+  .otp-submit-btn:active {
+    transform: translateY(1px);
+  }
+  
+  .otp-submit-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  
+  .otp-submit-btn:hover::after {
+    transform: scaleX(1);
+  }
+  
+  /* Resend OTP button */
+  .otp-resend-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    transition: color 0.3s ease;
+  }
+  
+  .otp-resend-btn:disabled {
+    color: #999;
+    cursor: not-allowed;
+  }
+  
+  .otp-resend-btn:hover {
+    color: #0056b3;
+  }
+  
+  /* Close Icon button styling */
+  .otp-close-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    color: #c9280f;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.3s ease;
+    z-index: 10; /* Ensure it's above modal content */
+  }
+  
+  .otp-close-icon:hover {
+    color: #ff4d4d; /* Red color on hover */
+    transform: scale(1.2); /* Slightly increase size for hover effect */
+  }
+  
+  .otp-close-icon:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.6); /* Purple glow on focus */
+  }
+  
+  /* Additional animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .otp-input-group, .otp-button-group {
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  .otp-input-group:nth-child(1) { animation-delay: 0.1s; }
+  .otp-input-group:nth-child(2) { animation-delay: 0.2s; }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .otp-modal-content {
+      padding: 1.5rem;
+    }
+  
+    .otp-modal-content h2 {
+      font-size: 1.5rem;
+    }
+  
+    .otp-input-group input {
+      padding: 10px 14px;
+      font-size: 0.9rem;
+    }
+  
+    .otp-submit-btn {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .otp-modal-content {
+      padding: 1rem;
+    }
+  
+    .otp-modal-content h2 {
+      font-size: 1.3rem;
+    }
+  
+    .otp-input-group input {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+    }
+  
+    .otp-submit-btn {
+      padding: 8px 16px;
+      font-size: 0.8rem;
+    }
+  }
+/* EmployerLayout.css */
+.employer-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.layout-content {
+  display: flex;
+  flex: 1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* OTP.css */
+
+/* Resend button styling */
+.otp-resend-btn {
+  background: none;
+  border: none;
+  color: #007bff; /* Blue color for the resend button */
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.otp-resend-btn:disabled {
+  color: #ccc; /* Gray color when disabled */
+  cursor: not-allowed;
+}
+
+.otp-resend-btn:hover:not(:disabled) {
+  background-color: rgba(0, 123, 255, 0.1); /* Light blue background on hover */
+}
+
+/* Timer box styling */
+.timer-box {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background-color: #f5f5f5; /* Light gray background */
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #333; /* Dark gray text */
+}
