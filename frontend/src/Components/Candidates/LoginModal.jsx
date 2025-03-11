@@ -121,26 +121,26 @@ function CandidateLogin({ isOpen, onClose, switchToSignup }) {
                   <ErrorMessage name="password" component="div" className="candidate-error-message" />
                 </div>
                 {formError && <div className="candidate-form-error">{formError}</div>}
-                <div className="candidate-forgot-password">
-                  <button
-                    type="button"
-                    className="candidate-forgot-password-button"
-                  >
-                    Forgot password?
-                  </button>
-                </div>
+              {/*<div className="candidate-forgot-password">
                 <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="candidate-submit-button"
+                  type="button"
+                  className="candidate-forgot-password-button"
                 >
-                  {isSubmitting ? "Signing In..." : "Sign In"}
+                  Forgot password?
                 </button>
-                <div className="candidate-signup-text">
-                  <button type="button" onClick={switchToSignup}>
-                    Don't have an account? Sign Up
-                  </button>
-                </div>
+              </div>*/}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="candidate-submit-button"
+              >
+                {isSubmitting ? "Signing In..." : "Sign In"}
+              </button>
+              <div className="candidate-signup-text">
+                <button type="button" onClick={switchToSignup} className="candidate-signup-button">
+                  Don't have an account? Sign Up
+                </button>
+              </div>
               </Form>
             )}
           </Formik>

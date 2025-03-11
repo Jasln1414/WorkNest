@@ -1,4 +1,5 @@
 import React from 'react'
+import '../../../Styles/Findjob.css'
 
 function Pagination({ currentPage, totalPages, onPageChange }) {
 
@@ -19,31 +20,31 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
       pageNumbers.push(i);
     }
   return (
-   <div className='flex justify-center mt-5'>
+    <div className="pagination">
+    <button
+      onClick={handlePrevious}
+      disabled={currentPage === 1}
+      className="pagination-button"
+    >
+      Previous
+    </button>
+    {pageNumbers.map((number) => (
       <button
-        onClick={handlePrevious}
-        disabled={currentPage === 1}
-        className='mx-2 px-3 py-1 border border-gray-300 rounded-md'
+        key={number}
+        onClick={() => onPageChange(number)}
+        className={`pagination-button ${currentPage === number ? 'active' : ''}`}
       >
-        Previous
+        {number}
       </button>
-      {pageNumbers.map((number) => (
-        <button
-          key={number}
-          onClick={() => onPageChange(number)}
-          className={`mx-2 px-3 py-1 border border-gray-300 rounded-md ${currentPage === number ? 'bg-blue-500 text-white' : ''}`}
-        >
-          {number}
-        </button>
-      ))}
-      <button
-        onClick={handleNext}
-        disabled={currentPage === totalPages}
-        className='mx-2 px-3 py-1 border border-gray-300 rounded-md'
-      >
-        Next
-      </button>
-    </div>
+    ))}
+    <button
+      onClick={handleNext}
+      disabled={currentPage === totalPages}
+      className="pagination-button"
+    >
+      Next
+    </button>
+  </div>
   )
 }
 

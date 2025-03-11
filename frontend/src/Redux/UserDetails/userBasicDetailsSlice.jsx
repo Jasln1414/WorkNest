@@ -16,7 +16,7 @@ export const userBasicDetailsSlice = createSlice(
         state.name = action.payload.name;
         state.email=action.payload.email;
         state.phone=action.payload.phone;
-        state.profile_pic = action.payload.profile_pic;
+        state.profile_pic = action.payload.profile_pic || null; // Fallback to null
         state.user_type_id=action.payload.user_type_id
       }
     }

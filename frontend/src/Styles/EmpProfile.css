@@ -425,3 +425,605 @@ body {
 :focus:not(:focus-visible) {
     outline: none;
 }
+/* Main container layout */
+.ep-main-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    position: relative;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+  
+  /* Fixed sidebar styling */
+  .ep-sidebar-fixed {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    z-index: 10;
+    /* Other sidebar styling remains */
+  }
+  
+  /* Main content area with margin to accommodate the fixed sidebar */
+  .ep-content-wrapper {
+    flex: 1;
+    margin-left: 250px; /* Same as sidebar width */
+    padding: 2rem;
+    width: calc(100% - 250px); /* Ensure content doesn't exceed viewport */
+    box-sizing: border-box; /* Include padding in width calculation */
+  }
+  
+  /* Make sure all elements inside don't overflow */
+  .ep-data-text, .ep-description-text {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+    word-break: break-word;
+    max-width: 100%; /* Ensure text doesn't overflow */
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .ep-content-wrapper {
+      margin-left: 200px;
+      width: calc(100% - 200px);
+    }
+    
+    .ep-sidebar-fixed {
+      width: 200px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    /* On mobile, hide the fixed sidebar and adjust the content */
+    .ep-sidebar-fixed {
+      display: none;
+    }
+    
+    .ep-content-wrapper {
+      margin-left: 0;
+      width: 100%;
+      padding: 1rem;
+    }
+    
+    .ep-header-section {
+      flex-direction: column;
+      text-align: center;
+      width: 100%;
+    }
+    
+    .ep-info-row {
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+    
+    .ep-detail-block {
+      min-width: auto; /* Remove min-width on mobile */
+      width: 100%;
+    }
+  }
+  
+  /* Remove horizontal scrollbar specifically */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+  
+  /* Fix for long links or text in detail blocks */
+  .ep-detail-block {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+/* EmpProfile.css - Professional responsive styling for Employer Profile */
+
+/* Modern CSS Variables for consistent theming */
+:root {
+    /* Color palette */
+    --primary-color: #3b82f6; /* Blue */
+    --primary-light: #60a5fa;
+    --primary-dark: #2563eb;
+    --secondary-color: #f9fafb; /* Light gray for backgrounds */
+    --tertiary-color: #f3f4f6;
+    --accent-color: #8b5cf6; /* Purple accent */
+    --success-color: #10b981; /* Green */
+    --error-color: #ef4444; /* Red */
+    --warning-color: #f59e0b; /* Amber */
+    
+    /* Text colors */
+    --text-primary: #1f2937; /* Dark gray for main text */
+    --text-secondary: #4b5563; /* Medium gray for secondary text */
+    --text-muted: #9ca3af; /* Light gray for subtle text */
+    --text-white: #ffffff;
+    
+    /* Background colors */
+    --bg-white: #ffffff;
+    --bg-light: #f9fafb;
+    --bg-card: #ffffff;
+    
+    /* Border colors */
+    --border-light: #e5e7eb;
+    --border-medium: #d1d5db;
+    
+    /* Shadow styles */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Border radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --radius-full: 9999px;
+    
+    /* Font family */
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    
+    /* Spacing */
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+    --spacing-4: 1rem;
+    --spacing-5: 1.25rem;
+    --spacing-6: 1.5rem;
+    --spacing-8: 2rem;
+    --spacing-10: 2.5rem;
+    --spacing-12: 3rem;
+    --spacing-16: 4rem;
+    
+    /* Transitions */
+    --transition-fast: all 0.2s ease;
+    --transition-normal: all 0.3s ease;
+    --transition-slow: all 0.5s ease;
+  }
+  
+  /* Base reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background-color: var(--secondary-color);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Responsive images */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Main container layout */
+  .ep-main-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--secondary-color);
+    position: relative;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+  
+  /* Fixed sidebar styling */
+  .ep-sidebar-fixed {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    z-index: 40;
+    background-color: #eff1fd; /* Prominent color (blue) */
+    
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+  }
+  
+  /* Main content area */
+  .ep-content-wrapper {
+    flex: 1;
+    margin-left: 260px; /* Match sidebar width */
+    padding: var(--spacing-8);
+    width: calc(100% - 260px);
+    background-color: var(--bg-light);
+    transition: var(--transition-normal);
+  }
+  
+  /* Profile header with avatar and name */
+  .ep-header-section {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
+    background-color: var(--bg-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    gap: var(--spacing-6);
+  }
+  
+  .ep-avatar-wrapper {
+    flex-shrink: 0;
+    position: relative;
+  }
+  
+  .ep-avatar-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--bg-white);
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease;
+    background-color: var(--bg-light);
+  }
+  
+  .ep-avatar-image:hover {
+    transform: scale(1.05);
+  }
+  
+  .ep-company-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+  }
+  
+  /* Info row for two-column layout */
+  .ep-info-row {
+    display: flex;
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
+    flex-wrap: wrap;
+  }
+  
+  /* Detail blocks for contact and company info */
+  .ep-detail-block {
+    flex: 1;
+    min-width: 0; /* Allow shrinking below content size */
+    background-color: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-6);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+  }
+  
+  .ep-detail-block:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+  
+  .ep-full-width {
+    width: 100%;
+  }
+  
+  /* Block headings */
+  .ep-block-heading {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--border-light);
+    padding-bottom: var(--spacing-3);
+    position: relative;
+  }
+  
+  .ep-block-heading::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 60px;
+    height: 2px;
+    background-color: var(--primary-color);
+  }
+  
+  /* Detail rows with icons */
+  .ep-detail-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-4);
+    gap: var(--spacing-3);
+  }
+  
+  .ep-detail-row:last-child {
+    margin-bottom: 0;
+  }
+  
+  .ep-icon {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .ep-data-text, .ep-description-text {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    flex: 1;
+    min-width: 0; /* Allow text to shrink */
+  }
+  
+  .ep-description-text {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  
+  /* External links */
+  .ep-external-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: var(--transition-fast);
+    position: relative;
+  }
+  
+  .ep-external-link:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
+  
+  /* Loading and error states */
+  .loading-container, .error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: var(--spacing-8);
+    background-color: var(--bg-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin: var(--spacing-8) auto;
+    max-width: 800px;
+  }
+  
+  .loading-container {
+    position: relative;
+  }
+  
+  .loading-container:after {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-medium);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    margin-top: var(--spacing-6);
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .error-button {
+    margin-top: var(--spacing-6);
+    padding: var(--spacing-3) var(--spacing-6);
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .error-button:hover {
+    background-color: var(--primary-dark);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  
+  .error-button:active {
+    transform: translateY(0);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 1280px) {
+    .ep-content-wrapper {
+      padding: var(--spacing-6);
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .ep-sidebar-fixed {
+      width: 220px;
+    }
+    
+    .ep-content-wrapper {
+      margin-left: 220px;
+      width: calc(100% - 220px);
+    }
+    
+    .ep-avatar-image {
+      width: 100px;
+      height: 100px;
+    }
+    
+    .ep-company-title {
+      font-size: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .ep-sidebar-fixed {
+      width: 0;
+      transform: translateX(-100%);
+    }
+    
+    .ep-content-wrapper {
+      margin-left: 0;
+      width: 100%;
+      padding: var(--spacing-4);
+    }
+    
+    .ep-header-section {
+      flex-direction: column;
+      text-align: center;
+      padding: var(--spacing-4);
+    }
+    
+    .ep-company-title {
+      margin-top: var(--spacing-3);
+    }
+    
+    .ep-info-row {
+      flex-direction: column;
+      gap: var(--spacing-4);
+    }
+    
+    .ep-detail-block {
+      min-width: 100%;
+    }
+    
+    .ep-avatar-image {
+      width: 100px;
+      height: 100px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .ep-header-section {
+      padding: var(--spacing-3);
+    }
+    
+    .ep-detail-block {
+      padding: var(--spacing-4);
+    }
+    
+    .ep-avatar-image {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .ep-company-title {
+      font-size: 1.25rem;
+    }
+    
+    .ep-block-heading {
+      font-size: 1.125rem;
+    }
+  }
+  
+  /* Mobile sidebar toggle functionality - requires JS implementation */
+  .show-mobile-sidebar .ep-sidebar-fixed {
+    transform: translateX(0);
+    width: 260px;
+  }
+  
+  /* Toggle button for mobile */
+  .ep-mobile-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 50;
+    box-shadow: var(--shadow-lg);
+    border: none;
+    transition: var(--transition-normal);
+  }
+  
+  .ep-mobile-toggle:hover {
+    background-color: var(--primary-dark);
+    transform: scale(1.05);
+  }
+  
+  @media (max-width: 768px) {
+    .ep-mobile-toggle {
+      display: flex;
+    }
+  }
+  
+  /* Add smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* For WebKit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--bg-light);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+  }
+  
+  /* Print styles */
+  @media print {
+    .ep-sidebar-fixed, .ep-mobile-toggle {
+      display: none;
+    }
+    
+    .ep-content-wrapper {
+      margin-left: 0;
+      width: 100%;
+      padding: 0;
+    }
+    
+    .ep-detail-block {
+      box-shadow: none;
+      border: 1px solid var(--border-light);
+    }
+    
+    .ep-header-section {
+      box-shadow: none;
+      border: 1px solid var(--border-light);
+    }
+  }
+/* Styling for the Sidebar container */
+.ep-sidebar-fixed {
+    position: fixed;  /* Keeps the sidebar fixed on the page */
+    top: 0;
+    left: 0;
+    width: 250px;  /* You can adjust the width as needed */
+    height: 100%;  /* Full height */
+    background-color: #f4f4f4; /* Background color */
+    padding: 20px;  /* Space inside the sidebar */
+  }
+  
+  /* Styling for the h2 element */
+  .main-head {
+    color: #5c6bc0; /* Prominent color (blue) *//* Blue color for the heading */
+   /* Margin of 4vh on top and bottom */
+    font-size: 24px; /* Font size can be adjusted as per your need */
+    font-weight: bold; /* Make the heading bold */
+  }
+  
+ 
+  

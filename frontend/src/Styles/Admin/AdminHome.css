@@ -1,0 +1,917 @@
+/* ADMIN HEADER */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #f6f6f6, #ffffff);
+  padding: 15px 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  height: auto;
+  min-height: 70px;
+  color: #000;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo-wrapper {
+  width: 50px;
+  height: 50px;
+}
+
+.logo-image {
+  width: 100%;
+  height: auto;
+}
+
+.site-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: rgb(9, 52, 104);
+  margin-left: 10px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Divider */
+.divider-container {
+  display: none;
+}
+
+.vertical-divider {
+  height: 30px;
+  border-left: 2px solid white;
+}
+
+/* User Dropdown */
+.user-menu {
+  position: relative;
+}
+
+.user-dropdown a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Hamburger Menu */
+.menu-icon {
+  display: none;
+  font-size: 24px;
+  color: #0056b3;
+  cursor: pointer;
+}
+
+/* Main Content Container */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+  position: relative;
+}
+
+/* ADMIN LOGIN FORM */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* ✅ Align content to the top */
+  align-items: center; /* ✅ Center horizontally */
+  padding-top: 20vh; /* ✅ Push content just above the middle */
+  overflow-y: auto; /* Enables scrolling if needed */
+  flex: 1; /* Take available space */
+  padding: 20px;
+  
+}
+
+.login-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+}
+
+/* Form label styling */
+.adminlogin-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #333;
+  text-align: left;
+}
+
+/* Input field styling */
+.adminlogin-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+/* Admin sign-in button styling */
+button.adminhome {
+  width: 100%;
+  padding: 12px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the button */
+button.adminhome:hover {
+  background-color: #004494;
+}
+
+/* Focus effect for accessibility */
+button.adminhome:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+/* Footer Styling */
+.footer {
+  width: 100%;
+  background-color: #f5f5f5;
+  padding: 15px 0;
+  text-align: center;
+  position: relative; /* Changed from absolute or fixed */
+  bottom: 0;
+  margin-top: auto; /* Push to bottom if content doesn't fill page */
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .admin-header {
+    padding: 10px 15px;
+  }
+  
+  .header-right {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #007bff;
+    text-align: center;
+    padding: 10px 0;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+  }
+  
+  .header-right.open {
+    display: flex;
+  }
+  
+  .menu-icon {
+    display: block;
+  }
+  
+  .user-dropdown a {
+    font-size: 16px;
+  }
+  
+  .site-name {
+    font-size: 20px;
+  }
+  
+  .login-card {
+    width: 90%;
+    padding: 1.5rem;
+  }
+  
+  .adminlogin-form input,
+  button.adminhome {
+    font-size: 14px;
+    padding: 8px;
+  }
+}
+
+
+/* General Styles */
+.content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 30vh; /* Adjust for sidebar */
+  padding: 20px;
+  width: calc(100% - 30vh); /* Ensure content fits beside the sidebar */
+  box-sizing: border-box;
+}
+
+/* Tabs Styles */
+.MuiTabs-root {
+  margin-bottom: 20px;
+}
+
+.MuiTab-root {
+  font-size: 14px;
+  text-transform: none;
+  min-width: 100px !important;
+}
+
+.MuiTabs-indicator {
+  background-color: #3f51b5; /* Change to your preferred color */
+}
+
+/* Profile Tab Styles */
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profileHeader {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.statusButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.blockButton {
+  background-color: #ff4444;
+  color: white;
+}
+
+.unblockButton {
+  background-color: #00C851;
+  color: white;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.profileImage {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profileText {
+  text-align: center;
+}
+
+.profileText h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.profileText p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.profileLinks a {
+  color: #3f51b5;
+  text-decoration: none;
+}
+
+.profileLinks a:hover {
+  text-decoration: underline;
+}
+
+.profileFooter {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #777;
+}
+
+/* Skills Tab Styles */
+.skillsContainer {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.skillsContainer h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.skill-text {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 4px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Education Tab Styles */
+.educationContainer {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.educationContainer h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.educationTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.educationTable th,
+.educationTable td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.educationTable th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.educationTable td {
+  color: #555;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .content {
+      margin-left: 0; /* Remove margin for mobile */
+      padding: 10px;
+      width: 100%; /* Full width on mobile */
+  }
+
+  .profileInfo {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .profileImage {
+      width: 100px;
+      height: 100px;
+  }
+
+  .profileText h2 {
+      font-size: 20px;
+  }
+
+  .profileText p {
+      font-size: 14px;
+  }
+
+  .educationTable th,
+  .educationTable td {
+      padding: 8px;
+  }
+
+  .MuiTab-root {
+      min-width: 80px !important;
+      font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profileContainer {
+      padding: 10px;
+  }
+
+  .skillsContainer,
+  .educationContainer {
+      padding: 10px;
+  }
+
+  .skill-text {
+      font-size: 12px;
+      padding: 4px 8px;
+  }
+
+  .educationTable th,
+  .educationTable td {
+      font-size: 12px;
+  }
+}
+/* Education Tab Styles */
+.educationContainer {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.educationContainer h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.educationTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.educationTable th,
+.educationTable td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.educationTable th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.educationTable td {
+  color: #555;
+}
+
+/* About Tab Styles */
+.aboutContainer {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.aboutContainer h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.aboutContainer p {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Job Tab Styles */
+.jobContainer {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.jobContainer h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.jobTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.jobTable th,
+.jobTable td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.jobTable th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.jobTable td {
+  color: #555;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .educationContainer,
+  .aboutContainer,
+  .jobContainer {
+      padding: 15px;
+  }
+
+  .educationTable th,
+  .educationTable td,
+  .jobTable th,
+  .jobTable td {
+      padding: 8px;
+      font-size: 14px;
+  }
+
+  .educationContainer h3,
+  .aboutContainer h3,
+  .jobContainer h3 {
+      font-size: 18px;
+  }
+
+  .aboutContainer p {
+      font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .educationContainer,
+  .aboutContainer,
+  .jobContainer {
+      padding: 10px;
+  }
+
+  .educationTable th,
+  .educationTable td,
+  .jobTable th,
+  .jobTable td {
+      padding: 6px;
+      font-size: 12px;
+  }
+
+  .educationContainer h3,
+  .aboutContainer h3,
+  .jobContainer h3 {
+      font-size: 16px;
+  }
+
+  .aboutContainer p {
+      font-size: 12px;
+  }
+}
+
+/* General Styles */
+.content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 30vh; /* Adjust for sidebar */
+  padding: 20px;
+  width: calc(100% - 30vh); /* Ensure content fits beside the sidebar */
+  box-sizing: border-box;
+  min-height: 100vh; /* Ensure content takes full height */
+}
+
+/* Tabs Styles */
+.MuiTabs-root {
+  margin-bottom: 20px;
+}
+
+.MuiTab-root {
+  font-size: 14px;
+  text-transform: none;
+  min-width: 100px !important;
+}
+
+.MuiTabs-indicator {
+  background-color: #3f51b5; /* Change to your preferred color */
+}
+
+/* Profile Tab Styles */
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profileHeader {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.statusButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.blockButton {
+  background-color: #ff4444;
+  color: white;
+}
+
+.unblockButton {
+  background-color: #00C851;
+  color: white;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.profileImage {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profileText {
+  text-align: center;
+}
+
+.profileText h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.profileText p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+/* Address Tab Styles */
+.addressContainer {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.addressContainer h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.addressContainer p {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* About Tab Styles */
+.aboutContainer {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.aboutContainer h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.aboutContainer p {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Jobs Tab Styles */
+.jobsContainer {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.jobsContainer h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.jobsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.jobsTable th,
+.jobsTable td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.jobsTable th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.jobsTable td {
+  color: #555;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .content {
+      margin-left: 0; /* Remove margin for mobile */
+      padding: 10px;
+      width: 100%; /* Full width on mobile */
+  }
+
+  .profileInfo {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .profileImage {
+      width: 100px;
+      height: 100px;
+  }
+
+  .profileText h2 {
+      font-size: 20px;
+  }
+
+  .profileText p {
+      font-size: 14px;
+  }
+
+  .addressContainer,
+  .aboutContainer,
+  .jobsContainer {
+      padding: 15px;
+  }
+
+  .jobsTable th,
+  .jobsTable td {
+      padding: 8px;
+      font-size: 14px;
+  }
+
+  .addressContainer h3,
+  .aboutContainer h3,
+  .jobsContainer h3 {
+      font-size: 18px;
+  }
+
+  .addressContainer p,
+  .aboutContainer p {
+      font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profileContainer,
+  .addressContainer,
+  .aboutContainer,
+  .jobsContainer {
+      padding: 10px;
+  }
+
+  .jobsTable th,
+  .jobsTable td {
+      padding: 6px;
+      font-size: 12px;
+  }
+
+  .addressContainer h3,
+  .aboutContainer h3,
+  .jobsContainer h3 {
+      font-size: 16px;
+  }
+
+  .addressContainer p,
+  .aboutContainer p {
+      font-size: 12px;
+  }
+
+  .jobsTable {
+      display: block;
+      overflow-x: auto; /* Enable horizontal scrolling for small screens */
+  }
+}
+/* Container for the button */
+.profileHeader {
+  display: flex;
+  justify-content: flex-end; /* Aligns children (button) to the right */
+  padding: 10px; /* Optional: Add some padding */
+}
+
+/* Button styles */
+.statusButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.blockButton {
+  background-color: #ff4444;
+  color: white;
+}
+
+.unblockButton {
+  background-color: #00C851;
+  color: white;
+}
+.create-superuser-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.create-superuser-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #218838;
+}
+
+.success-message {
+  color: green;
+  text-align: center;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+}

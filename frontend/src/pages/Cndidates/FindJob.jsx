@@ -1,53 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import JobCard from './utilities/Jobcard';
 import SearchBox from './utilities/SearchBox';
 import Pagination from './utilities/Paginations';
-import Filter from './utilities/Filter';
-import Drawer from 'react-modern-drawer';
-import 'react-modern-drawer/dist/index.css';
+import '../../Styles/FindJob.css';
 
 function CandidateHome() {
   const baseURL = 'http://127.0.0.1:8000';
   const [jobData, setJobData] = useState([]);
-  const [filterData, setFilterData] = useState([]);
-  const [action, setAction] = useState(false);
+  const [filterData, setFilterData] = useState([]); // State for filtered data
+  const [action, setAction] = useState(false); // State to track if filtering is applied
   const [currentPage, setCurrentPage] = useState(1);
-  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 6;
   const token = localStorage.getItem('access');
 
   // Fetch job data
-  useEffect(() => {
-    const fetchJobData = async () => {
-      try {
-        const response = await axios.get(`${baseURL}/api/empjob/getAlljobs/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        });
+  const fetchJobData = useCallback(async () => {
+    try {
+      const response = await axios.get(`${baseURL}/api/empjob/getAlljobs/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
 
-        if (response.status === 200) {
-          setJobData(response.data);
-          setError(null);
-        } else {
-          setError('Failed to fetch job data. Please try again later.');
-        }
-      } catch (error) {
-        console.error('Error fetching job data:', error);
-        setError('An error occurred while fetching job data. Please try again later.');
-      } finally {
-        setLoading(false);
+      if (response.status === 200) {
+        setJobData(response.data);
+        setFilterData(response.data); // Initialize filterData with all jobs
+        setError(null);
+      } else {
+        setError('Failed to fetch job data. Please try again later.');
       }
-    };
-
-    fetchJobData();
+    } catch (error) {
+      console.error('Error fetching job data:', error);
+      setError('An error occurred while fetching job data. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   }, [baseURL, token]);
+
+  useEffect(() => {
+    fetchJobData();
+  }, [fetchJobData]);
 
   // Handle pagination
   const handlePageChange = (page) => {
@@ -57,49 +55,44 @@ function CandidateHome() {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentJobs = action
-    ? filterData.slice(indexOfFirstItem, indexOfLastItem)
-    : jobData.slice(indexOfFirstItem, indexOfLastItem);
+    ? filterData.slice(indexOfFirstItem, indexOfLastItem) // Use filtered data if action is true
+    : jobData.slice(indexOfFirstItem, indexOfLastItem); // Use all jobs otherwise
   const totalPages = Math.ceil((action ? filterData.length : jobData.length) / itemsPerPage);
 
-  // Toggle filter drawer
-  const toggleDrawer = () => {
-    setIsOpen(!isOpen);
-  };
-
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="ch-find-job-page">
+        <div className="ch-loading-container">
+          <div className="ch-spinner"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-red-500 text-center mt-10">{error}</div>;
+    return (
+      <div className="ch-find-job-page">
+        <div className="ch-error-message">{error}</div>
+      </div>
+    );
+  }
+
+  if (jobData.length === 0 || (action && filterData.length === 0)) {
+    return (
+      <div className="ch-find-job-page">
+        <div className="ch-no-jobs-message">No jobs found.</div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex relative">
-      {/* Filter Sidebar */}
-      <div className="absolute md:hidden mt-14">
-        <button
-          onClick={toggleDrawer}
-          className="w-16 h-8 mt-2 text-white font-semibold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg shadow-lg hover:scale-105 duration-200 hover:drop-shadow-2xl hover:shadow-[#7dd3fc] hover:cursor-pointer"
-        >
-          Filter
-        </button>
-        <Drawer open={isOpen} onClose={toggleDrawer} direction="left" className="bg-gray-50">
-          <Filter
-            setJobData={setJobData}
-            jobData={jobData}
-            setFilterData={setFilterData}
-            setAction={setAction}
-          />
-        </Drawer>
-      </div>
-
+    <div className="ch-find-job-page">
       {/* Main Content */}
-      <div className="pt-7 w-full">
+      <div className="ch-main-content">
         {/* Search Bar */}
-        <div className="mt-7 ml-10 flex justify-center">
+        <div className="ch-search-box-container">
           <SearchBox
-            setJobData={setJobData}
             jobData={jobData}
             setFilterData={setFilterData}
             setAction={setAction}
@@ -107,36 +100,50 @@ function CandidateHome() {
         </div>
 
         {/* Job Listings */}
-        <div className="flex flex-col min-h-[32rem]">
-          <div className="flex-grow flex justify-center">
-            <div className="flex flex-col justify-center md:w-4/6">
-              {currentJobs.map((job) => (
-                <JobCard
-                  key={job.id}
-                  id={job.id}
-                  img={job.employer.profile_pic}
-                  title={job.title}
-                  posted={job.posteDate}
-                 
-                  applybefore={job.applyBefore}
-                  empname={job.employer.user_full_name}
-                  jobtype={job.jobtype}
-                  salary={job.lpa}
-                  experience={job.experience}
-                  location={job.location}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Pagination */}
-          <div className="mt-5">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
+        <div className="ch-job-cards-container">
+          {currentJobs.map((job) => (
+            <JobCard
+              key={`${job.id}-${job.title}`}
+              id={job.id}
+              img={job.employer.profile_pic || 'default-profile.png'} 
+              title={job.title}
+              posted={job.posteDate}
+              applybefore={job.applyBefore}
+              empname={job.employer.user_full_name}
+              jobtype={job.jobtype}
+              salary={job.lpa}
+              experience={job.experience}
+              location={job.location}
+              about={job.about}
+              Responsibility={job.Responsibility}
+              cardClass="ch-job-card"
+              headerClass="ch-card-header"
+              profileImgClass="ch-profile-img"
+              titleClass="ch-card-title"
+              companyClass="ch-company-name"
+              detailsClass="ch-card-details"
+              detailItemClass="ch-detail-item"
+              iconClass="ch-detail-icon"
+              textClass="ch-detail-text"
+              footerClass="ch-card-footer"
+              tagsClass="ch-tags-container"
+              tagClass="ch-tag"
+              buttonClass="ch-apply-button"
+              About="about"
             />
-          </div>
+          ))}
+        </div>
+
+        {/* Pagination */}
+        <div className="ch-pagination-container-find-job">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            controlClass="ch-pagination-control"
+            buttonClass="ch-page-button"
+            activeClass="ch-active"
+          />
         </div>
       </div>
     </div>

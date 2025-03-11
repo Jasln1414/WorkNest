@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { GrSearch } from 'react-icons/gr';
+import React, { useState } from "react";
+import { BiSearch, BiMap } from "react-icons/bi";
+import "../../../Styles/Candidate/Search.css";
 
-function SearchBox({ jobData, setFilterData, setAction }) {
+const SearchBox = ({ jobData, setFilterData, setAction }) => {
   const [info, setInfo] = useState({
-    title: '',
-    location: '',
+    title: "",
+    location: "",
   });
 
   const handleChange = (event) => {
@@ -31,42 +32,83 @@ function SearchBox({ jobData, setFilterData, setAction }) {
     }
     setFilterData(filtered);
     setAction(true);
-    setInfo({ title: '', location: '' });
   };
 
   return (
-    <div className="search-box">
-      <form className="search-form">
-        <div className="search-container">
-          <GrSearch className="search-icon" />
-          <div className="search-input">
+    <div className="indeed-search-container">
+      <form
+        className="indeed-search-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+        }}
+      >
+        {/* For desktop view - horizontal layout */}
+        <div className="indeed-search-desktop">
+          <div className="indeed-search-field">
+            <BiSearch className="indeed-search-icon" />
             <input
               type="text"
               name="title"
               value={info.title}
               onChange={handleChange}
-              placeholder="Job"
+              placeholder="Job title, keywords, or company"
+              aria-label="Job title, keywords, or company"
             />
           </div>
-          <div className="search-divider" />
-          <div className="search-input">
+
+          <div className="indeed-search-divider"></div>
+
+          <div className="indeed-search-field">
+            <BiMap className="indeed-search-icon" />
             <input
               type="text"
               name="location"
               value={info.location}
               onChange={handleChange}
-              placeholder="Location"
+              placeholder="City, state, or zip code"
+              aria-label="City, state, or zip code"
             />
           </div>
-          <div className="search-button">
-            <button type="button" onClick={handleSearch}>
-              Search
-            </button>
+
+          <button type="submit" className="indeed-search-button">
+            Search
+          </button>
+        </div>
+
+        {/* For mobile view - stacked layout */}
+        <div className="indeed-search-mobile">
+          <div className="indeed-search-field">
+            <BiSearch className="indeed-search-icon" />
+            <input
+              type="text"
+              name="title"
+              value={info.title}
+              onChange={handleChange}
+              placeholder="Job title, keywords, or company"
+              aria-label="Job title, keywords, or company"
+            />
           </div>
+
+          <div className="indeed-search-field">
+            <BiMap className="indeed-search-icon" />
+            <input
+              type="text"
+              name="location"
+              value={info.location}
+              onChange={handleChange}
+              placeholder="City, state, or zip code"
+              aria-label="City, state, or zip code"
+            />
+          </div>
+
+          <button type="submit" className="indeed-search-button-mobile">
+            Find jobs
+          </button>
         </div>
       </form>
     </div>
   );
-}
+};
 
 export default SearchBox;

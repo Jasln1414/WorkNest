@@ -39,12 +39,7 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
         fields = "__all__"
-
-
-
-
-
-
+    
 
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:

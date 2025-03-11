@@ -1,29 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import logoimg from '../../assets/logoimg.jpg';
 import { Dropdown, Space } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { set_Authentication } from '../../Redux/Authentication/authenticationSlice';
-import { useSelector, useDispatch } from 'react-redux';
 import { set_user_basic_details } from '../../Redux/UserDetails/userBasicDetailsSlice';
-import { FaUserTie } from 'react-icons/fa';
-import axios from 'axios';
-import Drawer from 'react-modern-drawer';
-import 'react-modern-drawer/dist/index.css';
-import '../../Styles/Login.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { Menu, X } from 'lucide-react'; // Import Lucide icons
+import '../../Styles/OTP.css';
 
-function CandidateHeader() {
-  const baseURL = 'http://127.0.0.1:8000/';
-  const authentication_user = useSelector((state) => state.authentication_user);
+function EmployerHeader() {
+  const baseURL = 'http://127.0.0.1:8000';
   const userBasicDetails = useSelector((state) => state.user_basic_details);
-  const token = localStorage.getItem('access');
+  
+  // Only add the baseURL if profile_pic doesn't already have it
+  const profile_image = userBasicDetails.profile_pic ? 
+    (userBasicDetails.profile_pic.startsWith('http') ? 
+      userBasicDetails.profile_pic : 
+      `${baseURL}${userBasicDetails.profile_pic}`) : 
+    logoimg; // Fallback to logo if no profile pic
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const profile_image = `${baseURL}${userBasicDetails.profile_pic}`;
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleDrawer = () => {
-    setIsOpen(!isOpen);
-  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -48,67 +47,139 @@ function CandidateHeader() {
     navigate('/');
   };
 
-  const items = [
-    {
-      label: (
-        <Link to="/candidate/profile">
-          <p>Profile</p>
-        </Link>
-      ),
-      key: '0',
-    },
-    {
-      label: <p onClick={handleLogout}>Logout</p>,
-      key: '1',
-    },
-  ];
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+ const items = [
+  {
+    label: (
+      <Link to="/candidate/profile" className="w-full">
+        <p className="dropdown-item">Profile</p>
+      </Link>
+    ),
+    key: '0',
+  },
+  {
+    label: <p className="dropdown-item" onClick={handleLogout}>Logout</p>,
+    key: '1',
+  }
+];
 
   return (
-    <div className="header-container">
-      {/* Logo and Name on the Left */}
-      <div className="logo-container">
-        <div className="logo-image">
-          <img src={logoimg} alt="Logo" />
+    <div className="employer">
+      <div className="header-container">
+        {/* Logo Container */}
+        <div className="logo-container">
+          <div className="logo-image">
+            <img 
+              src={logoimg} 
+              alt="Logo" 
+              style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} 
+            />
+          </div>
+          <p className="logo-text">WorkNest</p>
         </div>
-        <p className="logo-text">WorkNest</p>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
+          <button 
+            onClick={toggleMobileMenu}
+            className="mobile-menu-button focus:outline-none"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Desktop Navigation */}
+        <div className="nav-links md:flex">
+       
+            
+          <Link to="/candidate/find-job" className="transition">
+            <span>Home</span>
+          </Link>
+          <Link to="/candidate/notifications" className="transition">
+            <span>Notifications</span>
+          </Link>
+          <Link to="/candidate/messages" className="transition">
+            <span>Messages</span>
+          </Link>
+          <Link to="/candidate/SavedJob" className="transition">
+            <span>Saved Job</span>
+          </Link>
+        </div>
+
+        {/* User Profile Dropdown (Hidden on Mobile) */}
+        <div className="header-actions hidden md:block">
+          <div className="user-profile">
+            <Dropdown menu={{ items }}>
+              <a onClick={(e) => e.preventDefault()}>
+                <Space>
+                  <img 
+                    src={profile_image} 
+                    alt="Profile" 
+                    className="profile-image" 
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = logoimg; // Fallback image if profile pic fails to load
+                    }}
+                  />
+                </Space>
+              </a>
+            </Dropdown>
+          </div>
+        </div>
       </div>
 
-      {/* Navigation Links */}
-      <div className="nav-links">
-        <Link to="/candidate/find-job">
-          <span>Home</span>
-        </Link>
-        <span>Messages</span>
-        <span>Notifications</span>
-        <span>Saved Jobs</span>
-      </div>
-
-      {/* Profile Picture on the Right */}
-      <div className="header-actions">
-        <div className="user-profile">
-          <Dropdown menu={{ items }}>
-            <a onClick={(e) => e.preventDefault()}>
-              <Space>
-                {authentication_user.isAuthenticated ? (
-                  <img
-                    className="profile-image authenticated"
-                    src={profile_image}
-                    alt="User avatar"
-                  />
-                ) : (
-                  <img
-                    className="profile-image default"
-                    src={""}
-                    alt="Default avatar"
-                  />
-                )}
-              </Space>
-            </a>
-          </Dropdown>
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu md:hidden">
+          <div className="flex-col">
+            <Link 
+              to="/candidate/find-job" 
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/candidate/messeges" 
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Messeges
+            </Link>
+            <Link 
+              to="/candidate/notifications" 
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Notifications
+            </Link>
+            <Link 
+              to="/candidate/SavedJob" 
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Saved Job
+            </Link>
+            <Link 
+              to="/candidate/profile" 
+              className="border-t"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Profile
+            </Link>
+            <button 
+              onClick={() => {
+                handleLogout();
+                setMobileMenuOpen(false);
+              }}
+            >
+              Logout
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
-export default CandidateHeader;
+export default EmployerHeader;

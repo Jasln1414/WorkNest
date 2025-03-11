@@ -104,12 +104,12 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
             />
           </div>
 
-          <span 
+         {/* <span 
             className="forgot-password" 
             onClick={handleForgotPassword}
           >
             Forgot Password?
-          </span>
+          </span>*/}
 
         
 

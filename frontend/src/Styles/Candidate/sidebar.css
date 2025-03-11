@@ -1,0 +1,121 @@
+/* Base Styles */
+.profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+    transition: width 0.3s ease;
+    width: 250px; /* Default width for desktop */
+  }
+  
+  /* Collapsed State */
+  .profile-sidebar.sidebar-collapsed {
+    width: 80px; /* Collapsed width for mobile */
+  }
+  
+  /* Sidebar Header */
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .user-brief {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .user-name h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333333;
+    margin: 0;
+  }
+  
+  .sidebar-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Sidebar Tabs */
+  .sidebar-tabs {
+    flex: 1;
+    padding: 20px 0;
+    overflow-y: auto;
+  }
+  
+  .sidebar-tab {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    color: #555555;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar-tab:hover {
+    background-color: #f9fafb;
+  }
+  
+  .sidebar-tab.active {
+    background-color: #e9ecef;
+    color: #333333;
+  }
+  
+  .tab-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .tab-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  /* Sidebar Footer */
+  .sidebar-footer {
+    border-top: 1px solid #e5e7eb;
+    padding: 20px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .profile-sidebar {
+      width: 80px; /* Collapsed by default on mobile */
+    }
+  
+    .profile-sidebar:not(.sidebar-collapsed) {
+      width: 250px; /* Expanded when toggled */
+    }
+  
+    .sidebar-header {
+      padding: 10px;
+    }
+  
+    .user-name h3 {
+      font-size: 16px;
+    }
+  
+    .sidebar-tab {
+      padding: 12px 10px;
+    }
+  
+    .tab-label {
+      display: none; /* Hide labels in collapsed state */
+    }
+  
+    .profile-sidebar:not(.sidebar-collapsed) .tab-label {
+      display: inline; /* Show labels when expanded */
+    }
+  }

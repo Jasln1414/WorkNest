@@ -2,17 +2,17 @@ import React, { useState } from "react";
 import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import EmployerWrapper from "./pages/Employer/EmployWrapper";
-import EmpProfileCreation from "./pages/Employer/EmployerProfile";
-import EmpHome from "./pages/Employer/EmployerHome";
-import PostJob from "./pages/Employer/PostJob";
 import Footer from "./Components/Footer";
 import { ToastContainer } from "react-toastify";
 import Header from "./Components/Header";
 import LoginModal from "./Components/Employer/LoginModal";
 import SignupModal from "./Components/Employer/SignupModal";
 import ForgotPassword from "./Components/Employer/ForgotPassword";
+import AdminWrapper from "./Components/admin/AdminWrapper";
 
 import CandidateWrapper from './pages/Cndidates/CandidateWrapper'
+import SidebarCandidate from "./Components/Candidates/CandidateSideBar";
+import './validation/App.css'
 
 const ConditionalHeader = ({ children }) => {
   const location = useLocation();
@@ -100,16 +100,17 @@ const router = createBrowserRouter([
         path: "/employer/*",
         element: <EmployerWrapper />,
       },
-     
-       
+     {
+       path:'admin/*', element:<AdminWrapper/>
       
-      
+    },
       
       
       {
         path: "/candidate/*",
         element: <CandidateWrapper />,
       },
+      
       {
         path: "/forgot-password",
         element: <ForgotPassword />,
@@ -125,5 +126,6 @@ const router = createBrowserRouter([
 function App() {
   return <RouterProvider router={router} />;
 }
+
 
 export default App;

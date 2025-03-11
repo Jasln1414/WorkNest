@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 export const EmployerSignupApi = async (formData) => {
   try {
-    const response = await BaseApi.post("api/account/employer/register/", formData);
+    const response = await BaseApi.post("/api/account/employer/register/", formData);
 
     if (response.status === 200 || response.status === 201) {
       toast.success("Registration successful! OTP sent.");
@@ -23,7 +23,7 @@ export const EmployerSignupApi = async (formData) => {
 
 export const EmployerVerifyOtpApi = async (otpData) => {
   try {
-    const response = await BaseApi.post("api/account/verify-otp/", otpData);
+    const response = await BaseApi.post("/api/account/verify-otp/", otpData);
 
     if (response.status === 200 || response.status === 201) {
      {/*toast.success("OTP verified successfully!");*/}
@@ -46,7 +46,7 @@ export const EmployerVerifyOtpApi = async (otpData) => {
 
 export const ResendOtpApi = async (data) => {
   try {
-    const response = await BaseApi.post("api/account/resend-otp/", data);
+    const response = await BaseApi.post("/api/account/resend-otp/", data);
     
     if (response.status === 200 || response.status === 201) {
       {/*toast.success("OTP has been resent to your email.");*/}
@@ -89,7 +89,12 @@ export const EmployerLoginApi = async (formData, dispatch, set_Authentication, n
       const decodedToken = jwtDecode(access_token);
       console.log("🔍 Decoded Token:", decodedToken);
 
-      // Update Redux state
+      // Extract profile picture URL from user_data
+      const baseURL = "http://127.0.0.1:8000"; // Replace with your backend URL
+      const profilePic = user_data?.profile_pic ? `${baseURL}${user_data.profile_pic}` : null;
+      console.log("Profile Picture URL:", profilePic); // Debugging
+
+      // Update Redux state with profile picture
       dispatch(
         set_Authentication({
           name: decodedToken.name || "Unknown",
@@ -97,16 +102,21 @@ export const EmployerLoginApi = async (formData, dispatch, set_Authentication, n
           isAuthenticated: true,
           isAdmin: isAdmin,
           usertype: usertype,
+          profilePic: profilePic, // Ensure this is added
         })
       );
+
+      // Store profile picture in localStorage (optional)
+      if (profilePic) {
+        localStorage.setItem("profilePic", profilePic);
+      }
 
       // Success toast
       toast.success("✅ Login successful!", { position: "top-center" });
 
-      // Redirect user
+      // Redirect user based on profile completion status
       if (user_data?.completed === false) {
         navigate("/employer/Profile_creation");
-
       } else {
         navigate("/employer/EmpHome");
       }

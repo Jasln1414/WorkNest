@@ -148,6 +148,7 @@ class UserDetails(APIView):
         elif user.user_type == 'employer':
             employer=Employer.objects.get(user=user)
             employer=EmployerSerializer(employer).data
+            print("employerdata.................",employer)
             user_data=employer
             content ={
                 'data':data,
@@ -157,7 +158,7 @@ class UserDetails(APIView):
             content ={
                 'data':data,
             } 
-       
+        print("dataaaaaaaaaaaaaaaaaaa",user_data)
         return Response(content)
 
 
@@ -192,28 +193,6 @@ class CandidateRegisterView(APIView):
         else:
             return Response({"message":"error"}, status=status.HTTP_400_BAD_REQUEST)
 
-class CurrentUser(APIView):
-    permission_classes=[]
-    def get(self, request):
-        user = request.user
-        if not user.is_authenticated:
-            return Response({"error": "User is not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
-        
-        try:
-            candidate = Candidate.objects.get(user=user)
-            serializer = CandidateSerializer(candidate)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Candidate.DoesNotExist:
-            pass
-        
-        try:
-            employer = Employer.objects.get(user=user)
-            serializer = EmployerSerializer(employer)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Employer.DoesNotExist:
-            pass
-        
-        return Response({"error": "User is not a candidate or an employer"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class CandidateLoginView(APIView):
@@ -325,34 +304,6 @@ class AuthCandidateView(APIView):
             'user_data': user_data
         }
         return Response(content,status=status.HTTP_200_OK)
-class UserDetails(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request):
-        
-        user = User.objects.get(id=request.user.id)
-        data = UserSerializer(user).data
-        if user.user_type == 'candidate':
-            candidate=Candidate.objects.get(user=user)
-            candidate=CandidateSerializer(candidate).data
-            user_data=candidate
-            content ={
-                'data':data,
-                'user_data':user_data
-            } 
-        elif user.user_type == 'employer':
-            employer=Employer.objects.get(user=user)
-            employer=EmployerSerializer(employer).data
-            user_data=employer
-            content ={
-                'data':data,
-                'user_data':user_data
-            } 
-        else:
-            content ={
-                'data':data,
-            } 
-       
-        return Response(content)
 
 
 class CandidateProfileCreation(APIView):
@@ -442,5 +393,73 @@ class ResendOtpView(APIView):
         except Exception as e:
             return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class AdminLoginView(APIView):
+    permission_classes = [AllowAny]
+    def post(self,request):
+        try:
+            email = request.data.get('email')
+            password = request.data.get('password')
+            print(email,password)
+            if not email or not password:
+                raise ParseError("Both email and password are required.")
+        except KeyError:
+            raise ParseError("Both email and password are required.")
+        
+        try:
+            user = User.objects.get(email=email)
+            if not user:
+                return Response({"message": "Invalid email address."}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({"message": "Invalid email address."}, status=status.HTTP_400_BAD_REQUEST)
+        if not user.is_superuser:
+            
+            return Response({"message": "Only Admin can login"}, status=status.HTTP_403_FORBIDDEN)
+        
+        user = authenticate(username=email, password=password)
+        if user is None:
+            return Response({"message": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
+        refresh = RefreshToken.for_user(user)
+        refresh["name"]=str(user.full_name)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        content = {
+            'email': user.email,
+            'name':user.full_name,
+            'access_token': access_token,
+            'refresh_token': refresh_token,
+            'isAdmin': user.is_superuser,
+            'user_type':user.user_type,
+        }
+        return Response(content, status=status.HTTP_200_OK)
+
+class UserDetails(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        print("helloooooooooooooo",request)
+        user = User.objects.get(id=request.user.id)
+        data = UserSerializer(user).data
+        if user.user_type == 'candidate':
+            candidate=Candidate.objects.get(user=user)
+            candidate=CandidateSerializer(candidate).data
+            user_data=candidate
+            content ={
+                'data':data,
+                'user_data':user_data
+            } 
+        elif user.user_type == 'employer':
+            employer=Employer.objects.get(user=user)
+            employer=EmployerSerializer(employer).data
+            user_data=employer
+            content ={
+                'data':data,
+                'user_data':user_data
+            } 
+        else:
+            content ={
+                'data':data,
+            } 
+       
+        return Response(content)
 
 

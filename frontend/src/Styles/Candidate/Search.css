@@ -1,0 +1,111 @@
+/* Base styles */
+.indeed-search-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.indeed-search-form {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.indeed-search-desktop,
+.indeed-search-mobile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+.indeed-search-field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.indeed-search-field input {
+  width: 100%;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+  height: 100%;
+}
+
+.indeed-search-field input::placeholder {
+  color: #999;
+}
+
+.indeed-search-icon {
+  color: #666;
+  flex-shrink: 0;
+}
+
+.indeed-search-divider {
+  width: 1px;
+  height: 30px;
+  background-color: #e0e0e0;
+}
+
+.indeed-search-button,
+.indeed-search-button-mobile {
+  background-color: #2557a7;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.indeed-search-button:hover,
+.indeed-search-button-mobile:hover {
+  background-color: #1a3f7a;
+}
+
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+  .indeed-search-desktop {
+    display: none;
+  }
+
+  .indeed-search-mobile {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .indeed-search-field {
+    width: 100%;
+  }
+
+  .indeed-search-divider {
+    display: none;
+  }
+
+  .indeed-search-button-mobile {
+    width: 100%;
+  }
+}
+
+/* Hide mobile layout on desktop */
+@media (min-width: 769px) {
+  .indeed-search-mobile {
+    display: none;
+  }
+}

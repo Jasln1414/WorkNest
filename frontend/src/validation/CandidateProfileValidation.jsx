@@ -75,7 +75,10 @@ export const EducationSchema = Yup.object().shape({
         .required('College is required'),
     completed: Yup.string()
         .required('Completion status is required'),
+    //mark: Yup.string()
+        //.matches(/^\d{1,2}$/, 'Marks should be a number between 1 and 99')
+        //.required('Marks are required'),
     mark: Yup.string()
-        .matches(/^\d{1,2}$/, 'Marks should be a number between 1 and 99')
-        .required('Marks are required'),
+    .matches(/^\d{1,2}(\.\d{1,2})?$/, 'Please enter a valid GPA (e.g., 9.6)')
+    .required('GPA is required'),
 })

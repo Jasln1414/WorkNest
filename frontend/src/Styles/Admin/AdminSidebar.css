@@ -1,0 +1,558 @@
+/* Sidebar container */
+.sidebar-container {
+    width: 250px; /* Sidebar width */
+    background-color: #f4f4f4; /* Light gray background */
+    padding: 20px;
+    height: 100vh; /* Full height */
+    overflow-y: auto; /* Enables scrolling if needed */
+  }
+  
+  /* Sidebar inner wrapper */
+  .sidebar-inner {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Sidebar menu list */
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Sidebar menu items */
+  .sidebar-item {
+    margin-bottom: 10px;
+  }
+  
+  /* Sidebar links */
+  .sidebar-link {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff; /* White background */
+    border-radius: 5px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .sidebar-link:hover {
+    background-color: #ddd; /* Light gray hover effect */
+  }
+  
+  /* Sidebar text */
+  .sidebar-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333; /* Dark gray text */
+  }
+  
+  /* Responsive: Hide sidebar on mobile screens */
+  @media (max-width: 768px) {
+    .sidebar-container {
+      display: none;
+    }
+  }
+/* Base Styles */
+.admin-home-page {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  .admin-sidebar-wrapper {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-content-wrapper {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .admin-stat-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .admin-stat-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .admin-stat-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .admin-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+  
+  /* Responsive Styles for Mobile */
+  @media (max-width: 768px) {
+    .admin-home-page {
+      flex-direction: column;
+    }
+  
+    .admin-sidebar-wrapper {
+      width: 100%;
+      padding: 10px;
+      box-shadow: none;
+    }
+  
+    .admin-content-wrapper {
+      padding: 10px;
+    }
+  
+    .admin-stats-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .admin-stat-card {
+      padding: 15px;
+    }
+  
+    .admin-stat-title {
+      font-size: 16px;
+    }
+  
+    .admin-stat-value {
+      font-size: 20px;
+    }
+  }
+  
+  /* Responsive Styles for Laptop */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .admin-stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+
+/* CandidateList.css - Professional responsive styles with unique classnames */
+.ccl-content-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #f9fafb;
+  }
+  
+  .ccl-main-content {
+    flex: 1;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    margin-left: 30vh; /* Add this to accommodate your sidebar */
+  }
+  
+  .ccl-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .ccl-page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .ccl-search-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+  .ccl-search-input {
+    width: 100%;
+    max-width: 320px;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+    background-color: white;
+  }
+  
+  .ccl-search-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  }
+  
+  .ccl-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+  }
+  
+  .ccl-table-container {
+    width: 100%;
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ccl-candidate-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .ccl-table-header {
+    background-color: #f3f4f6;
+  }
+  
+  .ccl-header-cell {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .ccl-table-row {
+    transition: background-color 0.15s ease;
+  }
+  
+  .ccl-table-row:hover {
+    background-color: #f9fafb;
+  }
+  
+  .ccl-table-cell {
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: #1f2937;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .ccl-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+  }
+  
+  .ccl-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  .ccl-status-active {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+  
+  .ccl-status-inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+  
+  .ccl-link-wrapper {
+    display: block;
+    transition: opacity 0.15s ease;
+  }
+  
+  .ccl-link-wrapper:hover {
+    opacity: 0.8;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 1024px) {
+    .ccl-main-content {
+      margin-left: 20vh; /* Reduced margin for medium screens */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .ccl-main-content {
+      margin-left: 0; /* Remove margin on mobile */
+      padding: 1rem;
+    }
+    
+    .ccl-page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    
+    .ccl-page-title {
+      font-size: 1.5rem;
+    }
+    
+    .ccl-search-container {
+      width: 100%;
+    }
+    
+    .ccl-search-input {
+      max-width: 100%;
+    }
+    
+    .ccl-header-cell {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .ccl-table-cell {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .ccl-avatar {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+  
+  /* Additional responsive adjustments for very small screens */
+  @media (max-width: 480px) {
+    .ccl-table-container {
+      border-radius: 0;
+      box-shadow: none;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .ccl-header-cell:nth-child(4),
+    .ccl-table-cell:nth-child(4) {
+      display: none; /* Hide phone column on very small screens */
+    }
+    
+    .ccl-avatar {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+
+
+
+
+/* EmployerList.css - Professional responsive styles with unique classnames */
+.el-content-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #f9fafb;
+  }
+  
+  .el-main-content {
+    flex: 1;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    margin-left: 35vh; /* Accommodates your sidebar */
+  }
+  
+  .el-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .el-page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .el-search-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+  .el-search-input {
+    width: 100%;
+    max-width: 320px;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+    background-color: white;
+  }
+  
+  .el-search-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  }
+  
+  .el-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+  }
+  
+  .el-table-container {
+    width: 100%;
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .el-employer-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .el-table-header {
+    background-color: #f3f4f6;
+  }
+  
+  .el-header-cell {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .el-table-row {
+    transition: background-color 0.15s ease;
+  }
+  
+  .el-table-row:hover {
+    background-color: #f9fafb;
+  }
+  
+  .el-table-cell {
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: #1f2937;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .el-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+  }
+  
+  .el-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  .el-status-active {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+  
+  .el-status-inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+  
+  .el-link-wrapper {
+    display: block;
+    transition: opacity 0.15s ease;
+  }
+  
+  .el-link-wrapper:hover {
+    opacity: 0.8;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 1024px) {
+    .el-main-content {
+      margin-left: 25vh; /* Reduced margin for medium screens */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .el-main-content {
+      margin-left: 0; /* Remove margin on mobile */
+      padding: 1rem;
+    }
+    
+    .el-page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    
+    .el-page-title {
+      font-size: 1.5rem;
+    }
+    
+    .el-search-container {
+      width: 100%;
+    }
+    
+    .el-search-input {
+      max-width: 100%;
+    }
+    
+    .el-header-cell {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .el-table-cell {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .el-avatar {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+  
+  /* Additional responsive adjustments for very small screens */
+  @media (max-width: 480px) {
+    .el-table-container {
+      border-radius: 0;
+      box-shadow: none;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .el-header-cell:nth-child(4),
+    .el-table-cell:nth-child(4) {
+      display: none; /* Hide phone column on very small screens */
+    }
+    
+    .el-avatar {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }

@@ -11,12 +11,13 @@ import EmpProfileCreation from './EmployerProfile'
 import PostJob from './PostJob'
 import EmpProfile from './EmployerProfile';
 import EmployerProfileView from './EmpProfileView';
+import JobDetail from './job/jobdetail';
 
 
 
 function EmployerWrapper() {
   const navigate=useNavigate()
-  const baseURL = 'http://127.0.0.1:8000/';
+  const baseURL = 'http://127.0.0.1:8000';
   const token = localStorage.getItem('access'); 
   const dispatch =useDispatch()
   const authentication_user = useSelector(state => state.authentication_user);
@@ -25,7 +26,7 @@ function EmployerWrapper() {
     const isAuthenticated = await isAuthUser();
     if (isAuthenticated.name){
       try{
-          const responce = await axios.get(baseURL+'/api/account/user/details',{
+          const responce = await axios.get(baseURL+'api/account/user/details',{
             headers:{
               'authorization': `Bearer ${token}`,
               'Accept' : 'application/json',
@@ -67,6 +68,7 @@ function EmployerWrapper() {
     
   
   }, [authentication_user])
+
   return (
     <div>
       <EmployerHeader/>
@@ -76,6 +78,7 @@ function EmployerWrapper() {
         <Route path='/profile_creation' element={<EmpProfileCreation/>} ></Route>
         <Route path='/profile' element={<EmployerProfileView/>}></Route>
         <Route path='/postjob' element={<PostJob/>}></Route>
+        <Route path='/jobdetail/:jobId' element={<JobDetail/>} ></Route>
         
         
 

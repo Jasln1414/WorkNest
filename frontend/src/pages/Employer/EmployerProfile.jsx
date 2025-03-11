@@ -95,7 +95,8 @@ function EmpProfileCreation() {
             profile_pic: response.data.data.profile_pic
           })
         );
-        navigate('employer/EmpHome');
+        console.log("navigating......")
+        navigate('/employer/profile');
       }
     } catch (error) {
       console.log(error);

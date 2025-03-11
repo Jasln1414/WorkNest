@@ -1,189 +1,425 @@
-/* SideBar.css */
+/* EmpHome.css - Responsive styling for employer dashboard */
 
-/* Main container */
-.emp-home-container {
+/* Main Container */
+.eh-container {
   display: flex;
   min-height: 100vh;
-  background-color: #f4f7fc;
-  padding: 20px;
+  background-color: #f8f9fa;
+  font-family: 'Inter', sans-serif;
+  position: relative;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 250px;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-right: 20px;
+/* Add margin only on larger screens */
+@media screen and (min-width: 769px) {
+  .eh-container {
+    margin-left: 250px; /* Match sidebar width */
+    width: calc(100% - 250px); /* Subtract sidebar width */
+  }
 }
 
-/* Main content */
-.main-content {
+/* Reset margin and width on mobile */
+@media screen and (max-width: 768px) {
+  .eh-container {
+    margin-left: 0; /* Remove margin */
+    width: 100%; /* Full width */
+  }
+}
+
+/* Sidebar Styles */
+.ep-sidebar-fixed {
+  width: 250px; /* Fixed width for sidebar */
+  position: fixed; /* Fixed position */
+  top: 0;
+  left: 0;
+  height: 100vh; /* Full height */
+  background-color: #fff; /* Background color */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05); /* Shadow for depth */
+  z-index: 1000; /* Ensure sidebar is above other content */
+  overflow-y: auto; /* Allow vertical scrolling if needed */
+}
+
+/* Hide sidebar on mobile screens */
+@media screen and (max-width: 768px) {
+  .ep-sidebar-fixed {
+    display: none; /* Hide sidebar */
+  }
+}
+
+/* Main Content Area */
+.eh-main-content {
   flex: 1;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  position: relative; /* Ensures proper stacking context */
+  z-index: 1; /* Lower z-index than sidebar */
 }
 
-/* Loading and error messages */
-.loading-message,
-.error-message {
-  text-align: center;
-  padding: 20px;
+/* Adjust padding for smaller screens */
+@media screen and (max-width: 768px) {
+  .eh-main-content {
+    padding: 1rem; /* Reduce padding for mobile */
+  }
 }
 
-.error-message {
-  color: red;
-}
-
-/* Job card */
-.job-card {
- height: 290px;
-
-  padding: 20px;
-  border: 1px solid #ddd;
+/* User Welcome Section */
+.eh-user-details {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.job-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.job-title {
-  font-size: 1.25rem;
+.eh-user-details h2 {
+  font-size: 1.75rem;
   font-weight: 600;
   color: #333;
+  margin: 0;
 }
 
-.job-detail {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  color: #555;
+/* Job Grid Layout */
+.eh-job-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.job-status-active {
+/* Job Card Styling */
+.eh-job-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.eh-job-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.eh-job-card-inner {
+  padding: 1.5rem;
+}
+
+.eh-job-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eh-job-title:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+.eh-job-detail {
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.eh-job-status-active {
   color: #10b981;
+  font-weight: 500;
 }
 
-/* No jobs message */
-.no-jobs-container {
+.eh-job-status-inactive {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* Loading and Error States */
+.eh-loading-message,
+.eh-error-message {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.1rem;
+  color: #6b7280;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.eh-error-message {
+  color: #ef4444;
+}
+
+/* Empty State - No Jobs */
+.eh-no-jobs-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  padding: 2rem;
 }
 
-.no-jobs-message {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
+.eh-no-jobs-message {
   text-align: center;
+  padding: 3rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-width: 500px;
 }
 
-.no-jobs-title {
+.eh-no-jobs-title {
   font-size: 1.5rem;
   font-weight: 600;
   color: #333;
+  margin-bottom: 1rem;
 }
 
-.no-jobs-text {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 20px;
+.eh-no-jobs-text {
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.6;
 }
 
-.post-job-button {
-  background: linear-gradient(135deg, #4f46e5, #6a11cb);
-  color: #ffffff;
-  padding: 10px 20px;
+.eh-post-job-button {
+  background-color: #2563eb;
+  color: #fff;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.eh-post-job-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Pagination Styling */
+.eh-pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.eh-pagination-button {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #4b5563;
+  transition: all 0.2s ease;
+}
+
+.eh-pagination-button:hover:not(.eh-disabled) {
+  background-color: #f3f4f6;
+  color: #2563eb;
+}
+
+.eh-pagination-numbers {
+  display: flex;
+  margin: 0 0.5rem;
+}
+
+.eh-pagination-number {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0.25rem;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #4b5563;
+  transition: all 0.2s ease;
+}
+
+.eh-pagination-number:hover:not(.eh-active) {
+  background-color: #f3f4f6;
+  color: #2563eb;
+}
+
+.eh-pagination-number.eh-active {
+  background-color: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+.eh-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile Drawer and Header */
+.drawer {
+  width: 80%;
+  max-width: 300px;
+  z-index: 1000; /* Higher z-index for the drawer */
+}
+
+.drawer-content {
+  height: 100%;
+  overflow-y: auto;
+  background-color: #fff; /* Ensure background is solid */
+}
+
+.eh-mobile-header {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 1rem;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eh-dashboard-icon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.eh-dashboard-icon span {
+  margin-left: 0.5rem;
+  font-weight: 500;
+}
+
+.eh-mobile-user {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Responsive Media Queries */
+@media screen and (max-width: 1200px) {
+  .eh-job-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .eh-job-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .eh-job-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    gap: 1rem;
+  }
+
+  .eh-pagination-container {
+    flex-wrap: wrap;
+  }
+
+  .eh-pagination-numbers {
+    margin: 0.5rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .eh-pagination-number {
+    width: 2rem;
+    height: 2rem;
+    margin: 0.2rem;
+  }
+
+  .eh-mobile-header {
+    display: flex;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .eh-no-jobs-message {
+    padding: 2rem 1rem;
+  }
+
+  .eh-job-card-inner {
+    padding: 1rem;
+  }
+
+  .eh-pagination-button {
+    padding: 0.4rem 0.75rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .ep-sidebar-fixed,
+  .ep-mobile-toggle {
+    display: none;
+  }
+
+  .ep-content-wrapper {
+    margin-left: 0;
+    width: 100%;
+    padding: 0;
+  }
+
+  .ep-detail-block {
+    box-shadow: none;
+    border: 1px solid var(--border-light);
+  }
+
+  .ep-header-section {
+    box-shadow: none;
+    border: 1px solid var(--border-light);
+  }
+}
+
+.header-title {
+  font-family: 'Worrity', sans-serif;
+  color: #0056b3;
+  margin-top: 10vh; /* Reduced from 30vh to 10vh */
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
   transition: all 0.3s ease;
 }
 
-.post-job-button:hover {
-  background: linear-gradient(135deg, #6a11cb, #4f46e5);
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .header-title {
+    font-size: 2.2rem;
+  }
 }
 
-
-.job-card {
-  width: 350px; /* Increased width */
-  height: 320px; /* Adjusted height */
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fdfdfd; /* Light background for contrast */
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+@media (max-width: 992px) {
+  .header-title {
+    font-size: 2rem;
+    margin-top: 8vh; /* Reduced from 25vh to 8vh */
+  }
 }
 
-.job-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 1.8rem;
+    margin-top: 6vh; /* Reduced from 20vh to 6vh */
+  }
 }
 
-.job-title {
-  font-size: 1.35rem; /* Slightly larger */
-  font-weight: 700; /* Bolder for emphasis */
-  color: #222; /* Darker shade */
-  background-color: #ffeb3b; /* Light yellow highlight */
-  padding: 5px 10px;
-  border-radius: 5px;
-  display: inline-block;
+@media (max-width: 576px) {
+  .header-title {
+    font-size: 1.5rem;
+    margin-top: 4vh; /* Reduced from 15vh to 4vh */
+  }
 }
 
-.job-detail {
-  margin-top: 12px;
-  font-size: 1rem;
-  color: #444;
-  background-color: #369ae1; /* Light blue background for better contrast */
-  padding: 8px;
-  border-radius: 5px;
-}
-
-.job-status-active {
-  color: #10b981;
-  font-weight: 600;
-  background-color: #d1fae5; /* Light green for active jobs */
-  padding: 5px 10px;
-  border-radius: 5px;
-  display: inline-block;
-}
-
-/* No jobs message */
-.no-jobs-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.no-jobs-message {
-  background-color: #fff3e0; /* Soft orange background */
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.no-jobs-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #d84315; /* Dark orange for better readability */
-}
-
-.no-jobs-text {
-  font-size: 1rem;
-  color: #666;
-  background-color: #fbe9e7; /* Light red background */
-  padding: 8px;
-  border-radius: 5px;
-  display: inline-block;
+.default-user {
+  color: #000; /* Change to black or any other visible color */
+  font-weight: 500; /* Optional: Add font weight for better visibility */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
 }

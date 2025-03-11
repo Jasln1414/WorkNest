@@ -40,9 +40,9 @@ export const PostJobValidationSchema = Yup.object().shape({
     about: Yup.string()
         .required('About is required')
         .min(20, 'About must be at least 20 characters')
-        .max(500, 'About must be less than 500 characters'),
+        .max(5000, 'About must be less than 500 characters'),
     responsibility: Yup.string()
         .required('Responsibilities are required')
         .min(20, 'Responsibilities must be at least 20 characters')
-        .max(500, 'Responsibilities must be less than 500 characters')
+        .max(5000, 'Responsibilities must be less than 500 characters')
 })

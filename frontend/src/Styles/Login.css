@@ -1,18 +1,15 @@
-/* Signup.css */
-/* Styles for the signup modal with input boxes matching button length */
-
-/* Modal background and positioning */
+/* Base modal styling */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Dark background with transparency */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Ensure modal appears above other content */
+  z-index: 9999;
   animation: fadeIn 0.4s ease;
 }
 
@@ -33,7 +30,7 @@
 }
 
 .modal-content h2 {
-  color: #2d3748;
+  color: #235f9b;
   margin-bottom: 1.5rem;
   font-size: 1.8rem;
   font-weight: 700;
@@ -64,42 +61,89 @@ form {
 .input-group {
   margin-bottom: 1.2rem;
   width: 100%;
+  position: relative;
 }
 
 .input-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #4a5568;
+  color: #0f3b3b;
   font-size: 0.9rem;
   font-weight: 600;
 }
 
-.input-group input {
+.input-group input, .input-field {
   width: 100%;
   padding: 12px 16px;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 1rem;
-  color: #2d3748;
+  color: #080808;
   transition: all 0.3s ease;
   background-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) inset;
   box-sizing: border-box;
 }
 
-.input-group input:focus {
+.input-group input:focus, .input-field:focus {
   outline: none;
   border-color: #6c5ce7;
   box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
 }
 
-.input-group input:disabled {
-  background-color: #f5f5f5;
+.input-group input:disabled, .input-field:disabled {
+  background-color: #641a1a;
   cursor: not-allowed;
   opacity: 0.8;
 }
 
-/* Button styling */
+.input-label {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  background-color: white;
+  font-size: 14px;
+  color: #000000;
+  padding: 0 5px;
+  transition: 0.3s ease;
+}
+
+.textarea-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.textarea-field:focus {
+  border-color: #5c6bc0;
+  outline: none;
+}
+
+/* Error message styles */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  text-align: left;
+}
+
+.error-input {
+  border: 1px solid #e74c3c !important;
+}
+
+.form-error {
+  background-color: #ffe6e6;
+  color: #e74c3c;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Button Styling */
 .button-group {
   margin-top: 1.8rem;
   display: flex;
@@ -108,9 +152,9 @@ form {
   width: 100%;
 }
 
-.submit-btn {
+.submit-btn, .submit-button, .candidate-submit-button {
   background: linear-gradient(135deg, #4776E6, #8E54E9);
-  color: white;
+  color: rgb(254, 254, 254);
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -121,38 +165,60 @@ form {
   width: 100%;
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Ensure text is not hidden */
   letter-spacing: 0.5px;
   box-sizing: border-box;
 }
 
-.submit-btn:hover {
+.submit-btn:hover, .submit-button:hover, .candidate-submit-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+  color: rgb(0, 0, 0); /* Ensure text color remains visible */
 }
-
-.submit-btn:active {
+.submit-btn:active, .submit-button:active, .candidate-submit-button:active {
   transform: translateY(1px);
 }
 
-.submit-btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+button[type="button"] {
+  background-color: #19518d;
+  color: #ffffff;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
   width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.2);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
+  text-align: center;
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: all 0.4s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
 }
 
-.submit-btn:hover::after {
-  transform: scaleX(1);
+/* Forgot Password and Sign Up Buttons - FIXED */
+.candidate-forgot-password-button, .candidate-signup-button {
+  background: none;
+  border: none;
+  color: #fff9f9;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0;
+  display: inline-block;
+  transition: color 0.3s ease;
+  text-decoration: none;
 }
 
-/* Text styling */
+.candidate-forgot-password-button:hover, .candidate-signup-button:hover {
+  color:rgb(49, 110, 180);
+  text-decoration: underline;
+  background-color: #c7d7e7;
+}
+
+/* Styling for text containers */
 .text-gray-700 {
   color: #4a5568;
   font-size: 0.9rem;
@@ -195,140 +261,7 @@ form {
   color: #8E54E9;
 }
 
-/* Additional animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.input-group, .button-group, .text-gray-700 {
-  animation: fadeIn 0.5s ease forwards;
-}
-
-.input-group:nth-child(1) { animation-delay: 0.1s; }
-.input-group:nth-child(2) { animation-delay: 0.2s; }
-.input-group:nth-child(3) { animation-delay: 0.3s; }
-.input-group:nth-child(4) { animation-delay: 0.4s; }
-
-/* Placeholder styling */
-::placeholder {
-  color: #a0aec0;
-  opacity: 0.7;
-}
-
-/* Active field highlight */
-.input-group.active label {
-  color: #6c5ce7;
-  transform: translateY(-2px);
-}
-
-/* Link hover effects */
-a {
-  transition: all 0.3s ease;
-}
-
-a:hover {
-  color: #8E54E9;
-}
-
-/* Google Icon container */
-.google-image-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-}
-
-/* Google Icon */
-.google-icon {
-  width: 40px;
-  height: 40px;
-  transition: transform 0.3s ease-in-out;
-}
-
-/* Hover effect */
-.google-icon:hover {
-  transform: scale(1.1);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .google-icon {
-    width: 35px;
-    height: 35px;
-  }
-}
-
-@media (max-width: 480px) {
-  .google-icon {
-    width: 30px;
-    height: 30px;
-  }
-}
-
-
-/* FORGOT PASSWORD */
-
-/* ForgetPasswordModal.css */
-
-.form-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.input-group {
-  margin-bottom: 20px;
-}
-
-.label {
-  color: #4A4A4A;
-  font-size: 16px;
-}
-
-.input-field {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  border-radius: 10px;
-  border: 1px solid #D0D0D0;
-  background-color: #F9F9F9;
-}
-
-.input-field:focus {
-  background-color: #E8E8E8;
-  outline: none;
-}
-
-.error-message {
-  color: #D9534F;
-  font-size: 14px;
-  margin-bottom: 20px;
-}
-
-.submit-button {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-  background-color: #6F42C1;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-}
-
-.submit-button:hover {
-  background-color: #5A33A5;
-}
-/* Close Icon button styling */
+/* Close icon */
 .close-icon {
   position: absolute;
   top: 15px;
@@ -339,75 +272,25 @@ a:hover {
   border: none;
   cursor: pointer;
   transition: transform 0.2s ease, color 0.3s ease;
-  z-index: 10; /* Ensure it's above modal content */
+  z-index: 10;
 }
 
-/* Hover effect */
 .close-icon:hover {
-  color: #ff4d4d; /* Red color on hover */
-  transform: scale(1.2); /* Slightly increase size for hover effect */
+  color: #ff4d4d;
+  transform: scale(1.2);
 }
 
-/* Focus effect (optional for accessibility) */
 .close-icon:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.6); /* Purple glow on focus */
+  box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.6);
 }
 
-button[type="button"] {
- /* background: linear-gradient(135deg, #1f5268, #1d5e76);  Shiny Gradient */
- background-color:#2c3e50;
-  color: #fff; /* Text color */
-  padding: 12px 24px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px; /* Rounded edges */
-  cursor: pointer;
-  outline: none;
-  width: 100%; /* Full width */
-  text-align: center;
-  letter-spacing: 1px;
-  font-weight: 600;
-  transition: all 0.4s ease-in-out;
-  /*box-shadow: 0 4px 8px rgba(255, 75, 43, 0.3);  Initial Shadow */
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-button[type="button"]::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
- /* background: rgba(255, 255, 255, 0.3);  Shiny Effect */
- background-color:#2c3e50;
-  transition: all 0.4s ease-in-out;
-  transform: skewX(-30deg);
-}
-
-button[type="button"]:hover::before {
-  left: 100%;
-}
-
-button[type="button"]:hover {
-  box-shadow: 0 6px 12px rgba(138, 94, 87, 0.5); /* Glowing effect on hover */
-  transform: translateY(-2px);
-}
-
-button[type="button"]:active {
-  transform: translateY(2px); /* Press effect */
-  box-shadow: none;
-}
-
-/* Resend OTP Button */
+/* OTP related styles */
 .otp-resend-btn {
   padding: 10px 18px;
   font-size: 16px;
   font-weight: bold;
-  color: white;
+  color: rgb(255, 255, 255);
   background: linear-gradient(135deg, #ff512f, #dd2476);
   border: none;
   border-radius: 6px;
@@ -433,7 +316,6 @@ button[type="button"]:active {
   box-shadow: none;
 }
 
-/* Timer Box */
 .timer-box {
   display: inline-block;
   font-size: 14px;
@@ -445,14 +327,13 @@ button[type="button"]:active {
   margin-left: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
-/* Verify Code Button */
+
 .verify-btn {
   padding: 12px 20px;
   font-size: 16px;
   font-weight: bold;
-  color: white;
-  /*background: linear-gradient(135deg, #28a745, #218838);*/
-  background-color:#2c3e50;
+  color: rgb(255, 253, 253);
+  background-color: #528ecb;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -466,8 +347,7 @@ button[type="button"]:active {
 }
 
 .verify-btn:hover {
- /* background: linear-gradient(135deg, #218838, #1e7e34);*/
- background-color:#2c3e50;
+  background-color: #2c3e50;
   transform: scale(1.05);
   box-shadow: 0 6px 14px rgba(40, 167, 69, 0.3);
 }
@@ -482,7 +362,7 @@ button[type="button"]:active {
   justify-content: center;
 }
 
-/* Loading Spinner */
+/* Loading spinner */
 .spinner {
   width: 16px;
   height: 16px;
@@ -496,654 +376,71 @@ button[type="button"]:active {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-/* Blur effect for the signup modal when OTP modal is open */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Blur effect */
 .modal-overlay.blurred {
   filter: blur(5px);
-  pointer-events: none; /* Disable interactions with the blurred modal */
-}
-/* EmployerHeader.css */
-
-/* Base styles for the header */
-.employer-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  background-color: #f7f7f7; /* Light blue background */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  pointer-events: none;
 }
 
-/* Logo section */
-.header-logo {
+/* Google icon container */
+.google-image-container {
   display: flex;
   align-items: center;
-  cursor: pointer;
+  justify-content: center;
+  padding: 10px;
 }
 
-.logo-image img {
-  width: 40px;
-  height: 32px;
-}
-
-.logo-text {
-  margin-left: 10px;
-  font-size: 20px;
-  font-weight: bold;
-  font-family: sans-serif;
-  color: #3730a3; /* Dark indigo text */
-}
-
-/* Right section (divider and profile dropdown) */
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-divider {
-  height: 40px;
-  border-left: 2px solid #6b7280; /* Gray border */
-  margin: 0 10px;
-}
-
-/* Profile dropdown */
-.header-profile {
-  display: flex;
-  align-items: center;
-}
-
-.profile-image {
+.google-icon {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  object-fit: cover; /* Ensure the image fits well */
+  transition: transform 0.3s ease-in-out;
 }
 
-/* Dropdown menu styling */
-.ant-dropdown-menu {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.ant-dropdown-menu-item {
-  padding: 8px 16px;
-  font-size: 14px;
-  color: #374151; /* Gray text */
-}
-
-.ant-dropdown-menu-item:hover {
-  background-color: #f3f4f6; /* Light gray hover */
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-  .employer-header {
-    padding: 0 10px; /* Reduce padding on smaller screens */
-  }
-
-  .logo-text {
-    font-size: 18px; /* Slightly smaller logo text */
-  }
-
-  .header-right {
-    gap: 10px; /* Reduce gap between elements */
-  }
-
-  .header-divider {
-    height: 30px; /* Smaller divider */
-  }
-
-  .profile-image {
-    width: 35px;
-    height: 35px; /* Smaller profile image */
-  }
-}
-
-@media (max-width: 480px) {
-  .logo-text {
-    display: none; /* Hide logo text on very small screens */
-  }
-
-  .header-logo {
-    gap: 5px; /* Reduce gap between logo image and text */
-  }
-
-  .header-right {
-    gap: 5px; /* Further reduce gap */
-  }
-
-  .header-divider {
-    height: 25px; /* Even smaller divider */
-  }
-
-  .profile-image {
-    width: 30px;
-    height: 30px; /* Smaller profile image */
-  }
-}
-
-
-
-
-/* EMPLOYER PROFILE VIEW
-
-/* EmpProfile.css */
-
-/* General Styles */
-/* Container for sidebar and main content */
-.profile-container {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-  padding: 10px; /* Reduced padding */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Sidebar styling */
-.sidebar {
-  width: 200px; /* Reduced width */
-  background-color: #f4f4f4;
-  padding: 15px; /* Reduced padding */
-  border-radius: 10px; /* Reduced border radius */
-  margin-right: 15px; /* Reduced margin */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  position: sticky; /* Make sidebar sticky */
-  top: 10px; /* Stick to the top with reduced padding */
-  align-self: flex-start; /* Align to the top */
-}
-
-/* Main profile view */
-.profile-view-wrapper {
-  flex: 1;
-  background: #ffffff;
-  border-radius: 10px; /* Reduced border radius */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  padding: 15px; /* Reduced padding */
-}
-
-.profile-view-wrapper:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-}
-
-/* Profile Header */
-.profile-header {
-  text-align: center;
-  padding: 20px; /* Reduced padding */
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: #ffffff;
-  border-radius: 10px 10px 0 0; /* Reduced border radius */
-}
-
-.profile-pic-container {
-  display: inline-block;
-  border: 4px solid #ffffff; /* Reduced border width */
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-}
-
-.profile-pic-container:hover {
+.google-icon:hover {
   transform: scale(1.1);
 }
 
-.profile-pic {
-  width: 120px; /* Reduced size */
-  height: 120px; /* Reduced size */
-  object-fit: cover;
-  max-width: 100%;
-  max-height: 100%;
+/* Animation delays for sequential fade-in */
+.input-group:nth-child(1) { animation-delay: 0.1s; }
+.input-group:nth-child(2) { animation-delay: 0.2s; }
+.input-group:nth-child(3) { animation-delay: 0.3s; }
+.input-group:nth-child(4) { animation-delay: 0.4s; }
+
+/* Placeholder styling */
+::placeholder {
+  color: #a0aec0;
+  opacity: 0.7;
 }
 
-.company-name {
-  margin-top: 15px; /* Reduced margin */
-  font-size: 1.5rem; /* Reduced font size */
-  font-weight: 700;
-  color: #ffffff;
+/* Active field highlight */
+.input-group.active label {
+  color: #6c5ce7;
+  transform: translateY(-2px);
 }
 
-/* Profile Info Container */
-.profile-info-container {
-  padding: 20px; /* Reduced padding */
-}
-
-.info-section {
-  margin-bottom: 20px; /* Reduced margin */
-}
-
-.section-title {
-  font-size: 1.25rem; /* Reduced font size */
-  font-weight: 600;
-  color: #333333;
-  margin-bottom: 15px; /* Reduced margin */
-  position: relative;
-}
-
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -8px; /* Adjusted position */
-  left: 0;
-  width: 40px; /* Reduced width */
-  height: 2px; /* Reduced height */
-  background: #6a11cb;
-  border-radius: 2px;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px; /* Reduced margin */
-  padding: 10px; /* Reduced padding */
-  background: #f9f9f9;
-  border-radius: 8px; /* Reduced border radius */
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.info-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.info-icon {
-  font-size: 1rem; /* Reduced font size */
-  margin-right: 10px; /* Reduced margin */
-  color: #6a11cb;
-}
-
-.info-text {
-  font-size: 0.9rem; /* Reduced font size */
-  color: #555555;
-}
-
-.info-link {
-  color: #2575fc;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.info-link:hover {
-  color: #6a11cb;
-}
-
-/* About the Company */
-.about-section .info-text {
-  font-size: 0.9rem; /* Reduced font size */
-  line-height: 1.5; /* Adjusted line height */
-  color: #555555;
-}
-
-/* Loading and Error States */
-.loading-container,
-.error-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #ffffff;
-  font-size: 1rem; /* Reduced font size */
-  color: white;
-}
-
-.error-container {
-  flex-direction: column;
-  text-align: center;
-}
-
-.error-button {
-  margin-top: 15px; /* Reduced margin */
-  padding: 8px 16px; /* Reduced padding */
-  background: #6a11cb;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px; /* Reduced border radius */
-  font-size: 0.9rem; /* Reduced font size */
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.error-button:hover {
-  background: #2575fc;
-}
-
-/* Responsive Design */
+/* Responsive design */
 @media (max-width: 768px) {
-  .profile-container {
-    flex-direction: column;
-    align-items: stretch; /* Stretch to full width */
-  }
-
-  .sidebar {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 15px; /* Reduced margin */
-    position: static; /* Remove sticky behavior on smaller screens */
-  }
-
-  .profile-view-wrapper {
-    border-radius: 0;
-  }
-
-  .profile-header {
-    padding: 15px; /* Reduced padding */
-  }
-
-  .company-name {
-    font-size: 1.25rem; /* Reduced font size */
-  }
-
-  .profile-pic {
-    width: 100px; /* Reduced size */
-    height: 100px; /* Reduced size */
-  }
-
-  .info-item {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 8px; /* Reduced padding */
-    text-align: left;
-  }
-
-  .info-icon {
-    margin-bottom: 8px; /* Reduced margin */
-  }
-}
-
-@media (max-width: 480px) {
-  .profile-container {
-    padding: 8px; /* Reduced padding */
-  }
-
-  .profile-view-wrapper {
-    box-shadow: none;
-  }
-
-  .section-title {
-    font-size: 1rem; /* Reduced font size */
-  }
-
-  .info-text {
-    font-size: 0.8rem; /* Reduced font size */
-  }
-}
-
-
-
-
-
-/*CANDIDATE LOGIN
-
-/* Login.css */
-
-/* General Styles */
-/* ProfileDropdown.css */
-
-.profile-dropdown {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.profile-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-}
-
-.profile-pic {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ddd;
-}
-
-.username {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  z-index: 1000;
-}
-
-.profile-dropdown:hover .dropdown-menu {
-  display: flex;
-}
-
-.dropdown-menu button {
-  background: none;
-  border: none;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  color: #333;
-  cursor: pointer;
-  text-align: left;
-  transition: background-color 0.2s ease;
-}
-
-.dropdown-menu button:hover {
-  background-color: #f5f5f5;
-}
-
-/* HeaderProfile.css */
-
-/* Ensure the dropdown menu is properly aligned */
-.ant-dropdown-menu {
-  min-width: 150px; /* Set a minimum width for the dropdown menu */
-}
-.header-profile {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%; /* Optional: create a circular container */
-  overflow: hidden; /* Ensures image doesn't overflow container */
-}
-
-.profile-image {
-  width: 100%; /* Fill the container width */
-  height: 100%; /* Fill the container height */
-  object-fit: cover; /* Ensures image covers area without distortion */
-  border-radius: 50%; /* Makes image circular */
-}
-
-.profile-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.profile-menu.show {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Header Container */
-.header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px; /* Reduced padding to minimize height */
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  height: 100px; /* Fixed height for the header */
-}
-
-/* Logo Container */
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo-image img {
-  width: 40px; /* Fixed width for the logo */
-  height: 40px; /* Fixed height for the logo */
-  border-radius: 50%;
-  object-fit: cover; /* Ensure the image fits properly */
-}
-
-.logo-text {
-  font-size: 20px;
-  font-weight: bold;
-  color: #007bff;
-  margin: 0;
-}
-
-/* Navigation Links */
-.nav-links {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  flex-grow: 1; /* Allow the nav-links to take up available space */
-  justify-content: center; /* Center the navigation links */
-  margin: 0 20px; /* Add margin to separate from logo and profile */
-}
-
-.nav-links a,
-.nav-links span {
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.nav-links a:hover,
-.nav-links span:hover {
-  color: #007bff;
-}
-
-/* Header Actions (Profile Picture) */
-.header-actions {
-  display: flex;
-  align-items: center;
-}
-
-.user-profile {
-  display: flex;
-  align-items: center;
-}
-
-.profile-image {
-  width: 40px; /* Fixed width for the profile picture */
-  height: 40px; /* Fixed height for the profile picture */
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid #007bff;
-  object-fit: cover; /* Ensure the image fits properly */
-}
-
-.profile-image.default {
-  border: 2px solid #ccc;
-}
-
-/* Dropdown Menu */
-.ant-dropdown-menu {
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.ant-dropdown-menu-item {
-  padding: 10px 20px;
-  font-size: 14px;
-}
-
-.ant-dropdown-menu-item:hover {
-  background-color: #f0f4ff;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-  .header-container {
-    padding: 0 10px;
-    height: 50px; /* Smaller height for mobile */
-  }
-
-  .logo-text {
-    font-size: 18px;
-  }
-
-  .nav-links {
-    gap: 10px;
-  }
-
-  .nav-links a,
-  .nav-links span {
-    font-size: 14px;
-  }
-
-  .logo-image img {
-    width: 35px; /* Smaller logo for mobile */
-    height: 35px;
-  }
-
-  .profile-image {
-    width: 35px; /* Smaller profile picture for mobile */
+  .google-icon {
+    width: 35px;
     height: 35px;
   }
 }
 
 @media (max-width: 480px) {
-  .logo-text {
-    display: none; /* Hide logo text on very small screens */
-  }
-
-  .nav-links {
-    gap: 5px;
-    margin: 0 10px; /* Reduce margin for very small screens */
-  }
-
-  .nav-links a,
-  .nav-links span {
-    font-size: 12px;
-  }
-
-  .logo-image img {
-    width: 30px; /* Even smaller logo for very small screens */
-    height: 30px;
-  }
-
-  .profile-image {
-    width: 30px; /* Even smaller profile picture for very small screens */
+  .google-icon {
+    width: 30px;
     height: 30px;
   }
 }
-
-
-

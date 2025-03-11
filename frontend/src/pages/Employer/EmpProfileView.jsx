@@ -4,9 +4,8 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { set_user_basic_details } from '../../Redux/UserDetails/userBasicDetailsSlice';
 import logo from '../../assets/logo.jpg';
-
-import SideBar from './SideBar'; // Import the SideBar component
-import '../../Styles/Login.css'
+import SideBar from './SideBar';
+import '../../Styles/EmpProfile.css';
 
 function EmployerProfileView() {
   const baseURL = "http://127.0.0.1:8000/";
@@ -27,9 +26,6 @@ function EmployerProfileView() {
 
     const fetchData = async () => {
       try {
-        console.log("Fetching profile data from:", `${baseURL}api/empjob/profile/`);
-        console.log("Using token:", token ? "Token exists" : "No token");
-
         const response = await axios.get(`${baseURL}api/empjob/profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -37,10 +33,6 @@ function EmployerProfileView() {
             'Content-Type': 'application/json',
           },
         });
-
-        console.log("Full API response:", response);
-        console.log("Response status:", response.status);
-        console.log("Response data:", response.data);
 
         if (response.status === 200) {
           if (response.data && response.data.data) {
@@ -50,7 +42,6 @@ function EmployerProfileView() {
                 profile_pic: response.data.data.profile_pic,
               })
             );
-            navigate("/employer/profile");
           } else {
             setError('No profile data found in response');
           }
@@ -91,41 +82,45 @@ function EmployerProfileView() {
   }
 
   return (
-    
-    <div className="profile-container">
-      {/* Render the SideBar component */}
-      <SideBar />
+    <div className="ep-main-container">
+      <div className="ep-sidebar-fixed">
+  <h2 className="main-head">EMPLOYER</h2>
+  <SideBar />
+</div>
 
-      <div className="profile-view-wrapper">
-        {/* Profile Picture */}
-        <div className="profile-header">
-          <div className="profile-pic-container">
+
+      {/* Main Content */}
+      <div className="ep-content-wrapper">
+        {/* Profile Header with Picture */}
+        <div className="ep-header-section">
+          <div className="ep-avatar-wrapper">
             <img
               src={profileData.profile_pic ? `${baseURL}${profileData.profile_pic}` : logo}
               alt="Employer Profile"
-              className="profile-pic"
+              className="ep-avatar-image"
             />
           </div>
-          <h2 className="company-name">{profileData.user_full_name || 'Company Name Not Available'}</h2>
+          <h2 className="ep-company-title">{profileData.user_full_name || 'Company Name Not Available'}</h2>
         </div>
 
-        {/* Employer Information */}
-        <div className="profile-info-container">
-          <div className="info-section">
-            <h3 className="section-title">Contact Information</h3>
-            <div className="info-item">
-              <span className="info-icon">📧</span>
-              <span className="info-text">{profileData.user_email || 'No Email Provided'}</span>
+        {/* Two-column layout for Contact and Company Information */}
+        <div className="ep-info-row">
+          {/* Contact Information */}
+          <div className="ep-detail-block">
+            <h3 className="ep-block-heading">Contact Information</h3>
+            <div className="ep-detail-row">
+              <span className="ep-icon">📧</span>
+              <span className="ep-data-text">{profileData.user_email || 'No Email Provided'}</span>
             </div>
-            <div className="info-item">
-              <span className="info-icon">📞</span>
-              <span className="info-text">{profileData.phone || 'No Phone Provided'}</span>
+            <div className="ep-detail-row">
+              <span className="ep-icon">📞</span>
+              <span className="ep-data-text">{profileData.phone || 'No Phone Provided'}</span>
             </div>
-            <div className="info-item">
-              <span className="info-icon">🌐</span>
-              <span className="info-text">
+            <div className="ep-detail-row">
+              <span className="ep-icon">🌐</span>
+              <span className="ep-data-text">
                 {profileData.website_link ? (
-                  <a href={profileData.website_link} target="_blank" rel="noopener noreferrer" className="info-link">
+                  <a href={profileData.website_link} target="_blank" rel="noopener noreferrer" className="ep-external-link">
                     {profileData.website_link}
                   </a>
                 ) : (
@@ -135,28 +130,29 @@ function EmployerProfileView() {
             </div>
           </div>
 
-          <div className="info-section">
-            <h3 className="section-title">Company Information</h3>
-            <div className="info-item">
-              <span className="info-icon">📍</span>
-              <span className="info-text">{profileData.headquarters || 'No Headquarters Provided'}</span>
+          {/* Company Information */}
+          <div className="ep-detail-block">
+            <h3 className="ep-block-heading">Company Information</h3>
+            <div className="ep-detail-row">
+              <span className="ep-icon">📍</span>
+              <span className="ep-data-text">{profileData.headquarters || 'No Headquarters Provided'}</span>
             </div>
-            <div className="info-item">
-              <span className="info-icon">🏢</span>
-              <span className="info-text">{profileData.industry || 'No Industry Provided'}</span>
+            <div className="ep-detail-row">
+              <span className="ep-icon">🏢</span>
+              <span className="ep-data-text">{profileData.industry || 'No Industry Provided'}</span>
             </div>
-            <div className="info-item">
-              <span className="info-icon">🏠</span>
-              <span className="info-text">{profileData.address || 'No Address Provided'}</span>
+            <div className="ep-detail-row">
+              <span className="ep-icon">🏠</span>
+              <span className="ep-data-text">{profileData.address || 'No Address Provided'}</span>
             </div>
           </div>
+        </div>
 
-          {/* About the Company */}
-          <div className="info-section">
-            <h3 className="section-title">About the Company</h3>
-            <div className="info-item">
-              <span className="info-text">{profileData.about || 'No description provided'}</span>
-            </div>
+        {/* About the Company - Full Width Below */}
+        <div className="ep-detail-block ep-full-width">
+          <h3 className="ep-block-heading">About the Company</h3>
+          <div className="ep-detail-row">
+            <span className="ep-description-text">{profileData.about || 'No description provided'}</span>
           </div>
         </div>
       </div>

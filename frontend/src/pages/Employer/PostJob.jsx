@@ -7,8 +7,9 @@ import 'react-modern-drawer/dist/index.css';
 import Swal from 'sweetalert2';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import '../../Styles/SideBar.css';
-import '../../Styles/Login.css'
+import '../../Styles/PostJob.css';
 import { PostJobValidationSchema } from '../../validation/PostJobValidation';
+import DashboardIcon from './DashBoard';
 
 // Define initialValues
 const initialValues = {
@@ -23,6 +24,8 @@ const initialValues = {
   saleryfrom: '',
   saleryto: '',
 };
+
+
 
 function PostJob() {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +47,7 @@ function PostJob() {
   };
 
   const handleResize = () => {
-    setIsSmallScreen(window.innerWidth < 640);
+    setIsSmallScreen(window.innerWidth < 768); // Check for small screens
   };
 
   useEffect(() => {
@@ -83,7 +86,7 @@ function PostJob() {
         swalWithBootstrapButtons.fire({
           title: 'Posted!',
           icon: 'success',
-          confirmButtonText: 'OK'
+          confirmButtonText: 'OK',
         }).then((result) => {
           if (result.isConfirmed || result.dismiss === Swal.DismissReason.timer) {
             resetForm(); // Reset the form after successful submission
@@ -103,29 +106,18 @@ function PostJob() {
   };
 
   return (
-    <div className="post-job-container">
-      {/* Content Wrapper */}
+    
       <div className="content-wrapper">
         {/* Sidebar */}
         {isSmallScreen ? (
           <>
+            {/* Drawer Toggle Button 
             <button onClick={toggleDrawer} className="drawer-toggle-button">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="40px"
-                height="40px"
-                viewBox="0 0 24 24"
-                className="drawer-icon"
-              >
-                <path
-                  d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                  strokeWidth="1.5"
-                ></path>
-                <path d="M8 12H16" strokeWidth="1.5"></path>
-                <path d="M12 16V8" strokeWidth="1.5"></path>
-              </svg>
-            </button>
-
+              <DashboardIcon />
+              <span>Dashboard</span>
+            </button>*/}
+    
+            {/* Drawer for Mobile */}
             <Drawer open={isOpen} onClose={toggleDrawer} direction="left" className="drawer">
               <div className="drawer-content">
                 <SideBar />
@@ -135,7 +127,7 @@ function PostJob() {
         ) : (
           <SideBar />
         )}
-
+    
         {/* Post Job Content */}
         <div className="post-job-content">
           <div className="post-job-form-container">
@@ -155,28 +147,28 @@ function PostJob() {
                         <label className="input-label">Job Title</label>
                         <ErrorMessage name="title" component="div" className="error-message" />
                       </div>
-
+    
                       {/* Location */}
                       <div className="input-group">
                         <Field className="input-field" placeholder=" " name="location" />
                         <label className="input-label">Location</label>
                         <ErrorMessage name="location" component="div" className="error-message" />
                       </div>
-
+    
                       {/* Salary From */}
                       <div className="input-group">
                         <Field className="input-field" placeholder=" " name="saleryfrom" type="number" />
                         <label className="input-label">Salary From</label>
                         <ErrorMessage name="saleryfrom" component="div" className="error-message" />
                       </div>
-
+    
                       {/* Salary To */}
                       <div className="input-group">
                         <Field className="input-field" placeholder=" " name="saleryto" type="number" />
                         <label className="input-label">Salary To</label>
                         <ErrorMessage name="saleryto" component="div" className="error-message" />
                       </div>
-
+    
                       {/* Job Type */}
                       <div className="input-group">
                         <Field as="select" name="jobtype" className="input-field">
@@ -187,7 +179,7 @@ function PostJob() {
                         <label className="input-label">Job Type</label>
                         <ErrorMessage name="jobtype" component="div" className="error-message" />
                       </div>
-
+    
                       {/* Job Mode */}
                       <div className="input-group">
                         <Field as="select" name="jobmode" className="input-field">
@@ -199,7 +191,7 @@ function PostJob() {
                         <label className="input-label">Job Mode</label>
                         <ErrorMessage name="jobmode" component="div" className="error-message" />
                       </div>
-
+    
                       {/* Experience */}
                       <div className="input-group">
                         <Field as="select" name="experience" className="input-field">
@@ -213,7 +205,7 @@ function PostJob() {
                         <label className="input-label">Experience</label>
                         <ErrorMessage name="experience" component="div" className="error-message" />
                       </div>
-
+    
                       {/* Apply Before */}
                       <div className="input-group">
                         <Field type="date" name="applyBefore" className="input-field" />
@@ -221,21 +213,24 @@ function PostJob() {
                         <ErrorMessage name="applyBefore" component="div" className="error-message" />
                       </div>
                     </div>
-
-                    {/* About */}
-                    <div className="input-group">
-                      <Field as="textarea" className="textarea-field" name="about" rows="4" />
-                      <label className="input-label">About</label>
-                      <ErrorMessage name="about" component="div" className="error-message" />
+    
+                    {/* About & Responsibility - Side by Side */}
+                    <div className="two-column-grid">
+                      {/* About */}
+                      <div className="input-group">
+                        <Field as="textarea" className="textarea-field" name="about" rows="4" />
+                        <label className="input-label">About</label>
+                        <ErrorMessage name="about" component="div" className="error-message" />
+                      </div>
+    
+                      {/* Responsibility */}
+                      <div className="input-group">
+                        <Field as="textarea" className="textarea-field" name="responsibility" rows="4" />
+                        <label className="input-label">Responsibility</label>
+                        <ErrorMessage name="responsibility" component="div" className="error-message" />
+                      </div>
                     </div>
-
-                    {/* Responsibility */}
-                    <div className="input-group">
-                      <Field as="textarea" className="textarea-field" name="responsibility" rows="4" />
-                      <label className="input-label">Responsibility</label>
-                      <ErrorMessage name="responsibility" component="div" className="error-message" />
-                    </div>
-
+    
                     {/* Submit Button */}
                     <div className="submit-button-container">
                       <button type="submit" className="submit-button" disabled={isSubmitting}>
@@ -249,8 +244,8 @@ function PostJob() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  
 }
 
 export default PostJob;

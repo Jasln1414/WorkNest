@@ -24,7 +24,7 @@ export const ProfileValidationSchema = Yup.object().shape({
         .required('Required'),
     about: Yup.string()
         .min(20, 'About must be at least 20 characters')
-        .max(200, 'About must be at most 200 characters')
+        .max(2000, 'About must be at most 200 characters')
         .required('Required'),
 
     address: Yup.string()
