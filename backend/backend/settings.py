@@ -40,9 +40,16 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'account',
+    'user_account',
     'Empjob',
     'Admin',
+     'allauth',
+    'allauth.account',
+    'django_filters',
+    'allauth.socialaccount',
+    # additional providers (e.g., Facebook, Google)
+    'allauth.socialaccount.providers.google',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -90,7 +98,8 @@ TEMPLATES = [
     },
 ]
 
-AUTH_USER_MODEL = 'account.User'
+AUTH_USER_MODEL = 'user_account.User'
+
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
@@ -129,12 +138,16 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',  # Optional
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
+    'DEFAULT_FILTER_BACKENDS': (  # ✅ Correct placement
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
 
 # JWT settings
@@ -181,6 +194,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = 'static/'
+SITE_ID = 1
+ACCOUNT_LOGIN_METHODS = {"email"}
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+# settings.py
+FRONTEND_URL = 'http://localhost:5173'  # For development
+# FRONTEND_URL = 'https://yourapp.com'  # For production
+
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -194,3 +217,8 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTHENTICATION_BACKENDS = [
+    'allauth.account.auth_backends.AuthenticationBackend',  # Ensure AllAuth is used
+    'django.contrib.auth.backends.ModelBackend',
+]
+
