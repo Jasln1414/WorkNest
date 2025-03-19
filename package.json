@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "react-modern-drawer": "^1.4.0",
-    "react-toastify": "^11.0.5",
-    "sweetalert2": "^11.17.2",
-    "yup": "^1.6.1"
-  }
-}

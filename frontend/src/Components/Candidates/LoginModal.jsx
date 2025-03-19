@@ -9,9 +9,14 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import { toast } from "react-toastify";
 import { LoginSchema, initialValues } from "../../validation/LoginValidation";
 import "../../Styles/Candidate/CandidateLogin.css";
+import { GoogleLogin } from '@react-oauth/google';
+import ForgotPasswordPage from "../../pages/comon/ForgotPassword";
+
 
 function CandidateLogin({ isOpen, onClose, switchToSignup }) {
   const [formError, setFormError] = useState("");
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const baseURL = "http://127.0.0.1:8000";
@@ -77,10 +82,80 @@ function CandidateLogin({ isOpen, onClose, switchToSignup }) {
     }
   };
 
+  const openForgotPasswordModal = () => {
+    setShowForgotPasswordModal(true);
+  };
+
+  const handleBackToLogin = () => {
+    setShowForgotPasswordModal(false);
+  };
+
+  const handleBackgroundClick = (e) => {
+    if (e.target.className === "candidate-login-overlay") {
+      onClose();
+    }
+  };
+
   if (!isOpen) return null;
+  
+  // If forgot password modal is open, render the ForgotPasswordPage component
+  if (showForgotPasswordModal) {
+    return (
+      <ForgotPasswordPage
+        isOpen={true} 
+        onClose={() => setShowForgotPasswordModal(false)}
+        onBackToLogin={handleBackToLogin}
+        userType="candidate"  // Add this line to specify user type
+      />
+    );
+  }
+
+  const GoogleTestlogin = async (userDetails) => {
+    console.log("userDetails after login", userDetails);
+    const formData = {
+      client_id: userDetails,
+    };
+    try {
+      const response = await axios.post(baseURL + '/api/account/auth/candidate/', formData);
+      console.log("auth response ", response);
+      if (response.status === 200) {
+        localStorage.setItem('access', response.data.access_token);
+        localStorage.setItem('refresh', response.data.refresh_token);
+
+        dispatch(
+          set_Authentication({
+            name: jwtDecode(response.data.access_token).name,
+            email: response.data.email,
+            isAuthenticated: true,
+            isAdmin: response.data.isAdmin,
+            usertype: response.data.usertype,
+          })
+        );
+        dispatch(
+          set_user_basic_details({
+            profile_pic: response.data.user_data.profile_pic,
+            user_type_id: response.data.user_data.id,
+          })
+        );
+        toast.success('Login successful!', {
+          position: "top-center",
+        });
+        if (response.data.user_data.completed === false) {
+          navigate("/candidate/profile-creation");
+        } else {
+          navigate("/candidate/find-job");
+        }
+      } else {
+        console.log("response...............................", response);
+        setFormError(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <div className="candidate-login-overlay" onClick={onClose}>
+    <div className="candidate-login-overlay" onClick={handleBackgroundClick}>
       <div className="candidate-login-content" onClick={(e) => e.stopPropagation()}>
         <button className="candidate-login-close-icon" onClick={onClose} aria-label="Close">
           &times;
@@ -119,28 +194,49 @@ function CandidateLogin({ isOpen, onClose, switchToSignup }) {
                     aria-label="Password"
                   />
                   <ErrorMessage name="password" component="div" className="candidate-error-message" />
+                  {/* Forgot Password Link - added to the right side */}
+                  <div className="text-right mt-1">
+                    <a 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openForgotPasswordModal();
+                      }}
+                      className="text-blue-600 text-sm hover:underline"
+                    >
+                      Forgot Password?
+                    </a>
+                  </div>
                 </div>
                 {formError && <div className="candidate-form-error">{formError}</div>}
-              {/*<div className="candidate-forgot-password">
+
+                {/* Submit Button */}
                 <button
-                  type="button"
-                  className="candidate-forgot-password-button"
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="candidate-submit-button"
                 >
-                  Forgot password?
+                  {isSubmitting ? "Signing In..." : "Sign In"}
                 </button>
-              </div>*/}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="candidate-submit-button"
-              >
-                {isSubmitting ? "Signing In..." : "Sign In"}
-              </button>
-              <div className="candidate-signup-text">
-                <button type="button" onClick={switchToSignup} className="candidate-signup-button">
-                  Don't have an account? Sign Up
-                </button>
-              </div>
+
+                {/* Sign Up and Google Login Section */}
+                <div className="candidate-signup-text">
+                  <button type="button" onClick={switchToSignup}>
+                    Don't have an account? Sign Up
+                  </button>
+                  <br />
+                  <br />
+                  <div className="flex justify-center">
+                    <GoogleLogin
+                      onSuccess={credentialResponse => {
+                        GoogleTestlogin(credentialResponse.credential);
+                      }}
+                      onError={() => {
+                        console.log('Login Failed');
+                      }}
+                    />
+                  </div>
+                </div>
               </Form>
             )}
           </Formik>

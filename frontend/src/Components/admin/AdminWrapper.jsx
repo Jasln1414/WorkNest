@@ -12,7 +12,8 @@ import EmployerList from '../../pages/Admin/EmployerList';
 import CandidateList from '../../pages/Admin/CadidatesList';
 import Edetails from '../../pages/Admin/EmployerDetails';
 import '../../Styles/EmpHome.css';
-
+import AdminJobView from '../../pages/Admin/PostedJobs';
+import AdminJobDetail from '../../pages/Admin/PostedJobDetails';
 
 function AdminWrapper() {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ function AdminWrapper() {
         })
       );
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
 
@@ -45,7 +46,7 @@ function AdminWrapper() {
     console.log('Current pathname:', location.pathname);
     const path = location.pathname.endsWith('/') ? location.pathname.slice(0, -1) : location.pathname;
     console.log('Cleaned pathname:', path);
-  
+
     // Handle dynamic routes
     if (path.startsWith('/admin/cdetails/')) {
       return 'Candidate Details';
@@ -53,7 +54,11 @@ function AdminWrapper() {
     if (path.startsWith('/admin/edetails/')) {
       return 'Employer Details';
     }
-  
+    if (path.startsWith('/admin/jobDetailList/')) {
+      return 'Job Details';
+    }
+
+
     // Handle static routes
     switch (path) {
       case '/admin/clist':
@@ -61,11 +66,15 @@ function AdminWrapper() {
       case '/admin/elist':
         return 'Employer List';
       case '/admin/home':
-        return 'Admin Home';
+        return 'AdminHome';
+      case '/admin/jobList':
+        return 'Posted Jobs';
+     
       default:
         return 'Admin Panel';
     }
   };
+
   return (
     <div className="admin-wrapper">
       <AdminHeader />
@@ -78,7 +87,9 @@ function AdminWrapper() {
           <Route path="/elist" element={<EmployerList />} />
           <Route path="/cdetails/:id" element={<Cdetails />} />
           <Route path="/edetails/:id" element={<Edetails />} />
-          
+          <Route path="/jobList" element={<AdminJobView />} />
+          <Route path="/jobDetailList/:id" element={<AdminJobDetail />} />
+
         </Routes>
       </div>
     </div>

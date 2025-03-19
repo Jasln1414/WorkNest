@@ -27,7 +27,16 @@ function Sidebar() {
                   <p className="sidebar-link">
                     <span className="sidebar-text">Employers</span>
                   </p>
+                  
                 </Link>
+                </li>
+                <li className="sidebar-item">
+                <Link to={'/admin/jobList/'} >
+                  <p className="sidebar-link">
+                    <span className="sidebar-text">Posted Jobs</span>
+                  </p>
+                </Link>
+
               </li>
               <li className="sidebar-item">
                   <a href="#" className="sidebar-link">

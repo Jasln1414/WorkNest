@@ -1,94 +1,130 @@
 import React, { useState } from "react";
-import CandidateLoginModal from "./Candidates/LoginModal";
-import CandidateSignupModal from "./Candidates/SignupModal";
-import EmployerLoginModal from "./Employer/LoginModal";
-import EmployerSignupModal from "./Employer/SignupModal";
-import logoimg from '../assets/logoimg.jpg';
-import '../Styles/Header.css';
+import { EmployerSignupApi } from "../../Api/Employer_Api/Employer_Auth_Api";
+import OtpModal from "./OtpModal";
+import "../../Styles/Login.css";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { SignupSchema, initialValues } from "../../validation/SignupValidation";
 
-const Header = () => {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
-  const [modalType, setModalType] = useState(null); // 'candidate' or 'employer'
+const EmployerSignupModal = ({ isOpen, onClose, switchToLogin }) => {
+  const [isOTPModalOpen, setIsOTPModalOpen] = useState(false);
+  const [otpEmail, setOtpEmail] = useState("");
 
-  // Functions to open and close modals
-  const toggleLoginModal = (type) => {
-    console.log(`Opening ${type} login modal`); // Debugging
-    setModalType(type); // Set the type of modal (candidate or employer)
-    setIsLoginModalOpen(true);
+  // If neither modal is open, return null
+  if (!isOpen && !isOTPModalOpen) return null;
+
+  const handleSubmit = async (values, { setSubmitting }) => {
+    const formData = new FormData();
+    formData.append("full_name", values.username);
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+
+    try {
+      const response = await EmployerSignupApi(formData);
+
+      if (response.success) {
+        localStorage.setItem("email", values.email); // Store email in localStorage
+        setOtpEmail(values.email);
+        setIsOTPModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const toggleSignupModal = (type) => {
-    console.log(`Opening ${type} signup modal`); // Debugging
-    setModalType(type); // Set the type of modal (candidate or employer)
-    setIsSignupModalOpen(true);
+  const handleOtpSuccess = () => {
+    setIsOTPModalOpen(false);
+    onClose();
+    switchToLogin();
   };
 
-  const closeLoginModal = () => {
-    setIsLoginModalOpen(false);
-    setModalType(null); // Reset modalType when closing the modal
-  };
+  // If OTP modal is open, render OTP modal
+  if (isOTPModalOpen) {
+    return (
+      <OtpModal
+        isOpen={isOTPModalOpen}
+        closeModal={() => setIsOTPModalOpen(false)}
+        email={otpEmail}
+        onOtpSuccess={handleOtpSuccess}
+      />
+    );
+  }
 
-  const closeSignupModal = () => {
-    setIsSignupModalOpen(false);
-    setModalType(null); // Reset modalType when closing the modal
-  };
-
+  // Otherwise, render signup modal
   return (
-    <header>
-      <div className="logo">
-        <img src={logoimg} alt="WorkNest Logo" />
-        <h1>WorkNest</h1>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="close-icon" onClick={onClose}>
+          ×
+        </button>
+
+        <h2>Employer Sign Up</h2>
+
+        <Formik
+          initialValues={initialValues}
+          validationSchema={SignupSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting, errors, touched }) => (
+            <Form>
+              <div className="input-group">
+                <Field
+                  type="text"
+                  name="username"
+                  placeholder="Enter Company Name"
+                  className={errors.username && touched.username ? "error-input" : ""}
+                />
+                <ErrorMessage name="username" component="div" className="error-message" />
+              </div>
+
+              <div className="input-group">
+                <Field
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email id"
+                  className={errors.email && touched.email ? "error-input" : ""}
+                />
+                <ErrorMessage name="email" component="div" className="error-message" />
+              </div>
+
+              <div className="input-group">
+                <Field
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  className={errors.password && touched.password ? "error-input" : ""}
+                />
+                <ErrorMessage name="password" component="div" className="error-message" />
+              </div>
+
+              <div className="input-group">
+                <Field
+                  type="password"
+                  name="confirm_password"
+                  placeholder="Confirm your password"
+                  className={errors.confirm_password && touched.confirm_password ? "error-input" : ""}
+                />
+                <ErrorMessage name="confirm_password" component="div" className="error-message" />
+              </div>
+
+              <div className="button-group">
+                <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                  {isSubmitting ? "Signing Up..." : "Sign Up"}
+                </button>
+              </div>
+
+              <div className="text-gray-700">
+                <button type="button" onClick={switchToLogin}>
+                  BACK TO LOGIN
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
-
-      <nav>
-        <button onClick={() => toggleLoginModal('candidate')}>CANDIDATE LOGIN</button>
-        <button onClick={() => toggleLoginModal('employer')}>EMPLOYER LOGIN</button>
-      </nav>
-
-      {/* Conditional Login Modal */}
-      {modalType === 'candidate' ? (
-        <CandidateLoginModal
-          isOpen={isLoginModalOpen}
-          onClose={closeLoginModal}
-          switchToSignup={() => {
-            closeLoginModal();
-            toggleSignupModal('candidate');
-          }}
-        />
-      ) : modalType === 'employer' ? (
-        <EmployerLoginModal
-          isOpen={isLoginModalOpen}
-          onClose={closeLoginModal}
-          switchToSignup={() => {
-            closeLoginModal();
-            toggleSignupModal('employer');
-          }}
-        />
-      ) : null}
-
-      {/* Conditional Signup Modal */}
-      {modalType === 'candidate' ? (
-        <CandidateSignupModal
-          isOpen={isSignupModalOpen}
-          onClose={closeSignupModal}
-          switchToLogin={() => {
-            closeSignupModal();
-            toggleLoginModal('candidate');
-          }}
-        />
-      ) : modalType === 'employer' ? (
-        <EmployerSignupModal
-          isOpen={isSignupModalOpen}
-          onClose={closeSignupModal}
-          switchToLogin={() => {
-            closeSignupModal();
-            toggleLoginModal('employer');
-          }}
-        />
-      ) : null}
-    </header>
+    </div>
   );
 };
 
-export default Header;
+export default EmployerSignupModal;

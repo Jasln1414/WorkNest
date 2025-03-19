@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
+import axios from "axios";
 import LandingPage from "./pages/LandingPage";
 import EmployerWrapper from "./pages/Employer/EmployWrapper";
 import Footer from "./Components/Footer";
@@ -7,13 +8,65 @@ import { ToastContainer } from "react-toastify";
 import Header from "./Components/Header";
 import LoginModal from "./Components/Employer/LoginModal";
 import SignupModal from "./Components/Employer/SignupModal";
-import ForgotPassword from "./Components/Employer/ForgotPassword";
 import AdminWrapper from "./Components/admin/AdminWrapper";
+import CandidateWrapper from './pages/Cndidates/CandidateWrapper';
+import ResetPasswordModal from "./pages/comon/ResetPassword";
+import ForgotPasswordModal from "./pages/comon/ForgotPassword";
+import './validation/App.css';
+import './index.css';
 
-import CandidateWrapper from './pages/Cndidates/CandidateWrapper'
-import SidebarCandidate from "./Components/Candidates/CandidateSideBar";
-import './validation/App.css'
 
+// Fetch CSRF Token from Backend
+const fetchCsrfToken = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/get-csrf-token/');
+    const csrfToken = response.data.csrfToken;
+    // Set CSRF token in axios defaults
+    axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
+  } catch (error) {
+    console.error('Error fetching CSRF token:', error);
+  }
+};
+
+// Custom Toast Container Component
+const CustomToastContainer = () => {
+  return (
+    <ToastContainer
+      position="top-center"
+      autoClose={2000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="light"
+      style={{ 
+        width: '400px',
+        '--toastify-toast-min-height': '80px',
+        '--toastify-toast-width': '400px'
+      }}
+      closeButton={({ closeToast }) => (
+        <button 
+          onClick={closeToast}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            padding: '4px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            marginLeft: '30vh'
+          }}
+        >
+          ✕
+        </button>
+      )}
+    />
+  );
+};
+
+// Conditional Header Component
 const ConditionalHeader = ({ children }) => {
   const location = useLocation();
   
@@ -24,11 +77,29 @@ const ConditionalHeader = ({ children }) => {
     </>
   );
 };
-console.log('Rendering App component'); // Add this to App.jsx
+
+// Error Boundary Component
+const ErrorBoundary = () => {
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h2>Oops! Something went wrong.</h2>
+      <p>Please try again later or contact support.</p>
+    </div>
+  );
+};
+
+// AppLayout Component
 const AppLayout = () => {
-  console.log("AppLayout rendered");
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [email, setEmail] = useState('');
+
+  // Fetch CSRF token when the app loads
+  useEffect(() => {
+    fetchCsrfToken();
+  }, []);
 
   const toggleLoginModal = () => {
     setShowLoginModal(!showLoginModal);
@@ -50,27 +121,23 @@ const AppLayout = () => {
     setShowLoginModal(true);
   };
 
+  // In App.js, fix the handleOtpSuccess function
+const handleOtpSuccess = () => {
+  console.log("OTP verification successful in AppLayout");
+  setShowResetPasswordModal(true); // Show Reset Password Modal
+  setShowForgotPasswordModal(false); // Close Forgot Password Modal
+};
+
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-
+      <CustomToastContainer />
       <ConditionalHeader>
         <Outlet />
       </ConditionalHeader>
 
       <Footer />
 
+      {/* Login Modal */}
       <LoginModal
         isOpen={showLoginModal}
         onClose={toggleLoginModal}
@@ -78,54 +145,53 @@ const AppLayout = () => {
         toggleLoginModal={toggleLoginModal}
       />
 
+      {/* Signup Modal */}
       <SignupModal
         isOpen={showSignupModal}
         onClose={toggleSignupModal}
         switchToLogin={switchToLogin}
       />
+
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal
+        isOpen={showForgotPasswordModal}
+        closeModal={() => setShowForgotPasswordModal(false)}
+        onOtpSuccess={handleOtpSuccess} // Make sure this is passed correctly
+        setEmail={setEmail} // Pass setEmail to store the user's email
+      />
+
+      {/* Reset Password Modal */}
+      <ResetPasswordModal
+        isOpen={showResetPasswordModal}
+        closeModal={() => setShowResetPasswordModal(false)}
+        email={email} // Pass the user's email to the Reset Password Modal
+      />
     </>
   );
 };
 
+// Router Configuration
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <AppLayout />,
+  { 
+    path: "/", 
+    element: <AppLayout />, 
+    errorElement: <ErrorBoundary />, // Global error boundary
     children: [
-      {
-        path: "/",
-        element: <LandingPage />,
-      },
-      {
-        path: "/employer/*",
-        element: <EmployerWrapper />,
-      },
-     {
-       path:'admin/*', element:<AdminWrapper/>
+      { path: "/", element: <LandingPage /> },
+      { path: "/employer/*", element: <EmployerWrapper /> },
+      { path: "/admin/*", element: <AdminWrapper /> },
+      { path: "/candidate/*", element: <CandidateWrapper /> },
+      { path: "/reset_password/:id", element: <ResetPasswordModal /> }, // Keep this route
       
-    },
-      
-      
-      {
-        path: "/candidate/*",
-        element: <CandidateWrapper />,
-      },
-      
-      {
-        path: "/forgot-password",
-        element: <ForgotPassword />,
-      },
-      {
-        path: "*",
-        element: <div>Page Not Found</div>,
-      },
-    ],
-  },
+      { path: "*", element: <div>Page Not Found</div> }
+    ]
+  }
 ]);
 
+// App Component
 function App() {
   return <RouterProvider router={router} />;
 }
 
-
 export default App;
+

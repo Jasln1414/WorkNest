@@ -3,21 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { set_Authentication } from "../../Redux/Authentication/authenticationSlice";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import "../../Styles/Login.css";
 import { EmployerLoginApi } from "../../Api/Employer_Api/Employer_Auth_Api";
+import { GoogleLogin } from '@react-oauth/google';
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import ForgotPasswordPage from "../../pages/comon/ForgotPassword";
 
 const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Reset previous errors
     setFormError("");
     setIsSubmitting(true);
@@ -28,32 +34,56 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
 
     try {
       const response = await EmployerLoginApi(formData, dispatch, set_Authentication, navigate);
-      
+
       // If the API call fails, this will throw an error
       if (!response.success) {
         throw new Error(response.message || "Login failed");
       }
+
+      // Check if the employer is verified
+      if (!response.data.is_verified) {
+        // Show SweetAlert2 message if the employer is not verified
+        Swal.fire({
+          icon: 'warning',
+          title: 'Account Not Verified',
+          text: 'Your account is not verified by the admin. Please wait for verification.',
+          confirmButtonText: 'OK',
+        });
+
+        // Clear the form fields
+        setEmail("");
+        setPassword("");
+        return; // Stop further execution
+      }
+
+      // If the employer is verified, proceed with login
+      toast.success("Login successful!");
+      navigate("/candidate/EmpHome"); // Redirect to the dashboard or any other page
+
     } catch (error) {
       // Handle different types of errors
       const errorMessage = error.response?.data?.message || 
                            error.message || 
                            "An unexpected error occurred";
-      
+
       // Set form error to display to user
       setFormError(errorMessage);
-      
+
       // Clear the form fields
       setEmail("");
       setPassword("");
-     
     } finally {
       // Always reset submitting state
       setIsSubmitting(false);
     }
   };
 
-  const handleForgotPassword = () => {
-    navigate("/forgot");
+  const openForgotPasswordModal = () => {
+    setShowForgotPasswordModal(true);
+  };
+
+  const handleBackToLogin = () => {
+    setShowForgotPasswordModal(false);
   };
 
   const handleClearForm = () => {
@@ -62,7 +92,63 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
     setFormError("");
   };
 
+  const GoogleTestlogin = async (userDetails) => {
+    console.log("userDetails after login", userDetails);
+    const formData = {
+      client_id: userDetails,
+    };
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/account/auth/employer/', formData);
+      console.log("auth response ", response);
+      if (response.status === 200) {
+        localStorage.setItem('access', response.data.access_token);
+        localStorage.setItem('refresh', response.data.refresh_token);
+
+        dispatch(
+          set_Authentication({
+            name: jwtDecode(response.data.access_token).name,
+            email: response.data.email,
+            isAuthenticated: true,
+            isAdmin: response.data.isAdmin,
+            usertype: response.data.usertype,
+          })
+        );
+
+        toast.success('Login successful!', {
+          position: "top-center",
+        });
+
+        if (response.data.user_data.completed === false) {
+          navigate('/employer/profile_creation/');
+        } else {
+          navigate('/employer/EmpHome/');
+        }
+      } else {
+        console.log("response...............................", response);
+        setFormError(response.data.message);
+      }
+    } catch (error) {
+      console.error("Google login error:", error.response?.data || error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: error.response?.data?.detail || 'You have to approved my admin.',
+      });
+    }
+  };
+
   if (!isOpen) return null;
+  
+  if (showForgotPasswordModal) {
+    return (
+      <ForgotPasswordPage
+        isOpen={true} 
+        onClose={() => setShowForgotPasswordModal(false)}
+        onBackToLogin={handleBackToLogin}
+        userType="employer"  // Add this line to specify user type
+      />
+    );
+  }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -72,10 +158,12 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
         </button>
 
         <h2>Employer Sign In</h2>
-        
+
+        {formError && <div className="error-message">{formError}</div>}
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <input
+            <input 
               type="email"
               placeholder="Enter your email id"
               value={email}
@@ -88,7 +176,7 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
               disabled={isSubmitting}
             />
           </div>
-
+                 
           <div className="input-group">
             <input
               type="password"
@@ -104,15 +192,6 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
             />
           </div>
 
-         {/* <span 
-            className="forgot-password" 
-            onClick={handleForgotPassword}
-          >
-            Forgot Password?
-          </span>*/}
-
-        
-
           <div className="button-group">
             <button 
               type="submit" 
@@ -123,11 +202,35 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
             </button>
           </div>
 
+          <div className="text-right mt-1">
+            <a 
+              href="#" 
+              onClick={(e) => {
+                e.preventDefault();
+                openForgotPasswordModal();
+              }}
+              className="text-blue-600 text-sm hover:underline"
+            >
+              Forgot Password?
+            </a>
+          </div>
+          <br></br>
           <div className="text-gray-700">
+           
             <button type="button" onClick={switchToSignup}>
-              Sign Up
+              Don't have an account?{" "} Sign Up
             </button>
-            Don't have an account?{" "}
+          </div>
+
+          <div className='flex justify-center'>
+            <GoogleLogin
+              onSuccess={credentialResponse => {
+                GoogleTestlogin(credentialResponse.credential);
+              }}
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            />
           </div>
         </form>
       </div>

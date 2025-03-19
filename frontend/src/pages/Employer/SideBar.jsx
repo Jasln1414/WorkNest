@@ -5,6 +5,11 @@ import { MdOutlineAddTask } from "react-icons/md";
 import { HiHome } from "react-icons/hi2";
 import { PiUserCircleCheckFill } from "react-icons/pi";
 import { IoIosLogOut } from "react-icons/io";
+import { PiFileTextFill } from "react-icons/pi"; // From Phosphor Icons
+import { PiClipboardTextFill } from "react-icons/pi"; // From Phosphor Icons
+
+import { FaClipboardList } from "react-icons/fa"; // From Font Awesome
+import { FaFileAlt } from "react-icons/fa"; // From Font Awesome
 import { set_Authentication } from "../../Redux/Authentication/authenticationSlice";
 import "../../Styles/SideBar.css";
 import DashboardIcon from "./DashBoard";
@@ -36,28 +41,17 @@ function SideBar({ hideHeader = false }) {
 
   return (
     <>
-      {/* Mobile Header - only show if not hidden by parent 
-      {!hideHeader && (
-        <div className="mobile-header">
-          <div className="dashboard-icon" onClick={toggleSidebar}>
-            <DashboardIcon />
-            <span>Dashboard</span>
-          </div>
-        </div>
-      )}*/}
-
       {/* Sidebar */}
       <div className={`employer-sidebar ${isOpen ? "open" : ""}`}>
         <div className="employer-sidebar-logo">
           <h1>Dashboard</h1>
         </div>
         <br />
-        <Link to="/employer/postjob/" className="employer-post-job-button">
+        <Link to="/employer/postjob/" className="employer-post-job-button-sidebar">
           <MdOutlineAddTask className="icon" />
           <span>Post Job</span>
         </Link>
-        <br />
-        <br />
+      
         <ul className="employer-sidebar-list">
           {/* Home Link */}
           <li>
@@ -82,6 +76,24 @@ function SideBar({ hideHeader = false }) {
               <PiUserCircleCheckFill className="icon" />
               <span>Profile</span>
             </Link>
+          </li>
+          {/* Applications Link */}
+          <li>
+            <Link
+              to="/employer/applications"
+              className={`employer-sidebar-link ${
+                location.pathname === "/employer/applications" ? "active" : ""
+              }`}
+            >
+              
+
+
+              
+    <PiClipboardTextFill className="icon" />
+    <span>Applications</span>
+  </Link>
+
+             
           </li>
         </ul>
         <button onClick={handleLogout} className="signout">

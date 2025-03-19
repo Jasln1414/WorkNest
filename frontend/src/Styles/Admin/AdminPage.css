@@ -1,0 +1,740 @@
+/* AdminPage.css - Styles for AdminJobView */
+
+/* Main container */
+.ajv-admin-job-view-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  /* Job grid layout */
+  .ajv-job-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Default for mobile */
+    gap: 1.5rem;
+  }
+  
+  @media (min-width: 640px) {
+    .ajv-job-grid {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
+      margin-left: 10vh;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .ajv-job-grid {
+      grid-template-columns: repeat(3, 1fr); /* 3 columns for laptops */
+    }
+  }
+  
+  /* Job card styling */
+  .ajv-job-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #e9ecef;
+    position: relative;
+    overflow: hidden; /* Prevent content overflow */
+    min-height: 300px; /* Set a minimum height for consistency */
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    gap: 1rem; /* Add spacing between elements */
+  }
+  
+  .ajv-job-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  
+  .ajv-job-card h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+  }
+  
+  .ajv-job-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Add spacing between job info items */
+  }
+  
+  .ajv-job-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+  }
+  
+  .ajv-job-card p[data-label]::before {
+    content: attr(data-label);
+    font-weight: 500;
+    color: #2c3e50;
+    margin-right: 0.5rem;
+  }
+  
+  /* Job status indicator */
+  .ajv-job-card p[data-label="Status:"] {
+    display: inline-block;
+    font-weight: 500;
+  }
+  
+  .ajv-job-card p[data-label="Status:"]::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: 8px;
+  }
+  
+  .ajv-active-status::after {
+    background-color: #10b981; /* Green for active */
+  }
+  
+  .ajv-inactive-status::after {
+    background-color: #ef4444; /* Red for inactive */
+  }
+  
+  /* Job actions */
+  .ajv-job-actions {
+    display: flex;
+    margin-top: auto; /* Push actions to the bottom of the card */
+    gap: 0.75rem;
+    flex-direction: column;
+  }
+  
+  @media (min-width: 640px) {
+    .ajv-job-actions {
+      flex-direction: row; /* Stack buttons horizontally on larger screens */
+    }
+  }
+  
+  .ajv-job-actions button, .ajv-job-actions a {
+    flex: 1;
+    padding: 0.625rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    border: none;
+    outline: none;
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+  
+  .ajv-job-actions button:active, .ajv-job-actions a:active {
+    transform: scale(0.98);
+  }
+  
+  .ajv-details-button {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+  }
+  
+  .ajv-details-button:hover {
+    background-color: #e5e7eb;
+  }
+  
+  .ajv-activate-button {
+    background-color: #10b981;
+    color: white;
+  }
+  
+  .ajv-activate-button:hover {
+    background-color: #059669;
+  }
+  
+  .ajv-deactivate-button {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  .ajv-deactivate-button:hover {
+    background-color: #dc2626;
+  }
+  
+  /* Pagination */
+  .ajv-pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .ajv-pagination-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+  }
+  
+  .ajv-pagination-button:hover:not(:disabled) {
+    background-color: #e5e7eb;
+  }
+  
+  .ajv-pagination-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .ajv-pagination-numbers {
+    display: flex;
+    gap: 0.25rem;
+  }
+  
+  .ajv-pagination-number {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+  
+  .ajv-pagination-number.ajv-active {
+    background-color: #3498db;
+    color: white;
+    border-color: #3498db;
+  }
+  
+  .ajv-pagination-number:hover:not(.ajv-active) {
+    background-color: #e5e7eb;
+  }
+  
+  /* Loading and error states */
+  .ajv-loading-container, .ajv-error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    text-align: center;
+  }
+  
+  .ajv-loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .ajv-error-message {
+    color: #ef4444;
+    margin-bottom: 1rem;
+  }
+  
+  .ajv-retry-button {
+    background-color: #3498db;
+    color: white;
+    padding: 0.625rem 1.25rem;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+  }
+  
+  .ajv-retry-button:hover {
+    background-color: #2980b9;
+  }
+  
+  .ajv-no-jobs-container {
+    text-align: center;
+    padding: 3rem;
+    color: #6b7280;
+    font-size: 1.125rem;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* General layout */
+.job-detail-container {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+  
+  /* Left Column (Job Details) */
+  .job-detail-content {
+    flex: 2; /* Takes 2/3 of the space */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+  }
+  
+  /* Right Column (Sidebar) */
+  .sidebar {
+    flex: 1; /* Takes 1/3 of the space */
+    position: sticky;
+    top: 20px; /* Stick to the top */
+    height: fit-content;
+  }
+  
+  /* Job Details Card */
+  .job-detail-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  /* Job Title */
+  .job-detail-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2d2d2d;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+    word-wrap: break-word;
+  }
+  
+  /* Job Info */
+  .job-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #505050;
+    font-size: 14px;
+  }
+  
+  .job-info-label {
+    font-weight: 500;
+    color: #2d2d2d;
+  }
+  
+  .job-info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  /* Job Status */
+  .status-active {
+    color: green;
+    font-weight: 500;
+  }
+  
+  .status-expired {
+    color: red;
+    font-weight: 500;
+  }
+  
+  /* Job Description */
+  .job-description {
+    line-height: 1.6;
+    color: #424242;
+  }
+  
+  .job-description p {
+    margin: 0 0 16px 0;
+    word-wrap: break-word;
+  }
+  
+  /* Job Actions */
+  .job-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  
+  .edit-button,
+  .activate-button,
+  .deactivate-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .edit-button {
+    background-color: #2557a7;
+    color: white;
+  }
+  
+  .edit-button:hover {
+    background-color: #1a4380;
+  }
+  
+  .activate-button {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .activate-button:hover {
+    background-color: #388e3c;
+  }
+  
+  .deactivate-button {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .deactivate-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Modal (if used) */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 24px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .job-detail-container {
+      flex-direction: column;
+      padding: 10px;
+      
+    }
+  
+    .job-detail-content {
+      padding: 16px;
+    }
+  
+    .sidebar {
+      position: static; /* Disable sticky behavior on mobile */
+    }
+  
+    .job-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .edit-button,
+    .activate-button,
+    .deactivate-button {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .job-detail-title {
+      font-size: 20px;
+    }
+  
+    .job-info {
+      font-size: 12px;
+    }
+  
+    .job-description {
+      font-size: 14px;
+    }
+  }
+
+/* Base styles for AdminJobDetail */
+
+.admin-job-detail-container {
+    max-width: 1200px;
+    margin-left: 31vh;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-job-detail-container h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .admin-job-detail-container p {
+    margin-bottom: 12px;
+    line-height: 1.5;
+    color: #555;
+  }
+  
+  .job-info-label {
+    font-weight: 600;
+    margin-top: 16px;
+    color: #333;
+  }
+  
+  .job-description {
+    white-space: pre-line;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 3px solid #3498db;
+  }
+  
+  /* Moderation Section */
+  .moderation-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f5f7fa;
+    border-radius: 6px;
+    border: 1px solid #e1e4e8;
+  }
+  
+  .moderation-section h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .moderation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .moderation-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 500;
+  }
+  
+  .moderation-form select,
+  .moderation-form textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .moderation-form button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    max-width: 200px;
+  }
+  
+  .moderation-form button:hover {
+    background-color: #2980b9;
+  }
+  
+  .moderation-form button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+  }
+  
+  /* Loading and Error Styles */
+  .loading-container, 
+  .error-container, 
+  .not-found-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .error-message {
+    color: #e74c3c;
+    margin-bottom: 15px;
+  }
+  
+  .retry-button, 
+  .back-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px;
+    font-weight: 500;
+  }
+  
+  .back-button {
+    background-color: #7f8c8d;
+  }
+  
+  /* Responsive styles */
+  /* For tablets and small laptops */
+  @media (max-width: 1024px) {
+    .admin-job-detail-container {
+      padding: 15px;
+      margin-left: 30vh;
+    }
+    
+    .admin-job-detail-container h1 {
+      font-size: 22px;
+    }
+    
+    .moderation-section {
+      padding: 15px;
+    }
+  }
+  
+  /* For mobile devices */
+  @media (max-width: 768px) {
+    .admin-job-detail-container {
+      padding: 12px;
+      
+      
+      border-radius: 6px;
+    }
+    
+    .admin-job-detail-container h1 {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+    
+    .admin-job-detail-container p {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    
+    .job-description {
+      padding: 12px;
+    }
+    
+    .moderation-section {
+      margin-top: 20px;
+      padding: 15px 12px;
+    }
+    
+    .moderation-section h2 {
+      font-size: 18px;
+    }
+    
+    .moderation-form {
+      gap: 12px;
+    }
+    
+    .moderation-form select,
+    .moderation-form textarea {
+      padding: 8px;
+      font-size: 14px;
+    }
+    
+    .moderation-form button {
+      padding: 10px 16px;
+      font-size: 14px;
+      max-width: 100%;
+    }
+    
+    .loading-container, 
+    .error-container, 
+    .not-found-container {
+      padding: 20px;
+    }
+    
+    .loading-spinner {
+      width: 30px;
+      height: 30px;
+    }
+    
+    .retry-button, 
+    .back-button {
+      padding: 8px 14px;
+      font-size: 14px;
+      width: 100%;
+      margin: 5px 0;
+    }
+  }
+  
+  /* For very small devices */
+  @media (max-width: 480px) {
+    .admin-job-detail-container h1 {
+      font-size: 18px;
+    }
+    
+    .admin-job-detail-container p {
+      font-size: 13px;
+    }
+    
+    .moderation-section h2 {
+      font-size: 16px;
+    }
+    
+    .moderation-form label {
+      font-size: 14px;
+    }
+    
+    .moderation-form select,
+    .moderation-form textarea,
+    .moderation-form button {
+      font-size: 13px;
+    }
+  }

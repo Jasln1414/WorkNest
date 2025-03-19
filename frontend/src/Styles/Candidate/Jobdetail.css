@@ -1,0 +1,309 @@
+/* Main container styles */
+.job-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+  color: #333;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas:
+    "header header"
+    "description company";
+  gap: 0; /* Removed gap between grid items */
+}
+
+/* Shared card styling */
+.job-detail-card, .job-description, .company-info {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  margin-bottom: 0; /* Removed margin between cards */
+}
+
+/* Job detail card - spans full width */
+.job-detail-card {
+  grid-area: header;
+}
+
+/* Job description section - left column */
+.job-description {
+  grid-area: description;
+}
+
+/* Company info section - right column */
+.company-info {
+  grid-area: company;
+}
+
+/* Job header section */
+.job-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.company-logo {
+  width: 80px;
+  height: 80px;
+  margin-right: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.company-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.job-info {
+  flex-grow: 1;
+}
+
+.job-info h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #2d2d2d;
+}
+
+.job-info h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #555;
+}
+
+/* Job meta information */
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  margin-right: 24px;
+  margin-bottom: 10px;
+}
+
+.meta-item svg {
+  color: #2557a7;
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+/* Job actions section */
+.job-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.action-item svg {
+  margin-right: 8px;
+  color: #2557a7;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.apply-button {
+  background-color: #2557a7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.apply-button:hover {
+  background-color: #1e4785;
+}
+
+.save-button {
+  background-color: white;
+  color: #2557a7;
+  border: 1px solid #2557a7;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-button:hover {
+  background-color: #f0f7ff;
+}
+
+/* Content sections styling */
+.job-description h2, .company-info h2 {
+  font-size: 20px;
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #2d2d2d;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.job-description h3, .company-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0 10px 0;
+  color: #2d2d2d;
+}
+
+.job-description p, .company-info p {
+  line-height: 1.6;
+  margin-bottom: 16px;
+  color: #444;
+}
+
+.company-info a {
+  color: #2557a7;
+  text-decoration: none;
+}
+
+.company-info a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive design for mobile devices */
+@media (max-width: 768px) {
+  .job-detail-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "description"
+      "company";
+    max-width: 100%;
+  }
+
+  .job-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .company-logo {
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+
+  .job-meta {
+    justify-content: center;
+  }
+
+  .job-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .action-buttons {
+    margin-left: 0;
+    margin-top: 16px;
+    width: 100%;
+  }
+
+  .apply-button, .save-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .job-detail-container {
+    padding: 10px;
+  }
+
+  .job-detail-card, .job-description, .company-info {
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .job-info h1 {
+    font-size: 20px;
+  }
+
+  .job-info h2 {
+    font-size: 16px;
+  }
+}
+/* Update job header to restrict width properly */
+.job-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%; /* Ensure it takes full width of parent */
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Adjust job info to properly fill available space */
+.job-info {
+  flex-grow: 1;
+  max-width: calc(100% - 100px); /* Account for logo width + margin */
+}
+
+/* Optional: If you still see a gap, you can adjust the padding */
+.job-detail-card {
+  padding: 24px 24px 24px 24px; /* Ensure equal padding on all sides */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* Add proper borders and spacing between sections */
+.job-detail-container {
+  gap: 20px; /* Add some gap between the grid items */
+}
+
+/* Enhanced card styling with better borders */
+.job-detail-card, .job-description, .company-info {
+  border: 1px solid #e1e4e8; /* Add a subtle border */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+  padding: 24px;
+  margin-bottom: 5px; /* Add some margin between cards */
+}
+
+/* Add a subtle border to separate major sections within cards */
+.job-meta {
+  border-bottom: 1px solid #e1e4e8;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+
+}
+
+/* Enhance separators for section headings */
+.job-description h2, .company-info h2 {
+  border-bottom: 2px solid #e1e4e8;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+

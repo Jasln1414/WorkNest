@@ -443,3 +443,490 @@
       height: 30px;
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* Base styles */
+.status-job-wrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.no-job-selected {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9fafb;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 1rem;
+}
+
+.container {
+  background-color: white;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.container:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.employer-name {
+  color: #4b5563;
+  font-size: 1.125rem;
+  display: block;
+  margin-bottom: 0.5rem;
+  word-break: break-word;
+}
+
+.divider {
+  width: 100%;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 1.25rem 0;
+}
+
+.status-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-size: 0.875rem;
+}
+
+.status-button:hover {
+  background-color: #2563eb;
+}
+
+.status-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.status-details {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.status-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.status-step {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: nowrap;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  gap: 0.5rem;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Firefox */
+}
+
+/* Custom scrollbar for webkit browsers */
+.status-step::-webkit-scrollbar {
+  height: 4px;
+}
+
+.status-step::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.status-step::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.status-step::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+.step-item {
+  flex: 0 0 auto;
+  min-width: 80px;
+  margin-right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-circle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.step-circle.completed {
+  background-color: #10b981;
+  border: 2px solid #10b981;
+}
+
+.step-circle.pending {
+  background-color: #9ca3af;
+  border: 2px solid #9ca3af;
+}
+
+.step-circle.action {
+  background-color: #3b82f6;
+  border: 2px solid #3b82f6;
+}
+
+.step-circle.rejected {
+  background-color: #ef4444;
+  border: 2px solid #ef4444;
+}
+
+.step-label {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #4b5563;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.step-label.font-bold {
+  font-weight: 600;
+  color: #111827;
+}
+
+.job-details {
+  background-color: white;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.job-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section-title {
+  color: #111827;
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.section-content {
+  color: #4b5563;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+  word-break: break-word;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+/* Animation for transitions */
+.status-details {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive styles */
+/* Large screens */
+@media (min-width: 1024px) {
+  .status-job-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem;
+  }
+  
+  .container, .job-details {
+      padding: 2rem;
+      border-radius: 1rem;
+  }
+  
+  .status-step {
+      justify-content: space-around;
+      overflow-x: visible;
+      flex-wrap: nowrap;
+  }
+  
+  .step-item {
+      margin-right: 0;
+  }
+}
+
+/* Medium screens - tablets */
+@media (max-width: 1023px) and (min-width: 769px) {
+  .status-job-wrapper {
+      max-width: 90%;
+      margin: 0 auto;
+      padding: 1.5rem;
+  }
+  
+  .container, .job-details {
+      padding: 1.75rem;
+  }
+  
+  .status-step {
+      justify-content: space-between;
+  }
+}
+
+/* Small screens - mobile */
+@media (max-width: 768px) {
+  .status-job-wrapper {
+      padding: 0.75rem;
+  }
+  
+  .container, .job-details {
+      padding: 1.25rem;
+      border-radius: 0.5rem;
+  }
+  
+  .title {
+      font-size: 1.25rem;
+  }
+  
+  .employer-name {
+      font-size: 1rem;
+  }
+  
+  .status-button {
+      width: 100%;
+      margin-top: 0.5rem;
+  }
+  
+  .job-section {
+      gap: 1rem;
+  }
+  
+  .section-title {
+      font-size: 1rem;
+  }
+  
+  .section-content {
+      font-size: 0.875rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .status-job-wrapper {
+      padding: 0.5rem;
+  }
+  
+  .container, .job-details {
+      padding: 1rem;
+  }
+  
+  .title {
+      font-size: 1.125rem;
+  }
+  
+  .employer-name {
+      font-size: 0.875rem;
+  }
+  
+  .status-title {
+      font-size: 1.125rem;
+  }
+  
+  .step-circle {
+      width: 1.75rem;
+      height: 1.75rem;
+  }
+  
+  .step-label {
+      font-size: 0.75rem;
+  }
+  
+  .section-title {
+      font-size: 0.95rem;
+  }
+  
+  .section-content {
+      font-size: 0.8125rem;
+  }
+  
+  .flex {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .status-job-wrapper {
+      background-color: #111827;
+      color: #f3f4f6;
+  }
+
+  .container, .job-details, .no-job-selected {
+      background-color: #1f2937;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  }
+
+  .title {
+      color: #f9fafb;
+  }
+
+  .employer-name, .section-content {
+      color: #d1d5db;
+  }
+
+  .section-title, .status-title {
+      color: #f3f4f6;
+  }
+
+  .divider {
+      border-top-color: #374151;
+  }
+
+  .step-label {
+      color: #9ca3af;
+  }
+
+  .step-label.font-bold {
+      color: #f3f4f6;
+  }
+
+  .status-step::-webkit-scrollbar-track {
+      background: #374151;
+  }
+
+  .status-step::-webkit-scrollbar-thumb {
+      background: #6b7280;
+  }
+
+  .status-step::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+  }
+}
+
+/* Print styles */
+@media print {
+  .status-job-wrapper {
+      padding: 0;
+      max-width: 100%;
+  }
+  
+  .container, .job-details {
+      box-shadow: none;
+      border: 1px solid #e5e7eb;
+      break-inside: avoid;
+  }
+  
+  .status-button {
+      display: none;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .container:hover {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .status-button {
+      padding: 0.75rem 1.25rem; /* Larger touch target */
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .status-job-wrapper {
+      padding: 0.5rem 1.5rem;
+  }
+  
+  .status-step {
+      justify-content: flex-start;
+      gap: 1.5rem;
+  }
+}
+
+/* Accessibility improvements */
+.status-button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .container, .status-details {
+      transition: none;
+      animation: none;
+  }
+}  background color light white and other background light color

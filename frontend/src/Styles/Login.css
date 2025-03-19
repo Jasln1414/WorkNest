@@ -15,7 +15,7 @@
 
 .modal-content {
   background: linear-gradient(135deg, #ffffff, #f8f9fa);
-  width: 90%;
+  width: 100%;
   max-width: 450px;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
@@ -27,6 +27,7 @@
   overflow: hidden;
   opacity: 0;
   animation: fadeIn 0.5s ease forwards;
+
 }
 
 .modal-content h2 {
@@ -52,14 +53,16 @@
 
 /* Form styling */
 form {
-  margin-top: 2rem;
+  margin-top: 0.2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .input-group {
-  margin-bottom: 1.2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.7rem;
+  
   width: 100%;
   position: relative;
 }
@@ -92,7 +95,7 @@ form {
 }
 
 .input-group input:disabled, .input-field:disabled {
-  background-color: #641a1a;
+  background-color: #ffffff;
   cursor: not-allowed;
   opacity: 0.8;
 }
@@ -139,13 +142,13 @@ form {
   color: #e74c3c;
   padding: 10px;
   border-radius: 4px;
-  margin-bottom: 15px;
+
   text-align: center;
 }
 
 /* Button Styling */
 .button-group {
-  margin-top: 1.8rem;
+  
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -307,7 +310,7 @@ button[type="button"] {
 .otp-resend-btn:hover {
   background: linear-gradient(135deg, #dd2476, #ff512f);
   transform: scale(1.05);
-  box-shadow: 0 6px 14px rgba(255, 81, 47, 0.3);
+  box-shadow: 0 6px 14px rgba(235, 229, 227, 0.3);
 }
 
 .otp-resend-btn:disabled {
@@ -443,4 +446,62 @@ button[type="button"] {
     width: 30px;
     height: 30px;
   }
+}
+
+
+.verification-message {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f0f8ff; /* Light blue background */
+  border: 1px solid #b0e0e6; /* Light blue border */
+  border-radius: 5px;
+  color: #31708f; /* Dark blue text */
+  text-align: center;
+}
+
+
+.custom-swal-popup {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+.custom-swal-title {
+  color: #ffa500; /* Orange color for warning */
+  font-size: 20px;
+}
+
+.custom-swal-confirm-button {
+  background-color: #ffa500;
+  color: white;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+
+
+.custom-swal-popup {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+.custom-swal-title {
+  color: #ffa500; /* Orange color for warning */
+  font-size: 20px;
+}
+
+.custom-swal-confirm-button {
+  background-color: #ffa500;
+  color: white;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+@media (-ms-high-contrast: active) {
+  /* Old IE/Edge high-contrast styles */
+}
+
+@media (forced-colors: active) {
+  /* New standard high-contrast styles */
+}
+.candidate-login-title{
+  margin-top: 0%;
+
 }

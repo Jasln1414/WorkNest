@@ -1,7 +1,10 @@
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
-export default {
+export default defineConfig({
   plugins: [
-    react()
-  ]
-};
+    react(), // React plugin
+    tailwindcss(), // Tailwind CSS plugin
+  ],
+});

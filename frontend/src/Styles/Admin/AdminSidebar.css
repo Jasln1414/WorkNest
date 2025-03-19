@@ -556,3 +556,113 @@
       height: 1.75rem;
     }
   }
+
+  .el-approve-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.el-reject-button {
+    background-color: #f44336; /* Red */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.el-approve-button:hover {
+    background-color: #45a049;
+}
+
+.el-reject-button:hover {
+    background-color: #e53935;
+}
+
+.custom-swal-popup {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+.custom-swal-title {
+  color: #4CAF50;
+  font-size: 20px;
+}
+
+.custom-swal-confirm-button {
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  padding: 10px 20px;
+
+
+
+}
+
+
+/* Approve Button */
+.ccl-approve-button {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.ccl-approve-button:hover {
+  background-color: #45a049; /* Darker Green */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+.ccl-approve-button:active {
+  background-color: #3d8b40; /* Even Darker Green */
+  transform: scale(0.95); /* Slight shrink effect */
+}
+
+/* Reject Button */
+.ccl-reject-button {
+  background-color: #f44336; /* Red */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.ccl-reject-button:hover {
+  background-color: #e53935; /* Darker Red */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+.ccl-reject-button:active {
+  background-color: #d32f2f; /* Even Darker Red */
+  transform: scale(0.95); /* Slight shrink effect */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .ccl-approve-button,
+  .ccl-reject-button {
+      padding: 6px 12px; /* Smaller padding for smaller screens */
+      font-size: 12px; /* Smaller font size for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .ccl-approve-button,
+  .ccl-reject-button {
+      width: 100%; /* Full width on very small screens */
+      margin-bottom: 8px; /* Space between stacked buttons */
+  }
+}

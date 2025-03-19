@@ -45,7 +45,7 @@ function CandidateList() {
             <Sidebar />
             <div className="ccl-main-content">
                 <div className="ccl-page-header">
-                    <h1 className="ccl-page-title">Candidate List</h1>
+                   
                     <div className="ccl-search-container">
                         <span className="ccl-search-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">

@@ -10,6 +10,10 @@ import ProfileCreation from './CandidateProfileCreation';
 import CandidateHome from './FindJob';
 import Profile from './ProfileView';
 import JobDetail from './Job/CandidateJobDeatail';
+import ApplyedJob from '../Cndidates/Job/ApplyJob';
+import SavedJobs from './Job/SavedJobs';
+//import JobListingWithFilters from './utilities/Filter';
+
 
 function CandidateWrapper() {
   const baseURL = 'http://127.0.0.1:8000';
@@ -114,6 +118,9 @@ function CandidateWrapper() {
         <Route index element={<CandidateHome />} />
         <Route path="find-job" element={<CandidateHome />} />
         <Route path="/find-job/job/:jobId" element={<JobDetail />} />
+        <Route path='/applyedjobs' element={<ApplyedJob/>} ></Route>
+        <Route path='/savedjobs' element={<SavedJobs/>}></Route>
+        
         <Route
           path="profile-creation"
           element={

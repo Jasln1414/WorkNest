@@ -1,274 +1,285 @@
-import React from "react";
-import { Link } from "react-router-dom"; // Import Link for navigation
-import hero from "../assets/hero.jpg";
-import logo from "../assets/logo.jpg";
-import "../Styles/LandingPage.css";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { FaSuitcase, FaBuilding, FaGlobe, FaMapMarkerAlt } from 'react-icons/fa';
+import { MdCurrencyRupee, MdDateRange, MdWorkOutline, MdLocationOn } from 'react-icons/md';
+import { BsClockHistory, BsBriefcase } from 'react-icons/bs';
+import { formatDistanceToNow } from 'date-fns';
+import Swal from 'sweetalert2';
+import '../../../Styles/Candidate/jobdetail.css';
 
-const LandingPage = () => {
-  return (
-    <div>
-      <div className="container">
-        <div className="Post-job">
-          <img src={logo} alt="Find Job" />
-          <Link to="/candidate/find-job">
-          <button>FIND JOB</button>
-          </Link>
-        </div>
-       
-        <div className="Post-job">
-          <img src={hero} alt="Post Job" />
-          {/* Use Link to navigate to the PostJob page */}
-          <Link to="/employer/PostJob">
-            <button>POST JOB</button>
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default LandingPage;
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { 
-  User, Mail, Phone, MapPin, Calendar, GraduationCap, 
-  BookOpen, Code, Link, FileText, Award, Briefcase, 
-  Database, Shield, Monitor, Edit
-} from "lucide-react";
-import { Tabs, Tab, Box } from '@mui/material';
-import '../../Styles/Findjob.css';
-
-function Profile() {
-  const baseURL = "http://127.0.0.1:8000/";
+function JobDetail() {
+  const baseURL = 'http://127.0.0.1:8000/';
   const token = localStorage.getItem('access');
-  const [profileData, setProfileData] = useState({});
-  const [eduData, setEduData] = useState([]);
-  const [skills, setSkills] = useState([]);
+  const { jobId } = useParams();
+  const [jobData, setJobData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState(0);
+  const [isApplying, setIsApplying] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+    const fetchJobData = async () => {
       try {
-        const response = await axios.get(baseURL + 'api/empjob/profile/', {
+        const response = await axios.get(`${baseURL}api/empjob/getjobs/detail/${jobId}/`, {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data'
-          }
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
         });
         if (response.status === 200) {
-          setProfileData(response.data.data || {});
-          setEduData(response.data.data?.education || []);
-          setError(null);
+          setJobData(response.data);
         }
       } catch (error) {
-        console.error(error);
-        setError("Failed to load profile data. Please try again later.");
+        console.error('Error fetching job data:', error);
+        setError('Failed to fetch job details. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [token]);
+    fetchJobData();
+  }, [jobId, token, baseURL]);
 
-  useEffect(() => {
-    if (profileData?.skills) {
-      const value = profileData.skills.split(',').map(skill => skill.trim());
-      setSkills(value);
-    } else {
-      setSkills([]);
+  const formatDate = (dateValue) => {
+    const date = new Date(dateValue);
+    if (isNaN(date.getTime())) {
+      return 'Date not available';
     }
-  }, [profileData]);
+    return formatDistanceToNow(date, { addSuffix: true })
+      .replace('about ', '')
+      .replace('hours', 'hr');
+  };
+
+  const handleApplyJob = () => {
+    setIsApplying(true);
+    // Application logic would go here
+    setTimeout(() => {
+      Swal.fire({
+        title: 'Application Submitted!',
+        text: 'Your application has been successfully submitted.',
+        icon: 'success',
+        confirmButtonText: 'Great!'
+      });
+      setIsApplying(false);
+    }, 1000);
+  };
 
   if (loading) {
     return (
-      <div className="ch-loading-container">
-        <div className="ch-spinner"></div>
-        <p>Loading profile data...</p>
+      <div className="job-loading-container">
+        <div className="job-loading-spinner"></div>
+        <p>Loading job details...</p>
       </div>
     );
   }
 
   if (error) {
-    return <div className="ch-error-message">{error}</div>;
+    return (
+      <div className="job-error-container">
+        <div className="job-error-icon">⚠️</div>
+        <h3>Something went wrong</h3>
+        <p>{error}</p>
+        <button className="job-retry-button" onClick={() => window.location.reload()}>
+          Try Again
+        </button>
+      </div>
+    );
   }
 
-  // Group skills by category for better organization
-  const skillCategories = {
-    "Programming": ["JavaScript", "Python", "Java", "C++", "PHP", "Ruby"],
-    "Web": ["HTML", "CSS", "React", "Angular", "Vue", "Node.js"],
-    "Database": ["SQL", "MongoDB", "PostgreSQL", "MySQL", "Firebase"],
-    "Tools": ["Git", "Docker", "Kubernetes", "AWS", "Azure", "GCP"]
-  };
+  const image = jobData.employer?.profile_pic ? `${baseURL}${jobData.employer.profile_pic}` : '';
 
-  // Helper function to categorize skills
-  const categorizeSkills = (skillList) => {
-    const categorized = {};
-    
-    skillList.forEach(skill => {
-      let foundCategory = false;
-      
-      for (const [category, items] of Object.entries(skillCategories)) {
-        if (items.some(item => skill.toLowerCase().includes(item.toLowerCase()))) {
-          if (!categorized[category]) categorized[category] = [];
-          categorized[category].push(skill);
-          foundCategory = true;
-          break;
-        }
-      }
-      
-      if (!foundCategory) {
-        if (!categorized["Other"]) categorized["Other"] = [];
-        categorized["Other"].push(skill);
-      }
-    });
-    
-    return categorized;
-  };
+  return (
+    <div className="job-detail-page">
+      <div className="job-detail-container">
+        {/* Sticky Apply Button for Mobile */}
+       {/* <div className="mobile-apply-sticky">
+          <button className="apply-now-button-mobile" onClick={handleApplyJob} disabled={isApplying}>
+            {isApplying ? 'Applying...' : 'Apply Now'}
+          </button>
+        </div>*/}
 
-  const categorizedSkills = categorizeSkills(skills);
-
-  // Icons for skill categories
-  const categoryIcons = {
-    "Programming": <Code size={20} />,
-    "Web": <Monitor size={20} />,
-    "Database": <Database size={20} />,
-    "Tools": <Briefcase size={20} />,
-    "Other": <Award size={20} />
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
-
-  // Tab items
-  const tabItems = [
-    { label: "Overview", icon: <User size={20} /> },
-    { label: "Personal", icon: <MapPin size={20} /> },
-    { label: "Skills", icon: <Code size={20} /> },
-    { label: "Education", icon: <GraduationCap size={20} /> },
-    { label: "Other Info", icon: <FileText size={20} /> }
-  ];
-
-  
-    return (
-      <div className="profile-container">
-        <div className="profile-header-section">
-          <div className="profile-header-content">
-            <div className="profile-avatar-container">
-              <img src="path_to_avatar_image" alt="Profile Avatar" className="profile-avatar" />
-            </div>
-            <div className="profile-header-info">
-              <h1>Profile Name</h1>
-              <div className="profile-quick-info">
-                <span>Info 1</span>
-                <span>Info 2</span>
-                <span>Info 3</span>
-              </div>
-              <button className="edit-profile-btn">Edit Profile</button>
-            </div>
-          </div>
-        </div>
-        <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="profile navigation tabs"
-            sx={{ 
-              borderBottom: 1, 
-              borderColor: 'divider',
-              '& .MuiTab-root': {
-                minHeight: '48px',
-                textTransform: 'none',
-                fontSize: '14px',
-                fontWeight: 'medium',
-              }
-            }}
-          >
-            {tabItems.map((tab, index) => (
-              <Tab 
-                key={index} 
-                label={
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    {tab.icon}
-                    <span>{tab.label}</span>
+        {/* Left Column (Job Description) */}
+        <div className="job-description-column">
+          {/* Job Header Section */}
+          <div className="job-header-card">
+            <div className="job-header-content">
+              <div className="job-company-logo">
+                {image ? (
+                  <img src={image} alt={`${jobData.employer?.user_full_name} logo`} />
+                ) : (
+                  <div className="default-company-logo">
+                    <FaBuilding />
                   </div>
-                }
-                id={`profile-tab-${index}`}
-                aria-controls={`profile-tabpanel-${index}`}
-              />
-            ))}
-          </Tabs>
-        </Box>
-        <div className="tab-content">
-          {/* Your tab content here */}
-        </div>
-        <div className="profile-grid">
-          <div className="profile-section">
-            <div className="profile-section-header">
-              <h2><span className="header-icon">🏠</span>Section 1</h2>
-            </div>
-            <div className="personal-info-content">
-              <div className="personal-details">
-                <div className="personal-details-item">
-                  <span className="icon">📧</span><span>Email: user@example.com</span>
-                </div>
-                <div className="personal-details-item">
-                  <span className="icon">📞</span><span>Phone: (123) 456-7890</span>
+                )}
+              </div>
+
+              <div className="job-title-section">
+                <h1 className="job-title">{jobData.title}</h1>
+                <h2 className="company-name">{jobData.employer?.user_full_name || 'Unknown Employer'}</h2>
+
+                <div className="job-location-date">
+                  <span className="job-location">
+                    <FaMapMarkerAlt /> {jobData.location}
+                  </span>
+                  <span className="job-posted-date">
+                    <BsClockHistory /> Posted {formatDate(jobData.postedDate)}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
-          <div className="profile-section full-width">
-            <div className="profile-section-header">
-              <h2><span className="header-icon">🧑‍🎓</span>Education</h2>
+
+          {/* Job Description Section */}
+          <div className="job-description-card">
+            <h3 className="section-title">Job Description</h3>
+            <div className="job-description-content">
+              <p>{jobData.about}</p>
             </div>
-            <div className="education-summary">
-              <div className="education-item">
-                <h3>Bachelor of Science in Computer Science</h3>
-                <p><span className="icon">🏛️</span>University Name</p>
-                <p><span className="icon">📅</span>Graduation Year</p>
+
+            <div className="responsibilities-section">
+              <h4 className="subsection-title">Key Responsibilities</h4>
+              <ul className="responsibilities-list">
+                {jobData.responsibility?.split('\n').map((item, index) => (
+                  item.trim() && <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="apply-deadline">
+              <div className="deadline-icon">
+                <MdDateRange />
+              </div>
+              <div className="deadline-content">
+                <span className="deadline-label">Apply Before:</span>
+                <span className="deadline-date">{jobData.applyBefore}</span>
               </div>
             </div>
-            <div className="education-table-container">
-              <table className="education-table">
-                <thead>
-                  <tr>
-                    <th><span className="icon">🏛️</span>Institution</th>
-                    <th><span className="icon">🎓</span>Degree</th>
-                    <th><span className="icon">📅</span>Year</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>University Name</td>
-                    <td>Bachelor of Science in Computer Science</td>
-                    <td>Graduation Year</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="education-cards">
-              <div className="education-card">
-                <div className="education-card-header">
-                  <h3>Bachelor of Science in Computer Science</h3>
+          </div>
+        </div>
+
+        {/* Right Column (Sidebar) */}
+        <div className="job-sidebar-column">
+          {/* Job Highlights Card */}
+          <div className="job-highlights-card">
+            <h3 className="highlights-title">Job Highlights</h3>
+            <div className="job-highlights-grid">
+              <div className="highlight-item">
+                <div className="highlight-icon">
+                  <BsBriefcase />
                 </div>
-                <div className="education-card-content">
-                  <p><span className="icon">🏛️</span>University Name</p>
-                  <p><span className="icon">📅</span>Graduation Year</p>
+                <div className="highlight-content">
+                  <span className="highlight-label">Job Type</span>
+                  <span className="highlight-value">{jobData.jobtype}</span>
+                </div>
+              </div>
+
+              <div className="highlight-item">
+                <div className="highlight-icon">
+                  <MdWorkOutline />
+                </div>
+                <div className="highlight-content">
+                  <span className="highlight-label">Experience</span>
+                  <span className="highlight-value">{jobData.experience}</span>
+                </div>
+              </div>
+
+              <div className="highlight-item">
+                <div className="highlight-icon">
+                  <MdCurrencyRupee />
+                </div>
+                <div className="highlight-content">
+                  <span className="highlight-label">Salary</span>
+                  <span className="highlight-value">{jobData.lpa} LPA</span>
+                </div>
+              </div>
+
+              <div className="highlight-item">
+                <div className="highlight-icon">
+                  <MdLocationOn />
+                </div>
+                <div className="highlight-content">
+                  <span className="highlight-label">Work Mode</span>
+                  <span className="highlight-value">{jobData.jobmode}</span>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Company Information Card */}
+          <div className="company-info-card">
+            <h3 className="section-title">About the Company</h3>
+            <div className="company-profile">
+              <div className="company-logo-name">
+                {image ? (
+                  <img src={image} alt={`${jobData.employer?.user_full_name} logo`} className="company-logo" />
+                ) : (
+                  <div className="default-company-logo large">
+                    <FaBuilding />
+                  </div>
+                )}
+                {/*<h4 className="company-name-large">{jobData.employer?.user_full_name || 'Unknown'}</h4>*/}
+              </div>
+
+              <div className="company-description">
+                <p>{jobData.employer?.about || 'No information available about this company.'}</p>
+              </div>
+
+              <div className="company-details-grid">
+                {jobData.employer?.headquarters && (
+                  <div className="company-detail-item">
+                    <div className="detail-icon">
+                      <FaBuilding />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Headquarters</span>
+                      <span className="detail-value">{jobData.employer.headquarters}</span>
+                    </div>
+                  </div>
+                )}
+
+                {jobData.employer?.address && (
+                  <div className="company-detail-item">
+                    <div className="detail-icon">
+                      <FaMapMarkerAlt />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Address</span>
+                      <span className="detail-value">{jobData.employer.address}</span>
+                    </div>
+                  </div>
+                )}
+
+                {jobData.employer?.website_link && (
+                  <div className="company-detail-item">
+                    <div className="detail-icon">
+                      <FaGlobe />
+                    </div>
+                    <div className="detail-content">
+                      <span className="detail-label">Website</span>
+                      <a href={jobData.employer.website_link} target="_blank" rel="noopener noreferrer" className="website-link">
+                        {jobData.employer.website_link}
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Apply Button in Sidebar */}
+          <div className="apply-now-button-container">
+            <button
+              className="apply-now-button"
+              onClick={handleApplyJob}
+              disabled={isApplying}
+            >
+              {isApplying ? 'Applying...' : 'Apply Now'}
+            </button>
           </div>
         </div>
       </div>
-    );
-  };
-  
-  export default Profile;
-  
+    </div>
+  );
+}
+
+export default JobDetail;

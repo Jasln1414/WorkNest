@@ -1,24 +1,44 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import JobCard from './utilities/Jobcard';
-import SearchBox from './utilities/SearchBox';
 import Pagination from './utilities/Paginations';
-import '../../Styles/FindJob.css';
+import BlinkingArrow from './utilities/BlinkingArow';
+import SearchBar from './utilities/SearchBox';
+import QuickFilterDropdowns from './utilities/Filter';
+import '../../Styles/LandingPage.css';
+import '../../Styles/USER/Home.css';
+import { Link } from "react-router-dom"; // Add this import
 
 function CandidateHome() {
   const baseURL = 'http://127.0.0.1:8000';
   const [jobData, setJobData] = useState([]);
-  const [filterData, setFilterData] = useState([]); // State for filtered data
-  const [action, setAction] = useState(false); // State to track if filtering is applied
+  const [filteredJobs, setFilteredJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchPerformed, setSearchPerformed] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const [searchParams, setSearchParams] = useState({
+    keyword: '',
+    location: '',
+  });
+
+  const [filters, setFilters] = useState({
+    jobType: '',
+    jobMode: '',
+    experience: '',
+    salaryRange: '',
+    location: '',
+  });
 
   const itemsPerPage = 6;
   const token = localStorage.getItem('access');
 
-  // Fetch job data
-  const fetchJobData = useCallback(async () => {
+  // Fetch all jobs on component mount
+  const fetchAllJobs = useCallback(async () => {
+    setLoading(true);
+    setSearchPerformed(false);
     try {
       const response = await axios.get(`${baseURL}/api/empjob/getAlljobs/`, {
         headers: {
@@ -29,8 +49,10 @@ function CandidateHome() {
       });
 
       if (response.status === 200) {
-        setJobData(response.data);
-        setFilterData(response.data); // Initialize filterData with all jobs
+        const jobs = Array.isArray(response.data) ? response.data : [];
+        console.log("Fetched Jobs:", jobs); // Debugging line
+        setJobData(jobs);
+        setFilteredJobs(jobs);
         setError(null);
       } else {
         setError('Failed to fetch job data. Please try again later.');
@@ -41,110 +63,181 @@ function CandidateHome() {
     } finally {
       setLoading(false);
     }
-  }, [baseURL, token]);
+  }, [token]);
 
-  useEffect(() => {
-    fetchJobData();
-  }, [fetchJobData]);
+  // Handle search with filters
+  const handleSearch = useCallback(() => {
+    if (isSearching) return;
 
-  // Handle pagination
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setIsSearching(true);
+    setLoading(true);
+    setSearchPerformed(true);
+    setCurrentPage(1);
+
+    const queryParams = new URLSearchParams();
+
+    // Add search parameters
+    if (searchParams.keyword) queryParams.append('search', searchParams.keyword);
+    if (searchParams.location) queryParams.append('location', searchParams.location);
+
+    // Add filter parameters
+    if (filters.jobType) queryParams.append('jobtype', filters.jobType);
+    if (filters.jobMode) queryParams.append('jobmode', filters.jobMode);
+    if (filters.experience) queryParams.append('experience', filters.experience);
+    if (filters.salaryRange) queryParams.append('salary', filters.salaryRange);
+    if (filters.location && !searchParams.location) queryParams.append('location', filters.location);
+
+    // Execute the search
+    axios
+      .get(`${baseURL}/api/empjob/search/?${queryParams.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          let jobs = [];
+          if (Array.isArray(response.data)) {
+            jobs = response.data;
+          } else if (response.data.results && Array.isArray(response.data.results)) {
+            jobs = response.data.results;
+          } else if (typeof response.data === 'object' && Object.keys(response.data).length > 0) {
+            jobs = Object.values(response.data);
+          }
+          setFilteredJobs(jobs);
+          setError(null);
+        } else {
+          setError('Failed to fetch job data. Please try again later.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching job data:', error);
+        if (error.response && error.response.status === 500) {
+          setError('Server error. There might be an issue with your search criteria.');
+          setFilteredJobs(jobData); // Fall back to showing all jobs
+        } else {
+          setError('An error occurred while fetching job data. Please try again later.');
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+        setIsSearching(false);
+      });
+  }, [searchParams, filters, token, jobData, isSearching, baseURL]);
+
+  // Reset all filters
+  const resetFilters = () => {
+    setFilters({
+      jobType: '',
+      jobMode: '',
+      experience: '',
+      salaryRange: '',
+      location: '',
+    });
+    handleSearch(); // Trigger search after reset
   };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentJobs = action
-    ? filterData.slice(indexOfFirstItem, indexOfLastItem) // Use filtered data if action is true
-    : jobData.slice(indexOfFirstItem, indexOfLastItem); // Use all jobs otherwise
-  const totalPages = Math.ceil((action ? filterData.length : jobData.length) / itemsPerPage);
+  useEffect(() => {
+    fetchAllJobs();
+  }, [fetchAllJobs]);
+
+  const handleSearchInputChange = (e) => {
+    const { name, value } = e.target;
+    setSearchParams((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const getCurrentJobs = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredJobs.slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
 
   if (loading) {
     return (
-      <div className="ch-find-job-page">
-        <div className="ch-loading-container">
-          <div className="ch-spinner"></div>
-          <p>Loading...</p>
+      <div className="find-job-page-h1233">
+        <div className="loading-container-h1233">
+          <div className="spinner-h1233"></div>
+          <p>Loading job listings...</p>
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="ch-find-job-page">
-        <div className="ch-error-message">{error}</div>
-      </div>
-    );
-  }
-
-  if (jobData.length === 0 || (action && filterData.length === 0)) {
-    return (
-      <div className="ch-find-job-page">
-        <div className="ch-no-jobs-message">No jobs found.</div>
       </div>
     );
   }
 
   return (
-    <div className="ch-find-job-page">
-      {/* Main Content */}
-      <div className="ch-main-content">
-        {/* Search Bar */}
-        <div className="ch-search-box-container">
-          <SearchBox
-            jobData={jobData}
-            setFilterData={setFilterData}
-            setAction={setAction}
-          />
+    <div className="find-job-page-h1233">
+      <div className="find-job-header-h1233">
+        <h1>Find Your Next Opportunity</h1>
+        <p>Browse through hundreds of job listings tailored for you</p>
+      </div>
+
+      <SearchBar
+        searchParams={searchParams}
+        handleSearchInputChange={handleSearchInputChange}
+        handleSearch={handleSearch}
+      />
+
+      <QuickFilterDropdowns
+        filters={filters}
+        setFilters={setFilters}
+        handleSearch={handleSearch}
+        resetFilters={resetFilters}
+      />
+
+      {error && (
+        <div className="error-container-h1233">
+          <p className="error-text-h1233">{error}</p>
+        </div>
+      )}
+
+      <div className="jobs-content-area">
+        <div className="search-status">
+          <p>{filteredJobs.length} jobs found</p>
+          {searchPerformed && filteredJobs.length === 0 && (
+            <button onClick={fetchAllJobs} className="view-all-jobs-button">
+              View All Available Jobs
+            </button>
+          )}
         </div>
 
-        {/* Job Listings */}
-        <div className="ch-job-cards-container">
-          {currentJobs.map((job) => (
-            <JobCard
-              key={`${job.id}-${job.title}`}
-              id={job.id}
-              img={job.employer.profile_pic || 'default-profile.png'} 
-              title={job.title}
-              posted={job.posteDate}
-              applybefore={job.applyBefore}
-              empname={job.employer.user_full_name}
-              jobtype={job.jobtype}
-              salary={job.lpa}
-              experience={job.experience}
-              location={job.location}
-              about={job.about}
-              Responsibility={job.Responsibility}
-              cardClass="ch-job-card"
-              headerClass="ch-card-header"
-              profileImgClass="ch-profile-img"
-              titleClass="ch-card-title"
-              companyClass="ch-company-name"
-              detailsClass="ch-card-details"
-              detailItemClass="ch-detail-item"
-              iconClass="ch-detail-icon"
-              textClass="ch-detail-text"
-              footerClass="ch-card-footer"
-              tagsClass="ch-tags-container"
-              tagClass="ch-tag"
-              buttonClass="ch-apply-button"
-              About="about"
-            />
-          ))}
+        <div className="job-cards-container-h1233">
+          {getCurrentJobs().length > 0 ? (
+            getCurrentJobs().map((job) => {
+              console.log("Job Data:", job); // Debugging line
+              return (
+                <JobCard 
+                id={job.id} 
+                img={job.employer.profile_pic} 
+                title={job.title} 
+                posted={job.posteDate} // Pass actual date
+                applybefore={job.applyBefore} 
+                empname={job.employer.name} 
+                experience={job.experience} 
+                jobmode={job.jobmode} 
+                jobtype={job.jobtype} 
+                location={job.location} 
+                salary={job.lpa} 
+              />
+              
+              );
+            })
+          ) : (
+            <div className="no-jobs-message-h1233">
+              <p>No jobs match your current filters</p>
+              <BlinkingArrow onClick={fetchAllJobs} />
+              <p>Click to see all available jobs</p>
+            </div>
+          )}
         </div>
 
-        {/* Pagination */}
-        <div className="ch-pagination-container-find-job">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-            controlClass="ch-pagination-control"
-            buttonClass="ch-page-button"
-            activeClass="ch-active"
-          />
-        </div>
+        {totalPages > 1 && (
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        )}
       </div>
     </div>
   );

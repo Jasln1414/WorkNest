@@ -117,7 +117,7 @@ function EmployerHeader() {
                     src={profile_image} 
                     alt="Profile" 
                     className="profile-image" 
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} 
+                    style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover' }} 
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = logoimg; // Fallback image if profile pic fails to load

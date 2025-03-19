@@ -1,197 +1,296 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Tabs, Tab, Box } from '@mui/material';
-import '../../Styles/Findjob.css';
+import { Link } from "react-router-dom";
+import "../../styles/USER/Home.css";
+import EditProfileModal from "./utilities/EditModal";
 
 function Profile() {
   const baseURL = "http://127.0.0.1:8000/";
-  const token = localStorage.getItem('access');
+  const token = localStorage.getItem("access");
   const [profileData, setProfileData] = useState({});
   const [eduData, setEduData] = useState([]);
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState(0);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State for modal visibility
+
+  // Function to fetch profile data
+  const fetchProfileData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(baseURL + "api/empjob/profile/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.status === 200) {
+        setProfileData(response.data.data || {});
+        setEduData(response.data.data?.education || []);
+        setError(null);
+      }
+    } catch (error) {
+      console.error(error);
+      setError("Failed to load profile data. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to refresh profile data after updates
+  const refreshProfile = () => {
+    fetchProfileData();
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(baseURL + 'api/empjob/profile/', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        if (response.status === 200) {
-          console.log("API Response:", response.data); // Log the response
-          setProfileData(response.data.data || {});
-          setEduData(response.data.data?.education || []);
-          console.log("Education data set:", response.data.data?.education); // Debug
-          setError(null);
-        }
-      } catch (error) {
-        console.error(error);
-        setError("Failed to load profile data. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchProfileData();
   }, [token]);
 
   useEffect(() => {
     if (profileData?.skills) {
-      const value = profileData.skills.split(',').map(skill => skill.trim());
-      console.log("Skills parsed:", value); // Debug
+      const value = profileData.skills.split(",").map((skill) => skill.trim());
       setSkills(value);
     } else {
       setSkills([]);
-      console.log("No skills found in profile data"); // Debug
     }
   }, [profileData]);
 
-  // Debug log for tab state changes
-  useEffect(() => {
-    console.log("Current active tab:", activeTab);
-    console.log("Education data:", eduData);
-    console.log("Skills data:", skills);
-  }, [activeTab, eduData, skills]);
+  // Function to handle the edit button click
+  const handleEditProfile = () => {
+    setIsEditModalOpen(true);
+  };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loading-container">
+        <h3>Loading profile information...</h3>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return (
+      <div className="error-container">
+        <h3>Error</h3>
+        <p>{error}</p>
+        <button className="error-button" onClick={() => window.location.reload()}>
+          Try Again
+        </button>
+      </div>
+    );
   }
 
-  const handleTabChange = (event, newValue) => {
-    console.log("Tab changed to:", newValue); // Log the new tab value
-    setActiveTab(newValue);
-  };
-
-  
   return (
-    <div className="profile-container">
-      {/* Tabs */}
-      <Box sx={{ width: '100%' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs 
-            value={activeTab} 
-            onChange={handleTabChange}
-            aria-label="profile tabs"
-            variant="fullWidth"
-            sx={{
-              '& .MuiTab-root': {
-                textTransform: 'none',
-                fontSize: '16px',
-                minWidth: '100px',
-                padding: '10px 6px',
-                margin: '10px 16px'
-              },
-              '& .Mui-selected': {
-                color: '#007bff !important',
-                fontWeight: 'bold'
-              },
-              '& .MuiTabs-indicator': {
-                backgroundColor: '#007bff'
+    <div className="ep-main-container">
+      {/* Toggle Button for Small Screens */}
+      <div className="ep-sidebar-fixed" id="sidebar">
+        <h2 className="main-head">Candidate Profile</h2>
+        <nav className="sidebar-nav">
+          <ul>
+            <li>
+              <Link to="/candidate/applyedjobs">Applied Jobs</Link>
+            </li>
+            <li>
+              <Link to="/candidate/savedjobs">Saved Jobs</Link>
+            </li>
+            <li>
+              <Link to="/candidate/profile">Profile</Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      {/* Profile Details Section */}
+      <div className="ep-content-wrapper">
+        {/* Profile header with avatar and name */}
+        <div className="ep-header-section">
+          <div className="ep-avatar-wrapper">
+            <img
+              src={
+                profileData.profile_pic
+                  ? `${baseURL}${profileData.profile_pic}`
+                  : "/default-avatar.png"
               }
-            }}
-          >
-            <Tab label="Profile" />
-            <Tab label="Skills" />
-            <Tab label="Education" />
-          </Tabs>
-        </Box>
-        
-        {/* Profile Tab */}
-        {activeTab === 0 && (
-          <Box sx={{ p: 3 }}>
-            <div className="profileContainer">
-              <div className="profileHeader">
-                <img 
-                  src={profileData.profile_pic ? `${baseURL}${profileData.profile_pic}` : "/default-avatar.png"} 
-                  alt="Profile" 
-                  className="profileImage" 
-                />
-                <div className="profileText">
-                  <h2>{profileData.user_name || 'N/A'}</h2>
-                  <p><strong>Email:</strong> {profileData.email || 'N/A'}</p>
-                  <p><strong>Phone:</strong> {profileData.phone || 'N/A'}</p>
-                  <p><strong>Location:</strong> {profileData.place || 'N/A'}</p>
+              alt="Profile"
+              className="ep-avatar-image"
+            />
+          </div>
+          <div>
+            <h1 className="ep-company-title">{profileData.user_name || "N/A"}</h1>
+            <p className="ep-data-text">
+              {profileData.place || "Location not specified"}
+            </p>
+          </div>
+          {/* Add Edit Profile Button */}
+          <div className="ep-edit-button-container">
+            <button className="ep-edit-button" onClick={handleEditProfile}>
+              Edit Profile
+            </button>
+          </div>
+        </div>
+
+        {/* Personal Information Section */}
+        <div className="ep-info-row">
+          <div className="ep-detail-block">
+            <div className="ep-block-header">
+              <h3 className="ep-block-heading">Personal Information</h3>
+            </div>
+
+            <div className="ep-detail-row">
+              <div className="ep-icon">📧</div>
+              <div className="ep-data-text">
+                <strong>Email:</strong> {profileData.email || "N/A"}
+              </div>
+            </div>
+
+            <div className="ep-detail-row">
+              <div className="ep-icon">📱</div>
+              <div className="ep-data-text">
+                <strong>Phone:</strong> {profileData.phone || "N/A"}
+              </div>
+            </div>
+
+            <div className="ep-detail-row">
+              <div className="ep-icon">🎂</div>
+              <div className="ep-data-text">
+                <strong>Date of Birth:</strong> {profileData.dob || "N/A"}
+              </div>
+            </div>
+
+            <div className="ep-detail-row">
+              <div className="ep-icon">👤</div>
+              <div className="ep-data-text">
+                <strong>Gender:</strong> {profileData.Gender || "N/A"}
+              </div>
+            </div>
+
+            {profileData.resume && (
+              <div className="ep-detail-row">
+                <div className="ep-icon">📄</div>
+                <div className="ep-data-text">
+                  <strong>Resume:</strong>
+                  <a
+                    href={`${baseURL}${profileData.resume}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ep-external-link"
+                  >
+                    Download
+                  </a>
                 </div>
               </div>
-              <div className="profileDetails">
-                <p><strong>DOB:</strong> {profileData.dob || 'N/A'}</p>
-                {profileData.resume && (
-                  <p><strong>Resume:</strong>
-                    <a href={`${baseURL}${profileData.resume}`} target="_blank" rel="noopener noreferrer" className="profileLinks">
-                      Download
-                    </a>
-                  </p>
-                )}
-              </div>
-            </div>
-          </Box>
-        )}
-        
-        {/* Skills Tab */}
-        {activeTab === 1 && (
-          <Box sx={{ p: 3 }}>
-            <div className="skillsContainer">
-              <h3>Skills</h3>
-              <div className="skillsList">
-                {skills.length > 0 ? (
-                  skills.map((skill, index) => (
-                    <span key={index} className="skillTag">
-                      {skill}
-                    </span>
-                  ))
-                ) : (
-                  <p>No skills listed.</p>
-                )}
-              </div>
-            </div>
-          </Box>
-        )}
-        
-        {/* Education Tab */}
-        {activeTab === 2 && (
-          <Box sx={{ p: 3 }}>
-            <div className="educationContainer">
-              <h3>Educational Details</h3>
-              {eduData && eduData.length > 0 ? (
-                <table className="educationTable">
-                  <thead>
-                    <tr>
-                      <th>Education</th>
-                      <th>College</th>
-                      <th>Specialization</th>
-                      <th>Completed</th>
-                      <th>Mark</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {eduData.map((edu, index) => (
-                      <tr key={index}>
-                        <td>{edu.education || 'N/A'}</td>
-                        <td>{edu.college || 'N/A'}</td>
-                        <td>{edu.specilization || 'N/A'}</td>
-                        <td>{edu.completed || 'N/A'}</td>
-                        <td>{edu.mark || 'N/A'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            )}
+          </div>
+        </div>
+
+        {/* Social Links */}
+        <div className="ep-detail-block ep-full-width">
+          <div className="ep-block-header">
+            <h3 className="ep-block-heading">Social Links</h3>
+          </div>
+          <div className="ep-detail-row">
+            <div className="ep-icon">🔗</div>
+            <div className="ep-data-text">
+              <strong>LinkedIn:</strong>{" "}
+              {profileData.linkedin ? (
+                <a
+                  href={profileData.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ep-external-link"
+                >
+                  {profileData.linkedin}
+                </a>
               ) : (
-                <p>No educational details available.</p>
+                "N/A"
               )}
             </div>
-          </Box>
-        )}
-      </Box>
+          </div>
+          <div className="ep-detail-row">
+            <div className="ep-icon">💻</div>
+            <div className="ep-data-text">
+              <strong>GitHub:</strong>{" "}
+              {profileData.github ? (
+                <a
+                  href={profileData.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ep-external-link"
+                >
+                  {profileData.github}
+                </a>
+              ) : (
+                "N/A"
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Skills Section */}
+        <div className="ep-detail-block ep-full-width">
+          <div className="ep-block-header">
+            <h3 className="ep-block-heading">Skills</h3>
+          </div>
+          <div className="ep-skills-container">
+            {skills.length > 0 ? (
+              skills.map((skill, index) => (
+                <span key={index} className="ep-skill-tag">
+                  {skill}
+                </span>
+              ))
+            ) : (
+              <p className="ep-no-data">No skills added yet</p>
+            )}
+          </div>
+        </div>
+
+       
+
+
+
+       {/* Education Section */}
+<div className="ep-detail-block ep-full-width">
+  <div className="ep-block-header">
+    <h3 className="ep-block-heading">Education</h3>
+  </div>
+  {eduData.length > 0 ? (
+    <table className="ep-education-table">
+      <thead>
+        <tr>
+          <th>Education</th>
+          <th>Specialization</th>
+          <th>College</th>
+          <th>Year Completed</th>
+          <th>Mark</th>
+        </tr>
+      </thead>
+      <tbody>
+        {eduData.map((edu, index) => (
+          <tr key={index} className="ep-education-item">
+            <td>{edu.education}</td>
+            <td>{edu.specilization}</td>
+            <td>{edu.college}</td>
+            <td>{new Date(edu.completed).getFullYear()}</td>
+            <td>{edu.mark}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p className="ep-no-data">No education details added yet</p>
+  )}
+</div>
+</div>
+      {/* Edit Profile Modal */}
+      {isEditModalOpen && (
+        <EditProfileModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          profileData={profileData}
+          refreshProfile={refreshProfile}
+        />
+      )}
     </div>
   );
 }

@@ -15,6 +15,8 @@
   color: #e6ebf0; /* Text color */
   overflow-y: auto; /* Enable scrolling if content overflows */
   border-radius: 5px;
+  display:flex;
+  flex-direction:column
 }
 
 /* Sidebar hover effect */
@@ -38,7 +40,7 @@
   text-decoration: none; /* Remove underline */
   font-size: 16px;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   transition: background-color 0.3s ease; /* Smooth transition */
 }
 
@@ -64,10 +66,11 @@
 }
 
 /* Post job button styles */
-.employer-post-job-button {
+.employer-post-job-button-sidebar {
   width: 150px; /* Increased width for better appearance */
   padding: 15px;
   background-color: #e6ebf0; /* Light background color */
+  display:flex;
   color: #100808; /* Dark text color */
   font-size: 16px;
   font-weight: 600;
@@ -76,6 +79,9 @@
   box-shadow: 0 4px 8px rgba(235, 230, 230, 0.1);
   transition: all 0.3s ease;
   cursor: pointer;
+
+  
+  
 }
 
 .employer-post-job-button:hover {
@@ -109,6 +115,9 @@
 /* Additional styles for icons */
 .icon {
   color: #100808; /* Dark color for icons */
+  margin-right:10px;
+  margin-top:3px;
+  
 }
 
 .icon-1 {

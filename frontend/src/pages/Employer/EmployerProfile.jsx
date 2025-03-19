@@ -8,7 +8,7 @@ import { set_user_basic_details } from '../../Redux/UserDetails/userBasicDetails
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { ProfileValidationSchema, initialValues } from '../../validation/EmpProfile';
 import ProfilepicModal from './ProfilepicModal';
-import EmployerHeader from './EmployerHeader'; // Import the EmployerHeader component
+//import EmployerHeader from './EmployerHeader';  Import the EmployerHeader component
 import '../../Styles/EmpProfile.css';
 
 function EmpProfileCreation() {

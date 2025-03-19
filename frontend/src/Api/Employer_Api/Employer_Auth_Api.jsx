@@ -65,6 +65,8 @@ export const ResendOtpApi = async (data) => {
 
 import {jwtDecode} from "jwt-decode";
 
+import Swal from 'sweetalert2'; // Import SweetAlert
+
 export const EmployerLoginApi = async (formData, dispatch, set_Authentication, navigate) => {
   console.log("📌 FormData:", formData);
 
@@ -77,7 +79,11 @@ export const EmployerLoginApi = async (formData, dispatch, set_Authentication, n
 
       if (!access_token || !refresh_token) {
         console.error("❌ Missing authentication tokens!");
-        toast.error("Authentication failed. Please try again.");
+        Swal.fire({
+          icon: 'error',
+          title: 'Authentication Failed',
+          text: 'Authentication failed. Please try again.',
+        });
         return { success: false };
       }
 
@@ -111,8 +117,14 @@ export const EmployerLoginApi = async (formData, dispatch, set_Authentication, n
         localStorage.setItem("profilePic", profilePic);
       }
 
-      // Success toast
-      toast.success("✅ Login successful!", { position: "top-center" });
+      // Success SweetAlert
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Successful!',
+        text: 'You have successfully logged in.',
+        timer: 2000, // Auto-close after 2 seconds
+        showConfirmButton: false,
+      });
 
       // Redirect user based on profile completion status
       if (user_data?.completed === false) {
@@ -124,7 +136,11 @@ export const EmployerLoginApi = async (formData, dispatch, set_Authentication, n
       return { success: true };
     } else {
       console.warn("⚠️ Unexpected status code:", response.status);
-      toast.error("Login failed. Please try again.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: 'Login failed. Please try again.',
+      });
       return { success: false };
     }
   } catch (error) {
@@ -132,15 +148,67 @@ export const EmployerLoginApi = async (formData, dispatch, set_Authentication, n
 
     if (error.response) {
       console.error("🚨 Error Response:", error.response);
-      toast.error(`Login failed: ${error.response.data.detail || "Invalid credentials"}`);
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: error.response.data.detail || 'You have to approved by admin.',
+      });
     } else if (error.request) {
       console.error("📡 No response from server:", error.request);
-      toast.error("Server is not responding. Please try again later.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Server Error',
+        text: 'Server is not responding. Please try again later.',
+      });
     } else {
       console.error("⚙️ Error setting up request:", error.message);
-      toast.error("Something went wrong. Please try again.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong. Please try again.',
+      });
     }
 
+    return { success: false };
+  }
+};
+
+
+export const UserVerifyOtpApi = async (otpData) => {
+  try {
+    const response = await BaseApi.post("/api/account/verify-otp/", otpData);
+
+    if (response.status === 200 || response.status === 201) {
+      return { success: true, data: response.data };
+    } else {
+      toast.error("Invalid OTP. Please try again.");
+      return { success: false };
+    }
+  } catch (error) {
+    if (error.response) {
+      console.error("OTP verification error response:", error.response);
+      toast.error(`Error: ${error.response.data.error || "An error occurred. Please try again."}`);
+    } else {
+      console.error("OTP verification error:", error);
+      toast.error("An error occurred. Please try again.");
+    }
+    return { success: false };
+  }
+};
+
+export const UserResendOtpApi = async (data) => {
+  try {
+    const response = await BaseApi.post("/api/account/resend-otp/", data);
+
+    if (response.status === 200 || response.status === 201) {
+      return { success: true, data: response.data };
+    } else {
+      toast.error("Failed to resend OTP. Please try again.");
+      return { success: false };
+    }
+  } catch (error) {
+    console.error("Resend OTP error:", error);
+    toast.error("An error occurred. Please try again later.");
     return { success: false };
   }
 };
