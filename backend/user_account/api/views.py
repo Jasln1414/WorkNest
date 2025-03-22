@@ -4,7 +4,9 @@ from rest_framework import status
 from rest_framework.exceptions import ParseError,AuthenticationFailed
 from .serializer import *
 from .email import *
+from Empjob.api.serializer import *
 from user_account.models import *
+from Empjob.models import *
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -23,7 +25,16 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 import logging
 import logging
+from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
 
+from django.middleware.csrf import get_token
+from django.http import JsonResponse
+
+def get_csrf_token(request):
+    csrf_token = get_token(request)
+    print("CSRF Token:", csrf_token)  # Debugging
+    return JsonResponse({'csrfToken': csrf_token})
 
 logger = logging.getLogger(__name__)
 
@@ -194,6 +205,96 @@ class CurrentUser(APIView):
 
 
 
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+@method_decorator(csrf_exempt, name='dispatch')
+class EmployerProfileUpdateView(APIView):
+    permission_classes = [AllowAny]
+    
+    def put(self, request):
+        try:
+            user = request.user
+            employer = Employer.objects.get(user=user)
+            
+            # Update profile fields if provided in the request
+            if 'phone' in request.data:
+                employer.phone = request.data['phone']
+            if 'industry' in request.data:
+                employer.industry = request.data['industry']
+            if 'headquarters' in request.data:
+                employer.headquarters = request.data['headquarters']
+            if 'address' in request.data:
+                employer.address = request.data['address']
+            if 'about' in request.data:
+                employer.about = request.data['about']
+            if 'website_link' in request.data:
+                employer.website_link = request.data['website_link']
+            
+            # Handle profile picture update
+            if 'profile_pic' in request.FILES:
+                # Delete old profile picture if it exists
+                if employer.profile_pic and os.path.isfile(employer.profile_pic.path):
+                    os.remove(employer.profile_pic.path)
+                employer.profile_pic = request.FILES['profile_pic']
+            
+            # Save the updated employer profile
+            employer.save()
+            
+            return Response(
+                {"status": "success", "message": "Profile updated successfully"},
+                status=status.HTTP_200_OK
+            )
+        
+        except Employer.DoesNotExist:
+            return Response(
+                {"status": "error", "message": "Employer profile not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"status": "error", "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+@method_decorator(csrf_exempt, name='dispatch')
+class EmployerProfileDeleteView(APIView):
+    permission_classes = [AllowAny]
+    
+    def delete(self, request):
+        try:
+            user = request.user
+            employer = Employer.objects.get(user=user)
+            
+            # Delete profile picture if it exists
+            if employer.profile_pic and os.path.isfile(employer.profile_pic.path):
+                os.remove(employer.profile_pic.path)
+            
+            # Delete the employer profile
+            employer.delete()
+            
+            # Optionally, delete the user account as well
+            # user.delete()
+            
+            return Response(
+                {"status": "success", "message": "Profile deleted successfully"},
+                status=status.HTTP_200_OK
+            )
+        
+        except Employer.DoesNotExist:
+            return Response(
+                {"status": "error", "message": "Employer profile not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"status": "error", "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 

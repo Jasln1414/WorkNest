@@ -5,6 +5,7 @@ from .views import *
 urlpatterns = [
     path('chat-messages/<int:candidate_id>/<int:employer_id>/', ChatMessagesAPIView.as_view(), name='chat-messages'),
     path('chats/',views.ChatsView.as_view(),name='chats'),
-   
+    path('notificationStatus/',views.NotificationStatus.as_view(),name='notification status'),
+    
     
 ]

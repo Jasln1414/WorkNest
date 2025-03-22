@@ -88,7 +88,11 @@ class ProfileView(APIView):
 
         # If neither Candidate nor Employer exists, return 404
         return Response({"message": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+
 class GetJob(APIView):
+
     permission_classes = [IsAuthenticated]
     def get(self,request):
        
@@ -112,18 +116,50 @@ class GetJob(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+
 class GetAllJob(APIView):
-    permission_classes=[IsAuthenticated]
-    def get(self,request):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
         try:
-            #jobs=Jobs.objects.filter(active=True)
-            jobs=Jobs.objects.all()
-            print("jobssssssssssssssss",jobs)
-            serializer=JobSerializer(jobs,many=True)
+            # Check if the user is an employer
+            if request.user.user_type == "employer":
+                # Fetch the employer instance linked to the user
+                employer = Employer.objects.get(user=request.user)
+                # Filter jobs by the employer
+                jobs = Jobs.objects.filter(employer=employer)
+            else:
+                # User is a candidate or admin: return all jobs
+                jobs = Jobs.objects.all()
+
+            # Debugging: Print the jobs queryset
+            print("Jobs Queryset:", jobs)
+
+            serializer = JobSerializer(jobs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Employer.DoesNotExist:
+            return Response({"error": "Employer profile not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            print(e)
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print("Error:", e)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+
+
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import JsonResponse
+
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return JsonResponse({'detail': 'CSRF cookie set'})
+
+
+import os
+
+
+
+
+
 
 class GetJobDetail(APIView):
     permission_classes = [IsAuthenticated]
@@ -358,41 +394,25 @@ class GetApplicationjob(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
         
 
-        
 
-       
-        
 
-        
-"""class ApplicationStatusView(APIView):
-    permission_classes=[IsAuthenticated]
-    def post(self,request,job_id):
+
+class ApplicationStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, job_id):
         action = request.data.get('action')
         try:
-            applyedjob=ApplyedJobs.objects.get(id=job_id)
-            if applyedjob:
-                applyedjob.status = action
-                applyedjob.save()
+            applied_job = ApplyedJobs.objects.get(id=job_id)
+            if applied_job:
+                # Update the status based on the action
+                applied_job.status = action
+                applied_job.save()
 
-                message = f'The status of your application for job {job_id} has been changed to {action}.'
-                CandidateNotification.objects.create(
-                    user=applyedjob.candidate,
-                    message=message
-                )
-
-                channel_layer = get_channel_layer()
-                async_to_sync(channel_layer.group_send)(
-                    f'notifications_{applyedjob.candidate.id}',  
-                    {
-                        'type': 'send_notification',
-                        'message': f'The status of your application for job {job_id} has been changed to {action}.'
-                    }
-                )
-
-                return Response({"message":"Status changed"},status=status.HTTP_200_OK)
+                return Response({"message": "Status changed"}, status=status.HTTP_200_OK)
             else:
-                return Response({"message":"no job available"},status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+                return Response({"message": "No job available"}, status=status.HTTP_204_NO_CONTENT)
+        except ApplyedJobs.DoesNotExist:
+            return Response({"error": "Job application not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response ({"error":str(e)},status=status.HTTP_404_NOT_FOUND)"""
-
-
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

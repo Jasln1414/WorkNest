@@ -3,7 +3,7 @@ from django.urls import path
 from .views import (
     EmployerRegisterView, OtpVarificationView, ResendOtpView, CurrentUser, EmpLoginView, EmployerProfileCreatView,
     CandidateRegisterView, AuthCandidateView, UserDetails, CandidateProfileCreation, CandidateLoginView,AdminLoginView,AuthCandidateView,
-    AuthEmployerView,ForgotPassView,ResetPassword,ProfileDeleteView,ProfileUpdateView,
+    AuthEmployerView,ForgotPassView,ResetPassword,ProfileDeleteView,ProfileUpdateView,EmployerProfileDeleteView,EmployerProfileUpdateView
 )
 
 from rest_framework_simplejwt.views import (
@@ -33,6 +33,10 @@ urlpatterns = [
     path('verify-otp/', OtpVarificationView.as_view(), name="otp_verify"),
     path('reset_password/', ResetPassword.as_view(), name="reset_password"),
     path('resend-otp/', ResendOtpView.as_view(), name="resend_otp"),
+
+    path('employer/profile/update/', EmployerProfileUpdateView.as_view(), name='employer-profile-update'),
+    path('employer/profile/delete/', EmployerProfileDeleteView.as_view(), name='employer-profile-delete'),
+
 
 
     

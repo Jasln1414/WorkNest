@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'user_account',
     'Empjob',
     'Admin',
+     'channels',
      'allauth',
     'allauth.account',
     'django_filters',
@@ -51,13 +53,16 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'chat',
 ]
-
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -65,6 +70,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'backend.urls'
+# Point to your ASGI application
+ASGI_APPLICATION = 'backend.asgi.application'
+LANGUAGE_SESSION_KEY = '_language'
 
 # CORS and CSRF settings
 CSRF_TRUSTED_ORIGINS = [
@@ -72,12 +80,21 @@ CSRF_TRUSTED_ORIGINS = [
     
 ]
 
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
+    }
+}
+# In settings.py
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     "http://localhost:3000"]
 
 
-CORS_ALLOW_CREDENTIALS = True
+
 CSRF_COOKIE_SAMESITE = 'Lax'  # Or 'None' with secure=True if cross-site
 SESSION_COOKIE_SAMESITE = 'Lax'  # Or 'None' with secure=True if cross-site
 CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to access the cookie
@@ -100,7 +117,7 @@ TEMPLATES = [
 
 AUTH_USER_MODEL = 'user_account.User'
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+#WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -132,24 +149,33 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# REST Framework settings
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',  # Optional
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 6,
-    'DEFAULT_FILTER_BACKENDS': (  # ✅ Correct placement
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
-}
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+)
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
+        'rest_framework.authentication.SessionAuthentication',       # Session Authentication
+        'rest_framework.authentication.TokenAuthentication',         # Token Authentication
+         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Require authentication for all views
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 6,  # Default page size for paginated responses
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',  # Enable Django Filter Backend
+    ],
+}
 # JWT settings
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=50),
@@ -203,6 +229,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 # settings.py
 FRONTEND_URL = 'http://localhost:5173'  # For development
 # FRONTEND_URL = 'https://yourapp.com'  # For production
+CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
 
 
 # Email settings
@@ -222,3 +249,19 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+CSRF_COOKIE_SECURE = True  # For production with HTTPS
+
+
+CSRF_COOKIE_SAMESITE = 'Lax'  # Try 'None' if using cross-origin requests
+CSRF_COOKIE_HTTPONLY = False  # Must be False to allow JavaScript to read it
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+""""
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],  # Replace with your Redis server address
+        },
+    },
+}"""

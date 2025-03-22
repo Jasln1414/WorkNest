@@ -41,3 +41,24 @@ class ChatsView(APIView):
         serializer = ChatRoomSerializer(chatroom, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class NotificationStatus(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        print("hello notifications.....................................")
+        userid = request.data.get('userid')
+        print(userid)
+    
+        try:
+            candidate = Candidate.objects.get(id=userid)
+            print(candidate)
+            notifications = CandidateNotification.objects.filter(user=userid, is_read=False)
+            print("noti",notifications)
+            for notification in notifications:
+                notification.is_read = True
+                notification.save()
+            return Response({"status": "notification status changed"}, status=status.HTTP_200_OK)
+        except Candidate.DoesNotExist:
+            return Response({"error": "Candidate not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # return Response({"status": "notification status changed"}, status=status.HTTP_200_OK)

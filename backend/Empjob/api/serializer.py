@@ -118,3 +118,24 @@ class ApplyedJobSerializer(serializers.ModelSerializer):
         candidate = Candidate.objects.get(id=obj.candidate_id)  
         return candidate.user.full_name
     
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+
