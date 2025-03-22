@@ -13,7 +13,7 @@ const ProfileDropdown = ({ userType, userProfile, onLogout }) => {
     <div className="profile-dropdown">
       <div className="profile-info">
         <img
-          src={userProfile.profile_pic || "https://via.placeholder.com/40"}
+          src={userProfile.profile_pic || "/images/default-profile.png"}
           alt="Profile"
           className="profile-pic"
         />

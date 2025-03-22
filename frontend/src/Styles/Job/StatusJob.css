@@ -1084,6 +1084,178 @@
   color: #666;
   white-space: pre-line; /* Preserve line breaks but allow text to wrap */
 }
+/* General Styles */
+.status-job-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
+.job-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
+.chat-icon {
+  display: flex;
+  justify-content: flex-end;
+  cursor: pointer;
+}
 
+.job-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.job-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.employer-name {
+  font-size: 16px;
+  color: #666;
+}
+
+.divider {
+  border-bottom: 1px solid #ddd;
+  margin: 20px 0;
+}
+
+.status-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.status-steps {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #e0e0e0;
+  position: relative;
+}
+
+.step.completed {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.step.pending {
+  background-color: #ff9800;
+  color: #fff;
+}
+
+.step.rejected {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.step-icon {
+  margin-bottom: 10px;
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.job-details {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.details-section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.section-content {
+  font-size: 16px;
+  color: #666;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .status-steps {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .job-title {
+    font-size: 20px;
+  }
+
+  .employer-name {
+    font-size: 14px;
+  }
+
+  .status-title {
+    font-size: 18px;
+  }
+
+  .step-label {
+    font-size: 12px;
+  }
+
+  .section-title {
+    font-size: 16px;
+  }
+
+  .section-content {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-job-container {
+    padding: 10px;
+  }
+
+  .job-card, .job-details {
+    padding: 15px;
+  }
+
+  .job-title {
+    font-size: 18px;
+  }
+
+  .status-title {
+    font-size: 16px;
+  }
+
+  .step-label {
+    font-size: 10px;
+  }
+
+  .section-title {
+    font-size: 14px;
+  }
+
+  .section-content {
+    font-size: 12px;
+  }
+}

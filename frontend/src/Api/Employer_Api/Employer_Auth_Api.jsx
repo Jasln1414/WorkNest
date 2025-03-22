@@ -126,11 +126,10 @@ export const EmployerLoginApi = async (formData, dispatch, set_Authentication, n
         showConfirmButton: false,
       });
 
-      // Redirect user based on profile completion status
-      if (user_data?.completed === false) {
-        navigate("/employer/Profile_creation");
+      if (response.data.user_data.completed === false) {
+        navigate('/employer/profile_creation/');
       } else {
-        navigate("/employer/EmpHome");
+        navigate('/employer/EmpHome/');
       }
 
       return { success: true };

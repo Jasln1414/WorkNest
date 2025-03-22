@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import Swal from "sweetalert2";
 import ChatModal from "./ChatModal";
-
+import Swal from "sweetalert2"; // Import SweetAlert2
+import "../../../Styles/USER/Home.css";
 
 function CandidateView({ selectedJob, setChange, current, questions }) {
-  const baseURL =  'http://127.0.0.1:8000';
+  const baseURL = 'http://127.0.0.1:8000';
   const token = localStorage.getItem("access");
   const [appStatus, setAppStatus] = useState(current.status);
   const [chat, setChat] = useState(false);
@@ -16,11 +16,7 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
   const employer_id = selectedJob.employer_id;
   const emp_name = selectedJob.employer_name;
 
-  const handlResume = () => {
-    changeStatus("Resume Viewd");
-    setAppStatus("Resume Viewd");
-  };
-
+  // Function to handle status change
   const changeStatus = async (action) => {
     try {
       const response = await axios.post(
@@ -34,12 +30,37 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
           },
         }
       );
-      console.log(response);
+      if (response.status === 200) {
+        setAppStatus(action); // Update the local state
+        // Show a success message using SweetAlert2
+        Swal.fire({
+          icon: "success",
+          title: "Status Updated",
+          text: `Application status changed to ${action}.`,
+          showConfirmButton: false,
+          timer: 1500, // Auto-close after 1.5 seconds
+        });
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error updating status:", error);
+      // Show an error message using SweetAlert2
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to update status. Please try again.",
+        showConfirmButton: false,
+        timer: 1500, // Auto-close after 1.5 seconds
+      });
     }
   };
 
+  // Function to handle resume viewing
+  const handleResume = () => {
+    changeStatus("Resume Viewed");
+    setAppStatus("Resume Viewed");
+  };
+
+  // Function to handle chat modal
   const handleChat = () => {
     setChat(true);
   };
@@ -57,9 +78,22 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
         />
       )}
 
+      {/* Action Buttons */}
       <div className="candidate-actions">
         <button
-          className="action-button reject-button"
+          className={`action-button ${appStatus === "Pending" ? "pending-button active" : "pending-button"}`}
+          onClick={() => changeStatus("Pending")}
+        >
+          Pending
+        </button>
+        <button
+          className={`action-button ${appStatus === "Accepted" ? "accept-button active" : "accept-button"}`}
+          onClick={() => changeStatus("Accepted")}
+        >
+          Accept
+        </button>
+        <button
+          className={`action-button ${appStatus === "Rejected" ? "reject-button active" : "reject-button"}`}
           onClick={() => changeStatus("Rejected")}
         >
           Reject
@@ -69,15 +103,16 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
         </button>
       </div>
 
+      {/* Candidate Profile Section */}
       <div className="candidate-info-section">
         <h2 className="section-title">Candidate Info</h2>
         <div className="candidate-profile">
           <img
-            src={baseURL + current.candidate.profile_pic}
+            src={profile_pic}
             alt="Candidate Profile"
             className="profile-image"
           />
-          <p className="candidate-name">{current.candidate.user_name}</p>
+          <p className="candidate-name">{userName}</p>
         </div>
         <div className="info-details">
           <div className="info-item">
@@ -99,6 +134,7 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
         </div>
       </div>
 
+      {/* Education Section */}
       <div className="education-info-section">
         <h2 className="section-title">Education Info</h2>
         <div className="info-details">
@@ -137,6 +173,7 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
         </div>
       </div>
 
+      {/* Links Section */}
       <div className="links-section">
         <h2 className="section-title">Links</h2>
         <div className="info-details">
@@ -174,7 +211,7 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="link"
-                onClick={handlResume}
+                onClick={handleResume}
               >
                 View Resume
               </a>

@@ -9,11 +9,11 @@ import store from "./Redux/store"; // Import your Redux store
 const clientId = '718921547648-htg9q59o6ka7j7jsp45cc4dai6olfqs5.apps.googleusercontent.com'
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+ // <React.StrictMode>
     <GoogleOAuthProvider clientId={clientId}>
       <Provider store={store}>
         <App />
       </Provider>
     </GoogleOAuthProvider>
-  </React.StrictMode>
+ // </React.StrictMode>
 );

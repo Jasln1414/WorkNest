@@ -83,23 +83,7 @@ function Profile() {
 
   return (
     <div className="ep-main-container">
-      {/* Toggle Button for Small Screens */}
-      <div className="ep-sidebar-fixed" id="sidebar">
-        <h2 className="main-head">Candidate Profile</h2>
-        <nav className="sidebar-nav">
-          <ul>
-            <li>
-              <Link to="/candidate/applyedjobs">Applied Jobs</Link>
-            </li>
-            <li>
-              <Link to="/candidate/savedjobs">Saved Jobs</Link>
-            </li>
-            <li>
-              <Link to="/candidate/profile">Profile</Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
+     
 
       {/* Profile Details Section */}
       <div className="ep-content-wrapper">

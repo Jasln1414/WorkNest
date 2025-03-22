@@ -104,8 +104,11 @@ function EmployerHeader() {
           <Link to="/candidate/messages" className="transition">
             <span>Messages</span>
           </Link>
-          <Link to="/candidate/SavedJob" className="transition">
+          <Link to="/candidate/SavedJobs" className="transition">
             <span>Saved Job</span>
+          </Link>
+          <Link to="/candidate/applyedjobs" className="transition">
+            <span>Applied Jobs</span>
           </Link>
         </div>
 

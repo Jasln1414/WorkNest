@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect,useState } from "react";
 import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
 import axios from "axios";
 import LandingPage from "./pages/LandingPage";
@@ -14,19 +14,6 @@ import ResetPasswordModal from "./pages/comon/ResetPassword";
 import ForgotPasswordModal from "./pages/comon/ForgotPassword";
 import './validation/App.css';
 import './index.css';
-
-
-// Fetch CSRF Token from Backend
-const fetchCsrfToken = async () => {
-  try {
-    const response = await axios.get('http://localhost:8000/get-csrf-token/');
-    const csrfToken = response.data.csrfToken;
-    // Set CSRF token in axios defaults
-    axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
-  } catch (error) {
-    console.error('Error fetching CSRF token:', error);
-  }
-};
 
 // Custom Toast Container Component
 const CustomToastContainer = () => {
@@ -98,7 +85,17 @@ const AppLayout = () => {
 
   // Fetch CSRF token when the app loads
   useEffect(() => {
-    fetchCsrfToken();
+    axios.get('http://127.0.0.1:8000/get-csrf-token/')
+      .then(response => {
+        // Set the CSRF token in axios defaults
+        axios.defaults.headers.common['X-CSRFToken'] = response.data.csrfToken;
+        // Also set it in cookies if needed
+        document.cookie = `csrftoken=${response.data.csrfToken}; path=/`;
+        console.log('CSRF token set successfully');
+      })
+      .catch(error => {
+        console.error('Error fetching CSRF token:', error);
+      });
   }, []);
 
   const toggleLoginModal = () => {
@@ -121,12 +118,11 @@ const AppLayout = () => {
     setShowLoginModal(true);
   };
 
-  // In App.js, fix the handleOtpSuccess function
-const handleOtpSuccess = () => {
-  console.log("OTP verification successful in AppLayout");
-  setShowResetPasswordModal(true); // Show Reset Password Modal
-  setShowForgotPasswordModal(false); // Close Forgot Password Modal
-};
+  const handleOtpSuccess = () => {
+    console.log("OTP verification successful in AppLayout");
+    setShowResetPasswordModal(true); // Show Reset Password Modal
+    setShowForgotPasswordModal(false); // Close Forgot Password Modal
+  };
 
   return (
     <>
@@ -194,4 +190,3 @@ function App() {
 }
 
 export default App;
-

@@ -11,53 +11,91 @@ function ChatModal({
   candidate_id,
   employer_id,
 }) {
-  const baseURL = import.meta.env.VITE_API_BASEURL;
   const modalRef = useRef();
   const [chatMessages, setChatMessages] = useState([]);
-  const [client, setClient] = useState(null);
+  const clientRef = useRef(null);
   const [message, setMessage] = useState('');
   const chatMessagesRef = useRef(null);
-  const user_id = candidate_id;
+  const user_id = localStorage.getItem('user_id') || candidate_id;
 
   const closeModal = (e) => {
     if (modalRef.current === e.target) {
       setChat();
-      client.close();
+      if (clientRef.current) {
+        clientRef.current.close();
+      }
     }
   };
 
   useEffect(() => {
-    const connectToWebSocket = (candidate_id, employer_id) => {
-      if (!candidate_id || !employer_id) return;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
 
+    const connectToWebSocket = () => {
       const newClient = new W3CWebSocket(
-        `${baseURL}/ws/chat/${candidate_id}/${employer_id}/${user_id}`
+        `ws://127.0.0.1:8000/ws/chat/${candidate_id}/${employer_id}/${user_id}/`
       );
-      setClient(newClient);
-      newClient.onopen = () => {};
+      clientRef.current = newClient;
+
+      newClient.onopen = () => {
+        console.log("WebSocket connection established");
+        reconnectAttempts = 0;
+      };
 
       newClient.onmessage = (message) => {
         const data = JSON.parse(message.data);
-        setChatMessages((prevMessages) => [...prevMessages, data]);
+        setChatMessages((prevMessages) => {
+          if (!prevMessages.some(msg => msg.message === data.message && msg.sendername === data.sendername)) {
+            return [...prevMessages, data];
+          }
+          return prevMessages;
+        });
       };
 
-      return () => {
-        newClient.close();
+      newClient.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+
+      newClient.onclose = () => {
+        console.log("WebSocket connection closed");
+        if (reconnectAttempts < maxReconnectAttempts) {
+          setTimeout(() => {
+            reconnectAttempts++;
+            console.log(`Reconnecting... Attempt ${reconnectAttempts}`);
+            connectToWebSocket();
+          }, 3000);
+        }
       };
     };
 
-    connectToWebSocket(candidate_id, employer_id);
-  }, [candidate_id, employer_id]);
+    connectToWebSocket();
+
+    return () => {
+      if (clientRef.current) {
+        clientRef.current.close();
+        clientRef.current = null;
+      }
+    };
+  }, [candidate_id, employer_id, user_id]);
 
   const sendMessage = () => {
-    if (!client || client.readyState !== client.OPEN) {
+    if (!message.trim()) return;
+
+    if (!clientRef.current || clientRef.current.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket is not connected");
       return;
     }
+
     const sendername = candidate_name;
     const messageData = { message, sendername };
     const messageString = JSON.stringify(messageData);
-    client.send(messageString);
-    setMessage('');
+
+    try {
+      clientRef.current.send(messageString);
+      setMessage('');
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
   };
 
   useEffect(() => {
@@ -107,6 +145,12 @@ function ChatModal({
             onChange={(e) => setMessage(e.target.value)}
             value={message}
             className="chat-input"
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
           />
           <button className="chat-send-button" onClick={sendMessage}>
             <IoSend size={25} />

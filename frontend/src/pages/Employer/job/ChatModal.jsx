@@ -3,7 +3,6 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 import { IoSend } from "react-icons/io5";
 import '../../../Styles/Job/AppliedJob.css';
 
-
 function ChatModal({
   setChat,
   profile_pic,
@@ -13,9 +12,9 @@ function ChatModal({
   employer_id,
 }) {
   const modalRef = useRef();
-  const baseURL =  'http://127.0.0.1:8000';
+  const baseURL = 'http://127.0.0.1:8000';
   const [chatMessages, setChatMessages] = useState([]);
-  const [client, setClient] = useState(null);
+  const clientRef = useRef(null); // Use a ref to store the WebSocket client
   const [message, setMessage] = useState("");
   const chatMessagesRef = useRef(null);
   const user_id = employer_id;
@@ -23,7 +22,9 @@ function ChatModal({
   const closeModal = (e) => {
     if (modalRef.current === e.target) {
       setChat();
-      client.close();
+      if (clientRef.current && clientRef.current.readyState === clientRef.current.OPEN) {
+        clientRef.current.close(); // Close the WebSocket connection when the modal is closed
+      }
     }
   };
 
@@ -31,33 +32,58 @@ function ChatModal({
     const connectToWebSocket = (candidate_id, employer_id) => {
       if (!candidate_id || !employer_id) return;
 
+      // Close the existing WebSocket connection if it exists
+      if (clientRef.current && clientRef.current.readyState === clientRef.current.OPEN) {
+        clientRef.current.close();
+      }
+
       const newClient = new W3CWebSocket(
-        `${baseURL}/ws/chat/${candidate_id}/${employer_id}/${user_id}`
+        `${baseURL}/ws/chat/${candidate_id}/${employer_id}/${user_id}/`
       );
-      setClient(newClient);
-      newClient.onopen = () => {};
+      clientRef.current = newClient; // Store the new WebSocket client in the ref
+
+      newClient.onopen = () => {
+        console.log("WebSocket connection established.");
+      };
 
       newClient.onmessage = (message) => {
         const data = JSON.parse(message.data);
-        setChatMessages((prevMessages) => [...prevMessages, data]);
+        setChatMessages((prevMessages) => {
+          // Check if the message already exists in the state to avoid duplicates
+          if (!prevMessages.some(msg => msg.message === data.message && msg.sendername === data.sendername)) {
+            return [...prevMessages, data];
+          }
+          return prevMessages;
+        });
+      };
+
+      newClient.onclose = () => {
+        console.log("WebSocket connection closed.");
       };
 
       return () => {
-        newClient.close();
+        newClient.close(); // Clean up the WebSocket connection when the component unmounts
       };
     };
 
     connectToWebSocket(candidate_id, employer_id);
-  }, [candidate_id, employer_id]);
+
+    // Cleanup function to close the WebSocket connection when the component unmounts or dependencies change
+    return () => {
+      if (clientRef.current && clientRef.current.readyState === clientRef.current.OPEN) {
+        clientRef.current.close();
+      }
+    };
+  }, [candidate_id, employer_id, user_id]); // Dependencies for the useEffect hook
 
   const sendMessage = () => {
-    if (!client || client.readyState !== client.OPEN) {
+    if (!clientRef.current || clientRef.current.readyState !== clientRef.current.OPEN) {
       return;
     }
     const sendername = emp_name;
     const messageData = { message, sendername };
     const messageString = JSON.stringify(messageData);
-    client.send(messageString);
+    clientRef.current.send(messageString);
     setMessage("");
   };
 

@@ -1801,7 +1801,75 @@
 
 
 
+/* General Styles */
+.candidate-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
+.candidate-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.pending-button {
+  background-color: #ff9800;
+  color: #fff;
+}
+
+.pending-button.active {
+  background-color: #e65100;
+}
+
+.accept-button {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.accept-button.active {
+  background-color: #2e7d32;
+}
+
+.reject-button {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.reject-button.active {
+  background-color: #c62828;
+}
+
+.chat-button {
+  background-color: #2196f3;
+  color: #fff;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .candidate-actions {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+  }
+}
 
 
 

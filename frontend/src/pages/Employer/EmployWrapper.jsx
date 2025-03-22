@@ -13,6 +13,9 @@ import EmpProfile from './EmployerProfile';
 import EmployerProfileView from './EmpProfileView';
 import JobDetail from './job/jobdetail';
 import Applications from './job/AppliedJobs';
+import Chat from '../Employer/utilities/Message/Chat';
+
+
 
 
 
@@ -81,6 +84,8 @@ function EmployerWrapper() {
         <Route path='/postjob' element={<PostJob/>}></Route>
         <Route path='/jobdetail/:jobId' element={<JobDetail/>} ></Route>
         <Route path='/applications' element={<Applications/>}></Route>
+        <Route path='/chat' element={<Chat/>}></Route>
+       
         
         
 

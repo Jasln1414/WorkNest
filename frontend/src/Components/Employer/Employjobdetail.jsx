@@ -4,10 +4,9 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { PostJobValidationSchema } from '../../validation/PostJobValidation';
 import { toast } from 'react-toastify';
 import axios from 'axios';
- // Import custom CSS
 
-function JobDetailMOdal({ setModal, jobData }) {
-  const baseURL =  'http://127.0.0.1:8000/';
+function JobDetailModal({ setModal, jobData }) {
+  const baseURL = 'http://127.0.0.1:8000/';
   const modalRef = useRef();
 
   const closeModal = (e) => {
@@ -63,109 +62,133 @@ function JobDetailMOdal({ setModal, jobData }) {
   };
 
   return (
-    <div ref={modalRef} onClick={closeModal} className="modal-overlay">
-      <div className="modal-container">
-        <button className="close-button" onClick={() => setModal(false)}>
+    <div 
+      ref={modalRef} 
+      onClick={closeModal} 
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gray-100 bg-opacity-75"
+    >
+      <div className="relative w-full max-w-4xl mx-auto my-6 p-5 bg-white rounded-lg shadow-xl md:p-8">
+        <button 
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200" 
+          onClick={() => setModal(false)}
+        >
           <IoMdClose size={30} />
         </button>
-        <div className="modal-content">
+        
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Edit Job Details</h2>
+          
           <Formik
             initialValues={initialValue}
             validationSchema={PostJobValidationSchema}
             onSubmit={handleSubmit}
           >
             {({ errors, touched }) => (
-              <Form>
-                <div className="form-group">
-                  <div className="form-row">
-                    <div className="form-field">
-                      <label htmlFor="title">Title</label>
+              <Form className="space-y-6">
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                       <Field
                         type="text"
                         id="title"
                         name="title"
-                        className={`form-input ${errors.title && touched.title ? 'error' : ''}`}
+                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                          errors.title && touched.title ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                        }`}
                       />
-                      <ErrorMessage name="title" component="div" className="error-message" />
+                      <ErrorMessage name="title" component="div" className="mt-1 text-sm text-red-600" />
                     </div>
 
-                    <div className="form-field">
-                      <label htmlFor="location">Location</label>
+                    <div>
+                      <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">Location</label>
                       <Field
                         type="text"
                         id="location"
                         name="location"
-                        className={`form-input ${errors.location && touched.location ? 'error' : ''}`}
+                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                          errors.location && touched.location ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                        }`}
                       />
-                      <ErrorMessage name="location" component="div" className="error-message" />
+                      <ErrorMessage name="location" component="div" className="mt-1 text-sm text-red-600" />
                     </div>
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-field">
-                      <label htmlFor="saleryfrom">Salary From</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="saleryfrom" className="block text-sm font-medium text-gray-700 mb-1">Salary From</label>
                       <Field
                         type="text"
                         id="saleryfrom"
                         name="saleryfrom"
-                        className={`form-input ${errors.saleryfrom && touched.saleryfrom ? 'error' : ''}`}
+                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                          errors.saleryfrom && touched.saleryfrom ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                        }`}
                       />
-                      <ErrorMessage name="saleryfrom" component="div" className="error-message" />
+                      <ErrorMessage name="saleryfrom" component="div" className="mt-1 text-sm text-red-600" />
                     </div>
 
-                    <div className="form-field">
-                      <label htmlFor="saleryto">Salary To</label>
+                    <div>
+                      <label htmlFor="saleryto" className="block text-sm font-medium text-gray-700 mb-1">Salary To</label>
                       <Field
                         type="text"
                         id="saleryto"
                         name="saleryto"
-                        className={`form-input ${errors.saleryto && touched.saleryto ? 'error' : ''}`}
+                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                          errors.saleryto && touched.saleryto ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                        }`}
                       />
-                      <ErrorMessage name="saleryto" component="div" className="error-message" />
+                      <ErrorMessage name="saleryto" component="div" className="mt-1 text-sm text-red-600" />
                     </div>
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-field">
-                      <label htmlFor="jobtype">Job Type</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="jobtype" className="block text-sm font-medium text-gray-700 mb-1">Job Type</label>
                       <Field
                         as="select"
                         id="jobtype"
                         name="jobtype"
-                        className={`form-input ${errors.jobtype && touched.jobtype ? 'error' : ''}`}
+                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                          errors.jobtype && touched.jobtype ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                        }`}
                       >
                         <option value="">Select</option>
                         <option value="Full Time">Full Time</option>
                         <option value="Part Time">Part Time</option>
                       </Field>
-                      <ErrorMessage name="jobtype" component="div" className="error-message" />
+                      <ErrorMessage name="jobtype" component="div" className="mt-1 text-sm text-red-600" />
                     </div>
 
-                    <div className="form-field">
-                      <label htmlFor="jobmode">Job Mode</label>
+                    <div>
+                      <label htmlFor="jobmode" className="block text-sm font-medium text-gray-700 mb-1">Job Mode</label>
                       <Field
                         as="select"
                         id="jobmode"
                         name="jobmode"
-                        className={`form-input ${errors.jobmode && touched.jobmode ? 'error' : ''}`}
+                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                          errors.jobmode && touched.jobmode ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                        }`}
                       >
                         <option value="">Select</option>
                         <option value="Remote">Remote</option>
                         <option value="On Site">On Site</option>
                         <option value="Hybrid">Hybrid</option>
                       </Field>
-                      <ErrorMessage name="jobmode" component="div" className="error-message" />
+                      <ErrorMessage name="jobmode" component="div" className="mt-1 text-sm text-red-600" />
                     </div>
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-field">
-                      <label htmlFor="experiance">Experience</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="experiance" className="block text-sm font-medium text-gray-700 mb-1">Experience</label>
                       <Field
                         as="select"
                         id="experiance"
                         name="experiance"
-                        className={`form-input ${errors.experiance && touched.experiance ? 'error' : ''}`}
+                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                          errors.experience && touched.experiance ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                        }`}
                       >
                         <option value="">Select</option>
                         <option value="Internship">Internship</option>
@@ -174,51 +197,58 @@ function JobDetailMOdal({ setModal, jobData }) {
                         <option value="Mid Level">Mid Level</option>
                         <option value="Senior Level">Senior Level</option>
                       </Field>
-                      <ErrorMessage name="experiance" component="div" className="error-message" />
+                      <ErrorMessage name="experiance" component="div" className="mt-1 text-sm text-red-600" />
                     </div>
 
-                    <div className="form-field">
-                      <label htmlFor="applyBefore">Apply Before</label>
+                    <div>
+                      <label htmlFor="applyBefore" className="block text-sm font-medium text-gray-700 mb-1">Apply Before</label>
                       <Field
                         type="date"
                         id="applyBefore"
                         name="applyBefore"
-                        className={`form-input ${errors.applyBefore && touched.applyBefore ? 'error' : ''}`}
+                        className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                          errors.applyBefore && touched.applyBefore ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                        }`}
                       />
-                      <ErrorMessage name="applyBefore" component="div" className="error-message" />
+                      <ErrorMessage name="applyBefore" component="div" className="mt-1 text-sm text-red-600" />
                     </div>
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-field">
-                      <label htmlFor="about">About</label>
-                      <Field
-                        as="textarea"
-                        id="about"
-                        name="about"
-                        className={`form-input ${errors.about && touched.about ? 'error' : ''}`}
-                      />
-                      <ErrorMessage name="about" component="div" className="error-message" />
-                    </div>
+                  <div>
+                    <label htmlFor="about" className="block text-sm font-medium text-gray-700 mb-1">About</label>
+                    <Field
+                      as="textarea"
+                      id="about"
+                      name="about"
+                      rows="4"
+                      className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                        errors.about && touched.about ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                      }`}
+                    />
+                    <ErrorMessage name="about" component="div" className="mt-1 text-sm text-red-600" />
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-field">
-                      <label htmlFor="responsibility">Responsibility</label>
-                      <Field
-                        as="textarea"
-                        id="responsibility"
-                        name="responsibility"
-                        className={`form-input ${errors.responsibility && touched.responsibility ? 'error' : ''}`}
-                      />
-                      <ErrorMessage name="responsibility" component="div" className="error-message" />
-                    </div>
+                  <div>
+                    <label htmlFor="responsibility" className="block text-sm font-medium text-gray-700 mb-1">Responsibility</label>
+                    <Field
+                      as="textarea"
+                      id="responsibility"
+                      name="responsibility"
+                      rows="4"
+                      className={`w-full p-2 border rounded-md focus:outline-none focus:ring-1 ${
+                        errors.responsibility && touched.responsibility ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-300'
+                      }`}
+                    />
+                    <ErrorMessage name="responsibility" component="div" className="mt-1 text-sm text-red-600" />
                   </div>
                 </div>
 
-                <div className="form-submit">
-                  <button type="submit" className="submit-button">
-                    Submit
+                <div className="flex justify-center">
+                  <button 
+                    type="submit" 
+                    className="inline-flex justify-center items-center text-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 sm:px-5 sm:py-2.5 transition-colors"
+                  >
+                    Update Job
                   </button>
                 </div>
               </Form>
@@ -230,4 +260,4 @@ function JobDetailMOdal({ setModal, jobData }) {
   );
 }
 
-export default JobDetailMOdal;
+export default JobDetailModal;

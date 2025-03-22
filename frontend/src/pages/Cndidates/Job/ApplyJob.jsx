@@ -6,7 +6,7 @@ import Drawer from 'react-modern-drawer';
 import 'react-modern-drawer/dist/index.css';
 import StatusJob from './StatusJob';
 import { useMediaQuery } from 'react-responsive';
-import '../../../Styles/USER/Home.css';
+import '../../../Styles/Candidate/Jobdetail.css';
 
 function ApplyedJob() {
     const baseURL = 'http://127.0.0.1:8000';
@@ -66,12 +66,12 @@ function ApplyedJob() {
                 <div className="applyed-jobs-layout">
                     {/* Job List Section */}
                     <div className="job-list-section">
-                        <div className="job-list-header">
+                       
                             <h2>Your Applications</h2>
                             <p>{jobData.length} applications</p>
-                        </div>
+                      
                         
-                        <div className="job-list-container">
+                       
                             {jobData.map((job) => (
                                 <div 
                                     key={job.id} 
@@ -85,7 +85,7 @@ function ApplyedJob() {
                                                 alt={job.job.employer.user_full_name} 
                                                 onError={(e) => {
                                                     e.target.onerror = null;
-                                                    e.target.src = "https://via.placeholder.com/56?text=Logo";
+                                                    e.target.src = "";
                                                 }}
                                             />
                                         </div>
@@ -114,8 +114,7 @@ function ApplyedJob() {
                                 </div>
                             ))}
                         </div>
-                    </div>
-                    
+                 
 
 
                     

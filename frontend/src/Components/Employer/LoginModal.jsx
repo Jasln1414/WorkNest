@@ -21,6 +21,14 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const handleBackToLogin = () => {
+    setShowForgotPasswordModal(false);
+  };
+
+  const openForgotPasswordModal = () => {
+    setShowForgotPasswordModal(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -56,10 +64,18 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
         return; // Stop further execution
       }
 
+      // Debugging: Log the user_data.completed value
+      console.log("User data completed:", response.data?.user_data?.completed);
+
       // If the employer is verified, proceed with login
       toast.success("Login successful!");
-      navigate("/candidate/EmpHome"); // Redirect to the dashboard or any other page
 
+      // Add an extra layer of protection with optional chaining
+      if (response.data?.user_data?.completed === false) {
+        navigate('/employer/profile_creation/');
+      } else {
+        navigate('/employer/EmpHome/');
+      }
     } catch (error) {
       // Handle different types of errors
       const errorMessage = error.response?.data?.message || 
@@ -78,20 +94,6 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
     }
   };
 
-  const openForgotPasswordModal = () => {
-    setShowForgotPasswordModal(true);
-  };
-
-  const handleBackToLogin = () => {
-    setShowForgotPasswordModal(false);
-  };
-
-  const handleClearForm = () => {
-    setEmail("");
-    setPassword("");
-    setFormError("");
-  };
-
   const GoogleTestlogin = async (userDetails) => {
     console.log("userDetails after login", userDetails);
     const formData = {
@@ -100,6 +102,7 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/account/auth/employer/', formData);
       console.log("auth response ", response);
+
       if (response.status === 200) {
         localStorage.setItem('access', response.data.access_token);
         localStorage.setItem('refresh', response.data.refresh_token);
@@ -118,7 +121,11 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
           position: "top-center",
         });
 
-        if (response.data.user_data.completed === false) {
+        // Debugging: Log the user_data.completed value
+        console.log("User data completed:", response.data?.user_data?.completed);
+
+        // Add an extra layer of protection with optional chaining
+        if (response.data?.user_data?.completed === false) {
           navigate('/employer/profile_creation/');
         } else {
           navigate('/employer/EmpHome/');
@@ -132,7 +139,7 @@ const LoginModal = ({ isOpen, onClose, switchToSignup }) => {
       Swal.fire({
         icon: 'error',
         title: 'Login Failed',
-        text: error.response?.data?.detail || 'You have to approved my admin.',
+        text: error.response?.data?.detail || 'You have to be approved by admin.',
       });
     }
   };

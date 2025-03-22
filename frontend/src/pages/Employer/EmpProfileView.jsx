@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { set_user_basic_details } from '../../Redux/UserDetails/userBasicDetailsSlice';
 import logo from '../../assets/logo.jpg';
 import SideBar from './SideBar';
+import EditEmployerProfileModal from './EditEmployerProfileModal';
 import '../../Styles/EmpProfile.css';
 
 function EmployerProfileView() {
@@ -15,6 +16,25 @@ function EmployerProfileView() {
   const [profileData, setProfileData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // Function to get CSRF token from cookies
+  const getCookie = (name) => {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  };
+
+  const csrfToken = getCookie('csrftoken');
 
   // Fetch profile data
   useEffect(() => {
@@ -29,6 +49,7 @@ function EmployerProfileView() {
         const response = await axios.get(`${baseURL}api/empjob/profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
+            'X-CSRFToken': csrfToken, // Include CSRF token in headers
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -63,7 +84,37 @@ function EmployerProfileView() {
     };
 
     fetchData();
-  }, [baseURL, token, dispatch, navigate]);
+  }, [baseURL, token, dispatch, navigate, csrfToken]);
+
+  // Handle Edit Button Click
+  const handleEditClick = () => {
+    setIsEditModalOpen(true);
+  };
+
+  // Handle Save After Editing
+  const handleSave = async (updatedData) => {
+    try {
+      const response = await axios.put(`${baseURL}api/account/employer/profile/update/`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-CSRFToken': csrfToken, // Include CSRF token in headers
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.status === 200) {
+        setProfileData(updatedData);
+        dispatch(set_user_basic_details({ profile_pic: updatedData.profile_pic }));
+        setIsEditModalOpen(false);
+      } else {
+        setError(`Failed to update profile: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error updating profile data:', error);
+      setError(`Error updating profile: ${error.message}`);
+    }
+  };
 
   if (loading) {
     return <div className="loading-container">Loading employer profile data...</div>;
@@ -84,10 +135,9 @@ function EmployerProfileView() {
   return (
     <div className="ep-main-container">
       <div className="ep-sidebar-fixed">
-  <h2 className="main-head">EMPLOYER</h2>
-  <SideBar />
-</div>
-
+        <h2 className="main-head">EMPLOYER</h2>
+        <SideBar />
+      </div>
 
       {/* Main Content */}
       <div className="ep-content-wrapper">
@@ -101,6 +151,7 @@ function EmployerProfileView() {
             />
           </div>
           <h2 className="ep-company-title">{profileData.user_full_name || 'Company Name Not Available'}</h2>
+          <button onClick={handleEditClick} className="edit-profile-button">Edit Profile</button>
         </div>
 
         {/* Two-column layout for Contact and Company Information */}
@@ -156,6 +207,15 @@ function EmployerProfileView() {
           </div>
         </div>
       </div>
+
+      {/* Edit Profile Modal */}
+      {isEditModalOpen && (
+        <EditEmployerProfileModal
+          profileData={profileData}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={handleSave}
+        />
+      )}
     </div>
   );
 }

@@ -20,14 +20,12 @@ function StatusJob({ selectedJob, toggleDrawer }) {
         case 'Resume Viewd':
           setStep(3);
           break;
-        case 'Interview Sheduled':
+       
+        case 'Accepted':
           setStep(4);
           break;
-        case 'Accepted':
-          setStep(5);
-          break;
         default:
-          setStep(6);
+          setStep(5);
           break;
       }
     }
