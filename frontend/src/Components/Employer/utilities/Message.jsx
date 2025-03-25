@@ -1,18 +1,16 @@
-import Item from 'antd/es/list/Item'
-import React from 'react'
+import React from 'react'; 
+//import '../../../Styles/EmpProfile.css';
 
-function Message({text,send}) {
+function Message({ text, send, received }) {
   return (
-    <div>
-       <div className={` ${send ? "flex justify-start" : "flex justify-end" }  gap-2`}>
-              <div className={`rounded-lg ${send ? "bg-green-400" : "bg-blue-400"}  p-3 text-sm dark:bg-gray-800`}>
-                <p>
-                 {text}
-                </p>
-              </div>
-            </div>
+    <div className="message-container">
+      <div className={`message-wrapper ${send ? 'sent' : ''} ${received ? 'received' : ''}`}>
+        <div className={`message-bubble ${send ? 'sent' : ''} ${received ? 'received' : ''}`}>
+          <p>{text}</p>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Message
+export default Message;

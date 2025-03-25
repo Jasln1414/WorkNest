@@ -1,17 +1,27 @@
-import React from 'react'
+import React from 'react';
 
-function Messages({text,send}) {
+function Messages({ text, send }) {
   return (
-    <div>
-    <div className={` ${send ? "flex justify-start" : "flex justify-end" }  gap-2`}>
-           <div className={`rounded-lg ${send ? "bg-green-400" : "bg-blue-400"}  p-3 text-sm dark:bg-gray-800`}>
-             <p>
-              {text}
-             </p>
-           </div>
-         </div>
- </div>
-  )
+    <div className={`
+      message-container
+      ${send ? 'flex justify-end' : 'flex justify-start'}
+      p-2
+      w-full
+      max-w-lg
+    `}>
+      <div className={`
+        message-bubble
+        ${send ? 'bg-blue-500 text-white rounded-lg self-end' : 'bg-gray-200 text-gray-800 rounded-lg self-start'}
+        p-3
+        max-w-[70%] // Adjust max-width for responsiveness
+        break-words
+      `}>
+        <p className="text-sm">
+          {text}
+        </p>
+      </div>
+    </div>
+  );
 }
 
-export default Messages
+export default Messages;

@@ -81,11 +81,11 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
-CHANNEL_LAYERS = {
+"""CHANNEL_LAYERS = {
     'default': {
         'BACKEND': "channels.layers.InMemoryChannelLayer"
     }
-}
+}"""
 # In settings.py
 CORS_ALLOW_CREDENTIALS = True
 
@@ -158,9 +158,23 @@ CORS_ALLOW_METHODS = (
     "PUT",
 )
 
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+         'rest_framework.authentication.SessionAuthentication',       # Session Authentication
+        'rest_framework.authentication.TokenAuthentication',   
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
         'rest_framework.authentication.SessionAuthentication',       # Session Authentication
         'rest_framework.authentication.TokenAuthentication',         # Token Authentication
@@ -219,7 +233,33 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = 'static/'
+
+
+
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# Media files (Uploaded by users)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
+
+
+
+
+
+
+
 SITE_ID = 1
 ACCOUNT_LOGIN_METHODS = {"email"}
 
@@ -256,7 +296,7 @@ CSRF_COOKIE_SAMESITE = 'Lax'  # Try 'None' if using cross-origin requests
 CSRF_COOKIE_HTTPONLY = False  # Must be False to allow JavaScript to read it
 CSRF_USE_SESSIONS = False
 CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
-""""
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -264,4 +304,5 @@ CHANNEL_LAYERS = {
             'hosts': [('127.0.0.1', 6379)],  # Replace with your Redis server address
         },
     },
-}"""
+}
+

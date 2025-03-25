@@ -93,6 +93,17 @@ function SideBar({ hideHeader = false }) {
     <span>Applications</span>
   </Link>
 
+  <Link
+              to="/employer/chat"
+              className={`employer-sidebar-link ${
+                location.pathname === "/employer/chat" ? "active" : ""
+              }`}
+            >
+              
+  <PiClipboardTextFill className="icon" />
+    <span>Inbox</span>
+  </Link>
+
              
           </li>
         </ul>

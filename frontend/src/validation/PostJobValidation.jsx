@@ -19,7 +19,7 @@ export const PostJobValidationSchema = Yup.object().shape({
         .matches(/^[A-Z]/, 'start with an uppercase letter'),
     location: Yup.string()
         .required('Location is required')
-        .matches(/^[^0-9]*$/, 'Location cannot contain numbers'),
+        .matches(/^[a-zA-Z0-9\s,.-]*$/, 'Location can only contain letters, numbers, spaces, commas, periods and hyphens'),
     saleryfrom: Yup.number()
         .required('Salary from is required')
         .positive('Salary from must be greater than 0')

@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from chat.models import ChatMessage,ChatRoom
+from chat.models import ChatMessage,ChatRoom,CandidateNotification,EmployerNotification
 from user_account.models import *
+
 
 
 class ChatMessageSerializer(serializers.ModelSerializer):
@@ -28,3 +29,33 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
     def get_employer_pic(self, obj):
         return obj.employer.profile_pic.url if obj.employer.profile_pic else None
+
+
+from rest_framework import serializers
+from chat.models import CandidateNotification, EmployerNotification
+
+class CandidateNotificationSerializer(serializers.ModelSerializer):
+    sender_name = serializers.CharField(source='sender.name', read_only=True)
+    sender_pic = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CandidateNotification
+        fields = ['id', 'message', 'is_read', 'timestamp', 'sender', 'sender_name', 'sender_pic']
+
+    def get_sender_pic(self, obj):
+        if obj.sender_pic:
+            return obj.sender_pic
+        return None
+
+class EmployerNotificationSerializer(serializers.ModelSerializer):
+    sender_name = serializers.CharField(source='sender.name', read_only=True)
+    sender_pic = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EmployerNotification
+        fields = ['id', 'message', 'is_read', 'timestamp', 'sender', 'sender_name', 'sender_pic']
+
+    def get_sender_pic(self, obj):
+        if obj.sender_pic:
+            return obj.sender_pic
+        return None

@@ -169,7 +169,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs']['user_id']
-        self.group_name = f'notifications_{self.user_id}'  # Unique group name for the user
+        self.group_name = f'notifications_{self.user_id}'  # Unique group name for the userzz
 
         # Join room group
         await self.channel_layer.group_add(

@@ -5,7 +5,7 @@
   width: 250px; /* Fixed width for the sidebar */
   height: calc(100vh - 50vh); /* Adjust height to account for header */
   position: fixed; /* Fixed position to keep it in place */
-  top: 10vh; /* Position below the header */
+  
   left: 0; /* Align to the left corner */
   background-color: #5c6bc0; /* Prominent color (blue) */
   padding: 20px; /* Padding inside the sidebar */
@@ -205,7 +205,7 @@
   width: 250px; /* Fixed width for the sidebar */
   height: calc(100vh - 50vh); /* Adjust height to account for header */
   position: fixed; /* Fixed position to keep it in place */
-  top: 10vh; /* Position below the header */
+  top: 14vh; /* Position below the header */
   left: 0; /* Align to the left corner */
   background-color: #5c6bc0; /* Prominent color (blue) */
   padding: 20px; /* Padding inside the sidebar */
@@ -477,7 +477,7 @@
 
 .sidebar-container {
   position: fixed;
-  top: 0; /* Changed from 11vh to 0 */
+  top: 10vh; /* Changed from 11vh to 0 */
   left: 0;
   z-index: 40;
   width: 64px;

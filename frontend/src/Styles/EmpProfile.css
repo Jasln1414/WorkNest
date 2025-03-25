@@ -1204,4 +1204,348 @@ body {
 }
   
  
+ /* Main layout and containers */
+.chat-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.ep-sidebar-fixed {
+  width: 230px;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  transition: transform 0.3s ease-in-out;
+}
+
+.ep-sidebar-fixed .main-head {
+  padding: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.chat-content {
+  flex: 1;
+  margin-left: 230px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.chat-grid {
+  display: flex;
+  height: 100%;
+}
+
+/* Candidates list styling */
+.candidates-list {
+  width: 300px;
+  border-right: 1px solid #eaeaea;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+.candidates-container {
+  height: 100%;
+}
+
+.candidates-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.candidate-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.candidate-item:hover {
+  background-color: #e9ecef;
+}
+
+.candidate-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.candidate-name {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* Chat interface styling */
+.chat-interface {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Message component styling */
+.message-container {
+  width: 100%;
+  margin: 8px 0;
+}
+
+.message-wrapper {
+  display: flex;
+  max-width: 70%;
+}
+
+.message-wrapper.sent {
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.message-wrapper.received {
+  justify-content: flex-start;
+  margin-right: auto;
+}
+
+.message-bubble {
+  padding: 10px 15px;
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+.message-bubble.sent {
+  background-color: #0084ff;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message-bubble.received {
+  background-color: #e9e9eb;
+  color: black;
+  border-bottom-left-radius: 4px;
+}
+
+.message-bubble p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Toggle button for mobile */
+.sidebar-toggle {
+  display: none;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+}
+
+.toggle-button svg {
+  fill: none;
+  stroke: #0084ff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Drawer styling */
+.drawer {
+  z-index: 1000;
+  background-color: white !important;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.drawer-content,
+.chat-drawer-content {
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat interface specific styling */
+header {
+  display: flex;
+  height: 60px;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid #eaeaea;
+  background-color: rgba(245, 245, 245, 0.4);
+  padding: 0 24px;
+  position: relative;
+}
+
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+main > div {
+  display: flex;
+  padding: 0 20px;
+  width: 100%;
+  flex-direction: column;
+  gap: 12px;
+}
+
+footer {
+  border-top: 1px solid #eaeaea;
+  background-color: white;
+  padding: 8px 16px;
+}
+
+footer .relative {
+  position: relative;
+}
+
+textarea {
+  min-height: 48px;
+  width: 100%;
+  resize: none;
+  border-radius: 24px;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  padding: 12px;
+  padding-right: 64px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+}
+
+textarea:focus {
+  border-color: #0084ff;
+}
+
+
+/* Fix for back button */
+.block.md\:hidden {
+  position: absolute;
+  right: 10px;
+  transition: right 0.2s;
+  color: #0084ff;
+}
+
+.block.md\:hidden:hover {
+  right: 16px;
+  color: #0066cc;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1024px) {
+  .candidates-list {
+    width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-content {
+    margin-left: 0;
+  }
   
+  .ep-sidebar-fixed {
+    transform: translateX(-100%);
+    z-index: 1100;
+  }
+  
+  .sidebar-toggle {
+    display: block;
+    position: fixed;
+    z-index: 1050;
+  }
+  
+  .candidates-list {
+    width: 100%;
+  }
+  
+  .chat-interface {
+    display: none;
+  }
+  
+  /* Ensure the drawer content is visible */
+  .chat-drawer-content {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Override any drawer styles that might be hiding content */
+  .rmd-drawer-content {
+    height: 100% !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .toggle-button {
+    top: 5px;
+    left: 5px;
+  }
+  
+  .candidate-item {
+    padding: 8px;
+  }
+  
+  .candidate-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .message-bubble {
+    padding: 8px 12px;
+  }
+  
+  textarea {
+    min-height: 40px;
+  }
+  
+  /* Ensure the chat interface fills the screen on small devices */
+  .h-full.flex.flex-col {
+    height: 100vh !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+}
+
+/* Fix for the react-modern-drawer visibility */
+.rmd-drawer.rmd-drawer-right {
+  height: 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.rmd-drawer.rmd-drawer-right .rmd-drawer-content {
+  height: 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Ensure the chat drawer content is visible */
+.rmd-drawer-open .rmd-drawer-content {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+} 

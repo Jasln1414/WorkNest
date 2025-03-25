@@ -7,7 +7,7 @@ import JobDetailMOdal from '../../../components/employer/utilities/JobDetailMOda
 import './JobDetail.css'; // Import the CSS file
 
 function JobDetail() {
-  const baseURL = import.meta.env.VITE_API_BASEURL;
+  const baseURL = import.meta.env.VITE_API_BASEURL||  'http://127.0.0.1:8000';
   const token = localStorage.getItem('access');
   const [jobData, setJobData] = useState({});
   const { jobId } = useParams();

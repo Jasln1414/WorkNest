@@ -20,3 +20,10 @@ html, body {
   width: 100%;
   max-width: 100%;
 }
+.header-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px; /* Adjust based on your header height */
+  background: #fff; /* Match your header background */
+}

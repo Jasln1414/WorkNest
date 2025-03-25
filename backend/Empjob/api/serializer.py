@@ -8,6 +8,11 @@ from Empjob.models import Jobs
 
 from django.utils import timezone
 
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['id', 'text']
+
 class PostJobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
@@ -56,8 +61,61 @@ class CandidateSerializer(serializers.ModelSerializer):
     def get_education(self, obj):
         educations = Education.objects.filter(user=obj.user)
         return EducationSerializer(educations, many=True).data
+    
 
 
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = '__all__'
+
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = '__all__'
+
+
+
+class ApplyedForJobsSerializer(serializers.ModelSerializer):
+    candidate = CandidateSerializer()
+    answers = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ApplyedJobs
+        fields = '__all__'
+
+    def get_answers(self, obj):
+        answers = Answer.objects.filter(candidate=obj.candidate, question__job=obj.job)
+        return AnswerSerializer(answers, many=True).data
+
+class ApplicationSerializer(serializers.ModelSerializer):
+    employer_name = serializers.SerializerMethodField()
+    employer_id = serializers.SerializerMethodField()
+    applications = serializers.SerializerMethodField()
+    questions = serializers.SerializerMethodField()
+    class Meta:
+        model = Jobs
+        fields = '__all__'
+
+    def get_employer_name(self, obj):
+        return obj.employer.user.full_name
+    
+    def get_employer_id(self,obj):
+        return obj.employer.id
+
+    def get_applications(self, obj):
+        applications = ApplyedJobs.objects.filter(job=obj)
+        serializer = ApplyedForJobsSerializer(applications, many=True)
+        return serializer.data
+    
+    def get_questions(self, obj):
+        questions = Question.objects.filter(job=obj)
+        if questions.exists():
+            return QuestionSerializer(questions, many=True).data
+        else:
+            return None
 
 
 

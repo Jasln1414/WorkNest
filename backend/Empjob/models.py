@@ -39,3 +39,16 @@ class ApplyedJobs(models.Model):
     job=models.ForeignKey(Jobs,on_delete=models.CASCADE)
     status=models.CharField(max_length=20,choices=choice, default="Application Send")
     applyed_on = models.DateTimeField(auto_now_add=True)
+
+
+
+
+class Question(models.Model):
+    job = models.ForeignKey(Jobs, on_delete=models.CASCADE, related_name='questions')
+    text = models.TextField()
+
+
+class Answer(models.Model):
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='answers')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
+    answer_text = models.TextField()

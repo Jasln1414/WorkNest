@@ -6,10 +6,10 @@ import { MdCurrencyRupee, MdDateRange } from "react-icons/md";
 import { SlLocationPin } from "react-icons/sl";
 import { formatDistanceToNow } from 'date-fns';
 import Swal from 'sweetalert2';
+import Qmodal from '../../../Components/Candidates/utilities/Qmodal';
+import '../../../Styles/Candidate/jobdetail.css';
 
-import '../../../Styles/Candidate/jobdetail.css'; // Add your custom CSS file here
-
-// Sub-components
+// Sub-components remain the same
 const JobHeader = ({ jobData, image }) => (
   <div className="job-header">
     <div className="company-logo">
@@ -39,7 +39,7 @@ const JobMeta = ({ jobData }) => (
   </div>
 );
 
-const JobActions = ({ jobData, handleApply, handleSave, isSaved }) => (
+const JobActions = ({ jobData, handleApply, handleSave, isSaved, hasQuestions }) => (
   <div className="job-actions">
     <div className="action-item">
       <MdDateRange />
@@ -49,8 +49,15 @@ const JobActions = ({ jobData, handleApply, handleSave, isSaved }) => (
       <span>Apply Before: {jobData.applyBefore}</span>
     </div>
     <div className="action-buttons">
-      <button className="apply-button" onClick={handleApply}>Apply</button>
-      <button className="save-button" onClick={handleSave}>{isSaved ? 'Unsave' : 'Save'}</button>
+      <button 
+        className="apply-button" 
+        onClick={handleApply}
+      >
+        Apply
+      </button>
+      <button className="save-button" onClick={handleSave}>
+        {isSaved ? 'Unsave' : 'Save'}
+      </button>
     </div>
   </div>
 );
@@ -77,111 +84,198 @@ const CompanyInfo = ({ jobData }) => (
   </div>
 );
 
-// Main Component
+// Main Component with all fixes
 function JobDetail() {
-  const baseURL = import.meta.env.VITE_API_BASEURL || 'http://127.0.0.1:8000';
+  const baseURL = 'http://127.0.0.1:8000';
   const token = localStorage.getItem('access');
   const { jobId } = useParams();
   const [jobData, setJobData] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
   const [isSaved, setIsSaved] = useState(false);
+  const [modal, setModal] = useState(false);
   const [userid, setUserid] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Debugging logs
   useEffect(() => {
-    const getUserId = async () => {
+    console.log('Current questions:', questions);
+    console.log('Modal state:', modal);
+    console.log('Answers state:', answers);
+  }, [questions, modal, answers]);
+
+  // Fetch user ID
+  useEffect(() => {
+    const fetchUserId = async () => {
       try {
         const response = await axios.get(`${baseURL}/api/account/current_user/`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data'
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (response.status === 200) {
-          setUserid(response.data.id);
-        }
+        console.log('User data:', response.data);
+        setUserid(response.data.id);
       } catch (error) {
         console.error('Error fetching user ID:', error);
+        setError('Failed to load user data');
       }
     };
-    getUserId();
-  }, [baseURL, token]);
+    fetchUserId();
+  }, [token]);
 
+  // Fetch job data and questions
   useEffect(() => {
-    const fetchJobData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/api/empjob/getjobs/detail/${jobId}/`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data'
-          }
+        // Fetch job details
+        const jobResponse = await axios.get(`${baseURL}/api/empjob/getjobs/detail/${jobId}/`, {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (response.status === 200) {
-          setJobData(response.data);
-        }
+        console.log('Job data:', jobResponse.data);
+        setJobData(jobResponse.data);
+
+        // Fetch questions
+        const questionsResponse = await axios.get(`${baseURL}/api/empjob/getjobs/questions/${jobId}/`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        console.log('Questions response:', questionsResponse.data);
+        
+        // Handle both response formats
+        const questionsData = Array.isArray(questionsResponse.data) 
+          ? questionsResponse.data 
+          : (questionsResponse.data?.questions || []);
+        
+        setQuestions(questionsData);
+        
       } catch (error) {
-        console.error('Error fetching job data:', error);
+        console.error('Error fetching data:', error);
+        setError('Failed to load job details');
+      } finally {
+        setLoading(false);
       }
     };
-    fetchJobData();
-  }, [jobId, token, baseURL]);
+
+    fetchData();
+  }, [jobId, token]);
 
   const handleSave = async () => {
     try {
       const action = isSaved ? 'unsave' : 'save';
-      const response = await axios.post(`${baseURL}/api/empjob/savejob/${jobId}/`, { action }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      if (response.status === 200 || response.status === 201) {
-        setIsSaved(!isSaved);
-      }
-    } catch (error) {
-      console.error('Error saving job:', error);
-    }
-  };
-
-  const handleApply = async () => {
-    try {
-      const response = await axios.post(`${baseURL}/api/empjob/applyjob/${jobId}/`, 
-        { userid }, 
+      const response = await axios.post(`${baseURL}/api/empjob/savejob/${jobId}/`, 
+        { action }, 
         {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         }
       );
+      
       if (response.status === 200 || response.status === 201) {
+        setIsSaved(!isSaved);
         Swal.fire({
           position: "center",
           icon: "success",
-          title: `${response.data.message}`,
+          title: `Job ${action}ed successfully`,
           showConfirmButton: false,
           timer: 1500
         });
       }
     } catch (error) {
-      console.error('Error applying for job:', error);
+      console.error('Error saving job:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.message || 'Failed to update saved status'
+      });
     }
   };
 
-  if (!jobData) {
-    return <div>Loading...</div>;
-  }
+  const handleApplyClick = async () => {
+    console.log('Apply button clicked');
+    console.log('Questions count:', questions.length);
+    
+    try {
+      if (questions.length > 0) {
+        console.log('Showing modal with questions');
+        setModal(true);
+      } else {
+        console.log('No questions - applying directly');
+        await handleApply({});
+      }
+    } catch (error) {
+      console.error('Apply click error:', error);
+    }
+  };
+
+  const handleApply = async (submittedAnswers = {}) => {
+    try {
+      console.log('Attempting to apply with:', {userid, answers: submittedAnswers});
+      
+      if (!userid) {
+        throw new Error('User not authenticated');
+      }
+
+      const response = await axios.post(
+        `${baseURL}/api/empjob/applyjob/${jobId}/`,
+        {
+          userid: userid,
+          answers: submittedAnswers
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      console.log('Application response:', response.data);
+      setModal(false);
+      setAnswers({});
+
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: response.data.message || 'Application submitted!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    } catch (error) {
+      console.error('Application error:', error.response || error);
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Application failed",
+        text: error.response?.data?.message || error.message,
+      });
+    }
+  };
+
+  if (loading) return <div className="loading">Loading job details...</div>;
+  if (error) return <div className="error">{error}</div>;
+  if (!jobData) return <div className="error">Job not found</div>;
 
   const image = jobData.employer?.profile_pic ? `${baseURL}${jobData.employer.profile_pic}` : '';
 
   return (
     <div className="job-detail-container">
+      {modal && (
+        <Qmodal 
+          setModal={setModal} 
+          questions={questions} 
+          setAnswers={setAnswers} 
+          answers={answers} 
+          handleApply={handleApply}
+        />
+      )}
+      
       <div className="job-detail-card">
         <JobHeader jobData={jobData} image={image} />
         <JobMeta jobData={jobData} />
-        <JobActions jobData={jobData} handleApply={handleApply} handleSave={handleSave} isSaved={isSaved} />
+        <JobActions 
+          jobData={jobData} 
+          handleApply={handleApplyClick}
+          handleSave={handleSave} 
+          isSaved={isSaved}
+          hasQuestions={questions.length > 0}
+        />
       </div>
       <JobDescription jobData={jobData} />
       <CompanyInfo jobData={jobData} />

@@ -74,7 +74,7 @@ function Chat() {
 
     // Create new WebSocket connection
     const newClient = new W3CWebSocket(
-      `ws://${window.location.host}/ws/chat/${candidate_id}/${employer_id}/${user_id}/`
+      `${baseURL}/ws/chat/${candidate_id}/${employer_id}/${user_id}`
     );
     
     setClient(newClient);
@@ -126,62 +126,96 @@ function Chat() {
   };
 
   return (
-    <div className='flex pt-12'>
-      <div>
-        {isSmallScreen ? (
-          <>
-            <button onClick={toggleDrawer} title="Add New" className="group cursor-pointer outline-none hover:rotate-90 duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" viewBox="0 0 24 24"
-                className="stroke-indigo-300 fill-none group-hover:fill-indigo-400 group-active:stroke-indigo-200 group-active:fill-indigo-300 group-active:duration-0 duration-300">
-                <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" strokeWidth="1.5"></path>
-                <path d="M8 12H16" strokeWidth="1.5"></path>
-                <path d="M12 16V8" strokeWidth="1.5"></path>
-              </svg>
-            </button>
-            <Drawer
-              open={isOpen}
-              onClose={toggleDrawer}
-              direction='left'
-              className='bla bla bla'
-            >
-              <div className='bg-gray-50'><SideBar /></div>
-            </Drawer>
-          </>
-        ) : (
-          <SideBar />
-        )}
-      </div>
-      <div className='w-full'>
-        <div className='w-full h-[35rem]'>
+    <div className="chat-messenger-container">
+      {/* Sidebar only for mobile */}
+      {isSmallScreen && (
+        <>
+          <button onClick={toggleDrawer} title="Menu" className="chat-toggle-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" viewBox="0 0 24 24"
+              className="stroke-indigo-300 fill-none group-hover:fill-indigo-400 group-active:stroke-indigo-200 group-active:fill-indigo-300 group-active:duration-0 duration-300">
+              <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" strokeWidth="1.5"></path>
+              <path d="M8 12H16" strokeWidth="1.5"></path>
+              <path d="M12 16V8" strokeWidth="1.5"></path>
+            </svg>
+          </button>
+          <Drawer
+            open={isOpen}
+            onClose={toggleDrawer}
+            direction='left'
+            className='sidebar-drawer'
+          >
+            <div className='bg-gray-50'><SideBar /></div>
+          </Drawer>
+        </>
+      )}
+
+      {/* Main chat interface */}
+      <div className="w-full">
+        <div className="w-full h-[35rem]">
           <div className="grid min-h-full w-full lg:grid-cols-[280px_1fr]">
-            <div className="border-r bg-blue-100 h-[35rem]">
-              <div className="flex h-full max-h-screen flex-col gap-2 ">
-                <nav className="flex flex-col gap-1 overflow-auto py-2">
+            {/* Chat rooms panel */}
+            <div className="chat-rooms-panel bg-white shadow-sm rounded-lg mx-4 mt-4 p-4">
+              <div className="flex h-full max-h-screen flex-col gap-2">
+                <nav className="flex flex-col gap-2 overflow-auto py-2">
                   {chatRooms.map((room, index) => (
-                    <div onClick={() => handleChat(room)} className="flex items-center gap-3 px-4 py-2 text-sm font-medium bg-blue-50 rounded-md cursor-pointer" key={index}>
-                      <div>
-                        <img className="w-10 h-10 rounded-full" src={baseURL + room.candidate_pic} alt="Rounded avatar" />
+                    <div 
+                      onClick={() => handleChat(room)} 
+                      className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-all hover:bg-gray-100 ${
+                        selectedChat.id === room.id ? 'bg-blue-50 hover:bg-blue-100' : 'bg-white'
+                      }`} 
+                      key={index}
+                    >
+                      <div className="h-12 w-12 flex-shrink-0">
+                        <img 
+                          className="w-full h-full rounded-full object-cover" 
+                          src={baseURL + room.candidate_pic} 
+                          alt={`${room.candidate_name} avatar`} 
+                        />
                       </div>
-                      <div className="flex-1 truncate font-bold text-gray-500">{room.candidate_name}</div>
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-800">{room.candidate_name}</div>
+                        <div className="text-sm text-gray-500">Last message...</div> {/* Add last message or status */}
+                      </div>
                     </div>
                   ))}
                 </nav>
               </div>
             </div>
-            <div className="md:block">
+
+            {/* Chat messages container */}
+            <div className="chat-messages-container">
               {isSmallScreen ? (
                 <Drawer
                   open={chatDrawer}
                   onClose={() => setChatDrawer(false)}
                   direction='right'
                   size={440}
-                  className='bla bla bla'>
-                  <div className='bg-gray-100 '>
-                    <ChatInterface empName={empName} setChatDrawer={setChatDrawer} chatDrawer={chatDrawer} message={message} setMessage={setMessage} sendMessage={sendMessage} chatMessages={chatMessages} selectedChat={selectedChat} />
+                  className='chat-drawer'
+                >
+                  <div className='chat-messages-container'>
+                    <ChatInterface 
+                      empName={empName} 
+                      setChatDrawer={setChatDrawer} 
+                      chatDrawer={chatDrawer} 
+                      message={message} 
+                      setMessage={setMessage} 
+                      sendMessage={sendMessage} 
+                      chatMessages={chatMessages} 
+                      selectedChat={selectedChat} 
+                    />
                   </div>
                 </Drawer>
               ) : (
-                <ChatInterface empName={empName} setChatDrawer={setChatDrawer} chatDrawer={chatDrawer} message={message} setMessage={setMessage} sendMessage={sendMessage} chatMessages={chatMessages} selectedChat={selectedChat} />
+                <ChatInterface 
+                  empName={empName} 
+                  setChatDrawer={setChatDrawer} 
+                  chatDrawer={chatDrawer} 
+                  message={message} 
+                  setMessage={setMessage} 
+                  sendMessage={sendMessage} 
+                  chatMessages={chatMessages} 
+                  selectedChat={selectedChat} 
+                />
               )}
             </div>
           </div>

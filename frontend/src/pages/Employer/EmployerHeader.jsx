@@ -5,7 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { set_Authentication } from '../../Redux/Authentication/authenticationSlice';
 import { set_user_basic_details } from '../../Redux/UserDetails/userBasicDetailsSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { Menu, X } from 'lucide-react'; // Import Lucide icons
+import { Menu, X } from 'lucide-react';
+import NotificationsComponent from '../../Components/Notifications/Notifications';
 import '../../Styles/OTP.css';
 
 function EmployerHeader() {
@@ -17,10 +18,9 @@ function EmployerHeader() {
     (userBasicDetails.profile_pic.startsWith('http') ? 
       userBasicDetails.profile_pic : 
       `${baseURL}${userBasicDetails.profile_pic}`) : 
-    logoimg; // Fallback to logo if no profile pic
+    logoimg;
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -99,7 +99,7 @@ function EmployerHeader() {
           <Link to="/employer/postjob" className="transition">
             <span>Post Job</span>
           </Link>
-          <Link to="/employer/messages" className="transition">
+          <Link to="/employer/chat" className="transition">
             <span>Messages</span>
           </Link>
           <Link to="/employer/candidates" className="transition">
@@ -108,7 +108,10 @@ function EmployerHeader() {
         </div>
 
         {/* User Profile Dropdown (Hidden on Mobile) */}
-        <div className="header-actions hidden md:block">
+        <div className="header-actions hidden md:flex items-center gap-4">
+          {/* Add Notifications Component */}
+          <NotificationsComponent />
+          
           <div className="user-profile">
             <Dropdown menu={{ items }}>
               <a onClick={(e) => e.preventDefault()}>
@@ -120,7 +123,7 @@ function EmployerHeader() {
                     style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover' }} 
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = logoimg; // Fallback image if profile pic fails to load
+                      e.target.src = logoimg;
                     }}
                   />
                 </Space>
@@ -147,7 +150,7 @@ function EmployerHeader() {
               Post Job
             </Link>
             <Link 
-              to="/employer/messages" 
+              to="/employer/chat" 
               onClick={() => setMobileMenuOpen(false)}
             >
               Messages

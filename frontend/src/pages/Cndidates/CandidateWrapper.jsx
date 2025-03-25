@@ -12,6 +12,7 @@ import Profile from './ProfileView';
 import JobDetail from './Job/CandidateJobDeatail';
 import ApplyedJob from '../Cndidates/Job/ApplyJob';
 import SavedJobs from './Job/SavedJobs';
+import Message from '../Cndidates/Message/Message';
 
 //import JobListingWithFilters from './utilities/Filter';
 
@@ -121,6 +122,7 @@ function CandidateWrapper() {
         <Route path="/find-job/job/:jobId" element={<JobDetail />} />
         <Route path='/applyedjobs' element={<ApplyedJob/>} ></Route>
         <Route path='/savedjobs' element={<SavedJobs/>}></Route>
+        <Route path='/messages' element={<Message/>}></Route>
        
         
         <Route

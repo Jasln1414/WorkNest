@@ -16,15 +16,38 @@ class ChatMessage(models.Model):
     is_read = models.BooleanField(default=False)
     is_send = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f'{self.candidate} to {self.employer}: {self.message}'
+from django.db import models
+from user_account.models import Candidate, Employer
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class CandidateNotification(models.Model):
-    user = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='notifications')
     message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    sender_pic = models.CharField(max_length=255, null=True, blank=True)
+    sender_name = models.CharField(max_length=255, null=True, blank=True)
 
-    # def __str__(self):
-    #     return f'Notification for {self.user.username} - {self.message[:20]}...'
-    
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"Notification for {self.candidate.user.email}: {self.message}"
+
+class EmployerNotification(models.Model):
+    employer = models.ForeignKey(Employer, on_delete=models.CASCADE, related_name='notifications')
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    sender_pic = models.CharField(max_length=255, null=True, blank=True)
+    sender_name = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"Notification for {self.employer.user.email}: {self.message}"

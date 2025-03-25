@@ -5,22 +5,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { set_Authentication } from '../../Redux/Authentication/authenticationSlice';
 import { set_user_basic_details } from '../../Redux/UserDetails/userBasicDetailsSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { Menu, X } from 'lucide-react'; // Import Lucide icons
+import { Menu, X } from 'lucide-react';
+import NotificationsComponent from '../../Components/Notifications/Notifications';
 import '../../Styles/OTP.css';
 
-function EmployerHeader() {
+function CandidateHeader() {
   const baseURL = 'http://127.0.0.1:8000';
-  const userBasicDetails = useSelector((state) => state.user_basic_details);
+  const userBasicDetails = useSelector((state) => state.user_basic_details || {});
   
-  // Only add the baseURL if profile_pic doesn't already have it
   const profile_image = userBasicDetails.profile_pic ? 
     (userBasicDetails.profile_pic.startsWith('http') ? 
       userBasicDetails.profile_pic : 
       `${baseURL}${userBasicDetails.profile_pic}`) : 
-    logoimg; // Fallback to logo if no profile pic
+    logoimg;
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -51,20 +50,20 @@ function EmployerHeader() {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
- const items = [
-  {
-    label: (
-      <Link to="/candidate/profile" className="w-full">
-        <p className="dropdown-item">Profile</p>
-      </Link>
-    ),
-    key: '0',
-  },
-  {
-    label: <p className="dropdown-item" onClick={handleLogout}>Logout</p>,
-    key: '1',
-  }
-];
+  const items = [
+    {
+      label: (
+        <Link to="/candidate/profile" className="w-full">
+          <p className="dropdown-item">Profile</p>
+        </Link>
+      ),
+      key: '0',
+    },
+    {
+      label: <p className="dropdown-item" onClick={handleLogout}>Logout</p>,
+      key: '1',
+    }
+  ];
 
   return (
     <div className="employer">
@@ -86,6 +85,7 @@ function EmployerHeader() {
           <button 
             onClick={toggleMobileMenu}
             className="mobile-menu-button focus:outline-none"
+            aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -93,19 +93,14 @@ function EmployerHeader() {
 
         {/* Desktop Navigation */}
         <div className="nav-links md:flex">
-       
-            
           <Link to="/candidate/find-job" className="transition">
             <span>Home</span>
-          </Link>
-          <Link to="/candidate/notifications" className="transition">
-            <span>Notifications</span>
           </Link>
           <Link to="/candidate/messages" className="transition">
             <span>Messages</span>
           </Link>
           <Link to="/candidate/SavedJobs" className="transition">
-            <span>Saved Job</span>
+            <span>Saved Jobs</span>
           </Link>
           <Link to="/candidate/applyedjobs" className="transition">
             <span>Applied Jobs</span>
@@ -113,19 +108,24 @@ function EmployerHeader() {
         </div>
 
         {/* User Profile Dropdown (Hidden on Mobile) */}
-        <div className="header-actions hidden md:block">
+        <div className="header-actions hidden md:flex items-center gap-4">
+          {/* Notifications Component */}
+          <div className="notifications-wrapper">
+            <NotificationsComponent />
+          </div>
+          
           <div className="user-profile">
-            <Dropdown menu={{ items }}>
+            <Dropdown menu={{ items }} trigger={['click']}>
               <a onClick={(e) => e.preventDefault()}>
                 <Space>
                   <img 
                     src={profile_image} 
                     alt="Profile" 
                     className="profile-image" 
-                    style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover' }} 
+                    style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} 
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = logoimg; // Fallback image if profile pic fails to load
+                      e.target.src = logoimg;
                     }}
                   />
                 </Space>
@@ -138,39 +138,51 @@ function EmployerHeader() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="mobile-menu md:hidden">
-          <div className="flex-col">
+          <div className="flex flex-col gap-4 p-4">
             <Link 
               to="/candidate/find-job" 
+              className="mobile-menu-item"
               onClick={() => setMobileMenuOpen(false)}
             >
               Home
             </Link>
             <Link 
-              to="/candidate/messeges" 
+              to="/candidate/messages" 
+              className="mobile-menu-item"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Messeges
+              Messages
             </Link>
             <Link 
               to="/candidate/notifications" 
+              className="mobile-menu-item"
               onClick={() => setMobileMenuOpen(false)}
             >
               Notifications
             </Link>
             <Link 
-              to="/candidate/SavedJob" 
+              to="/candidate/SavedJobs" 
+              className="mobile-menu-item"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Saved Job
+              Saved Jobs
+            </Link>
+            <Link 
+              to="/candidate/applyedjobs" 
+              className="mobile-menu-item"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Applied Jobs
             </Link>
             <Link 
               to="/candidate/profile" 
-              className="border-t"
+              className="mobile-menu-item border-t pt-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               Profile
             </Link>
             <button 
+              className="mobile-menu-item text-left"
               onClick={() => {
                 handleLogout();
                 setMobileMenuOpen(false);
@@ -185,4 +197,4 @@ function EmployerHeader() {
   );
 }
 
-export default EmployerHeader;
+export default CandidateHeader;

@@ -22,8 +22,10 @@ urlpatterns = [
 
    
 
-
+    path('getjobs/questions/<int:job_id>/',views.GetQuestions.as_view(),name="getjob_detailS"),
+   
     path('getjobs/status/<int:job_id>/',views.GetJobStatus.as_view(),name="getjob_detail"),
+    
     path('savejob/<int:job_id>/',views.SavejobStatus.as_view(),name="savejob"),
     path('savedjobs/',views.SavedJobsView.as_view(),name="savedjobs"),
      path('applicationStatus/<int:job_id>/',views.ApplicationStatusView.as_view(),name='applicationStatus'),
