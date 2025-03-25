@@ -3,6 +3,7 @@ import authenticationSliceReducer from './Authentication/authenticationSlice'
 import userBasicDetailsSliceReducer from './UserDetails/userBasicDetailsSlice'
 
 
+
 export default configureStore({
     reducer:{
         authentication_user:authenticationSliceReducer,
