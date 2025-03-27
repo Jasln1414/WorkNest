@@ -4,12 +4,20 @@ from Empjob.models import *
 from django.utils import timezone
 
 from rest_framework import serializers
-from Empjob.models import Jobs, Question
+from Empjob.models import Jobs, Question,Answer
+
+
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = ['text']
+        fields = ['id', 'text', 'question_type']
+
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = ['id', 'candidate', 'question', 'answer_text']
+
 
 class PostJobSerializer(serializers.ModelSerializer):
     questions = QuestionSerializer(many=True, required=False)

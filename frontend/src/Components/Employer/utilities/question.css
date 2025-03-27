@@ -1,0 +1,248 @@
+/* Global reset and base styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  
+  .modal-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .modal-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    z-index: 10;
+  }
+  
+  .modal-close-button:hover {
+    color: #000;
+  }
+  
+  .modal-content {
+    padding: 30px;
+    overflow-y: auto;
+    max-height: calc(90vh - 60px);
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+  }
+  
+  /* Custom scrollbar */
+  .modal-content::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+  
+  .modal-subtitle {
+    color: #6b7280;
+    margin-bottom: 20px;
+  }
+  
+  .question-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .question-input-group {
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction:row;
+  }
+  
+  .question-label {
+    font-weight: 600;
+    color: #374151;
+  }
+  .question-button{
+    width:10px;
+  }
+  
+ 
+  .question-input,
+  .question-type-select,
+  .option-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+  }
+  
+  .question-input:focus,
+  .question-type-select:focus,
+  .option-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+  
+  .mcq-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .button-group,
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .add-button {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .add-button:hover {
+    background-color: #059669;
+  }
+  
+  .cancel-button,
+  .submit-button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .cancel-button {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+  }
+  
+  .cancel-button:hover {
+    background-color: #e5e7eb;
+  }
+  
+  .submit-button {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+  }
+  
+  .submit-button:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Responsive adjustments */
+  @media screen and (max-width: 600px) {
+    .modal-container {
+      margin: 0;
+      width: 95%;
+      max-width: none;
+    }
+  
+    .modal-content {
+      padding: 20px;
+    }
+  
+    .mcq-options {
+      grid-template-columns: 1fr;
+    }
+  }
+ 
+ .question-remove-button{
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+    width: 24px !important;/* Corrected from -0.5rem to 1.5rem */
+    hight:24px;
+    display: flex;
+    align-items: center;
+    flex-direction:row;
+    justify-content: center;
+    transition: color 0.2s ease;
+    border-radius: 50%;
+  }
+  
+  .remove:hover {
+    background-color: #f3f4f6;
+    color: #ff4d4f;
+  }
+  
+ 
+  .remove:hover {
+    background-color: #f3f4f6;
+    color: #ff4d4f;
+  }
+  
+  .remove svg {
+    width: 3px;
+    height: 6px;
+  }
+.question-header{
+    display:flex;
+    flex-direction:row;
+}
+
+.remove svg {
+    width: 16px;
+    height: 16px;
+}

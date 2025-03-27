@@ -1,20 +1,27 @@
-import React, { useState } from "react";
-import axios from "axios";
-import ChatModal from "./ChatModal";
-import Swal from "sweetalert2"; // Import SweetAlert2
-import "../../../Styles/USER/Home.css";
+// src/Components/Employer/CandidateView.jsx
+import React, { useState } from 'react';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import ChatModal from './ChatModal'; // Assuming ChatModal is in the same directory
+import '../../../Styles/USER/Home.css';
 
-function CandidateView({ selectedJob, setChange, current, questions }) {
+const CandidateView = ({ selectedJob, setChange, current, questions }) => {
+  console.log('Current application data:', current);
   const baseURL = 'http://127.0.0.1:8000';
-  const token = localStorage.getItem("access");
-  const [appStatus, setAppStatus] = useState(current.status);
+  const token = localStorage.getItem('access');
+  const [appStatus, setAppStatus] = useState(current?.status || 'Application Send');
   const [chat, setChat] = useState(false);
 
-  const profile_pic = baseURL + current.candidate.profile_pic;
-  const userName = current.candidate.user_name;
-  const candidate_id = current.candidate.id;
-  const employer_id = selectedJob.employer_id;
-  const emp_name = selectedJob.employer_name;
+  if (!current) {
+    return <div>Select an application to view details</div>;
+  }
+
+  const answers = current.answers || [];
+  const profilePic = current.candidate?.profile_pic ? `${baseURL}${current.candidate.profile_pic}` : '';
+  const userName = current.candidate?.user_name || current.candidate_name;
+  const candidateId = current.candidate?.id;
+  const employerId = selectedJob?.employer_id;
+  const empName = selectedJob?.employer_name;
 
   // Function to handle status change
   const changeStatus = async (action) => {
@@ -25,39 +32,36 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
+            Accept: 'application/json',
+            'Content-Type': 'application/json', // Changed to JSON since it's a POST with JSON data
           },
         }
       );
       if (response.status === 200) {
-        setAppStatus(action); // Update the local state
-        // Show a success message using SweetAlert2
+        setAppStatus(action);
         Swal.fire({
-          icon: "success",
-          title: "Status Updated",
+          icon: 'success',
+          title: 'Status Updated',
           text: `Application status changed to ${action}.`,
           showConfirmButton: false,
-          timer: 1500, // Auto-close after 1.5 seconds
+          timer: 1500,
         });
       }
     } catch (error) {
-      console.error("Error updating status:", error);
-      // Show an error message using SweetAlert2
+      console.error('Error updating status:', error.response || error);
       Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Failed to update status. Please try again.",
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to update status. Please try again.',
         showConfirmButton: false,
-        timer: 1500, // Auto-close after 1.5 seconds
+        timer: 1500,
       });
     }
   };
 
   // Function to handle resume viewing
   const handleResume = () => {
-    changeStatus("Resume Viewed");
-    setAppStatus("Resume Viewed");
+    changeStatus('Resume Viewd'); // Match the typo in your model choices
   };
 
   // Function to handle chat modal
@@ -69,32 +73,32 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
     <div className="candidate-view-container">
       {chat && (
         <ChatModal
-          candidate_id={candidate_id}
-          employer_id={employer_id}
+          candidate_id={candidateId}
+          employer_id={employerId}
           setChat={setChat}
-          profile_pic={profile_pic}
+          profile_pic={profilePic}
           userName={userName}
-          emp_name={emp_name}
+          emp_name={empName}
         />
       )}
 
       {/* Action Buttons */}
       <div className="candidate-actions">
         <button
-          className={`action-button ${appStatus === "Pending" ? "pending-button active" : "pending-button"}`}
-          onClick={() => changeStatus("Pending")}
+          className={`action-button ${appStatus === 'Pending' ? 'pending-button active' : 'pending-button'}`}
+          onClick={() => changeStatus('Pending')}
         >
           Pending
         </button>
         <button
-          className={`action-button ${appStatus === "Accepted" ? "accept-button active" : "accept-button"}`}
-          onClick={() => changeStatus("Accepted")}
+          className={`action-button ${appStatus === 'ShortListed' ? 'accept-button active' : 'accept-button'}`}
+          onClick={() => changeStatus('ShortListed')}
         >
-          Accept
+          ShortListed
         </button>
         <button
-          className={`action-button ${appStatus === "Rejected" ? "reject-button active" : "reject-button"}`}
-          onClick={() => changeStatus("Rejected")}
+          className={`action-button ${appStatus === 'Rejected' ? 'reject-button active' : 'reject-button'}`}
+          onClick={() => changeStatus('Rejected')}
         >
           Reject
         </button>
@@ -107,71 +111,69 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
       <div className="candidate-info-section">
         <h2 className="section-title">Candidate Info</h2>
         <div className="candidate-profile">
-          <img
-            src={profile_pic}
-            alt="Candidate Profile"
-            className="profile-image"
-          />
+          {profilePic && <img src={profilePic} alt="Candidate Profile" className="profile-image" />}
           <p className="candidate-name">{userName}</p>
         </div>
         <div className="info-details">
           <div className="info-item">
             <span className="info-label">Email:</span>
-            <p className="info-value">{current.candidate.email}</p>
+            <p className="info-value">{current.candidate?.email || 'N/A'}</p>
           </div>
           <div className="info-item">
             <span className="info-label">Phone:</span>
-            <p className="info-value">{current.candidate.phone}</p>
+            <p className="info-value">{current.candidate?.phone || 'N/A'}</p>
           </div>
           <div className="info-item">
             <span className="info-label">Gender:</span>
-            <p className="info-value">{current.candidate.Gender}</p>
+            <p className="info-value">{current.candidate?.Gender || 'N/A'}</p>
           </div>
           <div className="info-item">
             <span className="info-label">Date of Birth:</span>
-            <p className="info-value">{current.candidate.dob}</p>
+            <p className="info-value">{current.candidate?.dob || 'N/A'}</p>
+          </div>
+          <div className="info-item">
+            <span className="info-label">Applied On:</span>
+            <p className="info-value">{new Date(current.applyed_on).toLocaleDateString()}</p>
+          </div>
+          <div className="info-item">
+            <span className="info-label">Status:</span>
+            <p className="info-value">{appStatus}</p>
           </div>
         </div>
       </div>
 
       {/* Education Section */}
-      <div className="education-info-section">
-        <h2 className="section-title">Education Info</h2>
-        <div className="info-details">
-          <div className="info-item">
-            <span className="info-label">Qualification:</span>
-            <p className="info-value">
-              {current.candidate.education[0].education}
-            </p>
-          </div>
-          <div className="info-item">
-            <span className="info-label">Specialisation:</span>
-            <p className="info-value">
-              {current.candidate.education[0].specilization}
-            </p>
-          </div>
-          <div className="info-item">
-            <span className="info-label">Completed Year:</span>
-            <p className="info-value">
-              {current.candidate.education[0].completed}
-            </p>
-          </div>
-          <div className="info-item">
-            <span className="info-label">College:</span>
-            <p className="info-value">
-              {current.candidate.education[0].college}
-            </p>
-          </div>
-          <div className="info-item">
-            <span className="info-label">Mark in CGPA:</span>
-            <p className="info-value">{current.candidate.education[0].mark}</p>
-          </div>
-          <div className="info-item">
-            <span className="info-label">Skills:</span>
-            <p className="info-value">{current.candidate.skills}</p>
+      {current.candidate?.education?.length > 0 && (
+        <div className="education-info-section">
+          <h2 className="section-title">Education Info</h2>
+          <div className="info-details">
+            <div className="info-item">
+              <span className="info-label">Qualification:</span>
+              <p className="info-value">{current.candidate.education[0].education}</p>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Specialisation:</span>
+              <p className="info-value">{current.candidate.education[0].specilization}</p>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Completed Year:</span>
+              <p className="info-value">{current.candidate.education[0].completed}</p>
+            </div>
+            <div className="info-item">
+              <span className="info-label">College:</span>
+              <p className="info-value">{current.candidate.education[0].college}</p>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Mark in CGPA:</span>
+              <p className="info-value">{current.candidate.education[0].mark}</p>
+            </div>
+            <div className="info-item">
+              <span className="info-label">Skills:</span>
+              <p className="info-value">{current.candidate.skills || 'N/A'}</p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Links Section */}
       <div className="links-section">
@@ -180,47 +182,82 @@ function CandidateView({ selectedJob, setChange, current, questions }) {
           <div className="info-item">
             <span className="info-label">LinkedIn:</span>
             <p className="info-value">
-              <a
-                href={current.candidate.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link"
-              >
-                {current.candidate.linkedin}
-              </a>
+              {current.candidate?.linkedin ? (
+                <a href={current.candidate.linkedin} target="_blank" rel="noopener noreferrer" className="link">
+                  {current.candidate.linkedin}
+                </a>
+              ) : (
+                'N/A'
+              )}
             </p>
           </div>
           <div className="info-item">
             <span className="info-label">GitHub:</span>
             <p className="info-value">
-              <a
-                href={current.candidate.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link"
-              >
-                {current.candidate.github}
-              </a>
+              {current.candidate?.github ? (
+                <a href={current.candidate.github} target="_blank" rel="noopener noreferrer" className="link">
+                  {current.candidate.github}
+                </a>
+              ) : (
+                'N/A'
+              )}
             </p>
           </div>
           <div className="info-item">
             <span className="info-label">Resume:</span>
             <p className="info-value">
-              <a
-                href={`${baseURL}${current.candidate.resume}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link"
-                onClick={handleResume}
-              >
-                View Resume
-              </a>
+              {current.candidate?.resume ? (
+                <a
+                  href={`${baseURL}${current.candidate.resume}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link"
+                  onClick={handleResume}
+                >
+                  View Resume
+                </a>
+              ) : (
+                'N/A'
+              )}
             </p>
           </div>
         </div>
       </div>
+
+      {/* Answers Section */}
+      <div className="answers-section">
+        <h2 className="section-title">Answers</h2>
+        {answers.length > 0 ? (
+          <ul className="answers-list">
+            {answers.map((answer) => {
+              const question = questions.find((q) => q.id === answer.question) || {};
+              return (
+                <li key={answer.id} className="answer-item">
+                  <strong>{question.text || 'Unknown Question'}:</strong>
+                  {question.question_type === 'MCQ' ? (
+                    <span>
+                      {question.options
+                        ? `${answer.answer_text}: ${question.options[answer.answer_text]}`
+                        : answer.answer_text}
+                    </span>
+                  ) : (
+                    <pre>{answer.answer_text}</pre>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p>No answers provided</p>
+        )}
+      </div>
+
+      {/* Back Button */}
+      <button onClick={() => setChange(true)} className="back-btn">
+        Back to Applications
+      </button>
     </div>
   );
-}
+};
 
 export default CandidateView;

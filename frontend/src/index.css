@@ -19,7 +19,15 @@ html, body {
   overflow-x: hidden;
   width: 100%;
   max-width: 100%;
+  body {
+  overflow-y: scroll; /* Ensure scrolling is enabled */
 }
+
+}
+body {
+  overflow-y: scroll; /* Ensure scrolling is enabled */
+}
+
 .header-loading-container {
   display: flex;
   justify-content: center;

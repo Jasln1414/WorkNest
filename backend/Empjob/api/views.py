@@ -14,17 +14,7 @@ from django.http import JsonResponse
 def csrf_token_view(request):
     token = get_token(request)
     return JsonResponse({'csrfToken': token})
-class GetQuestions(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self,request,job_id):
-        print(job_id)
-        try:
-            questions=Question.objects.filter(job=job_id)
-            print(questions)
-            serializer=QuestionSerializer(questions, many=True)
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        except:
-            return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+
 
 
 
@@ -194,33 +184,7 @@ class GetJobDetail(APIView):
 
 
 
-class Applyjob(APIView):
-    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
 
-    def post(self, request, job_id):
-        print('Job ID:', job_id)  # Debugging
-        print('Request Data:', request.data)  # Debugging
-
-        user = request.user  # Get the authenticated user
-        userid = user.id  # Get the user ID from the authenticated user
-
-        print('User ID:', userid)  # Debugging
-
-        try:
-            job = Jobs.objects.get(id=job_id)
-            candidate = Candidate.objects.get(user=user)  # Get candidate associated with the user
-        except Jobs.DoesNotExist:
-            return Response({'message': 'Job not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except Candidate.DoesNotExist:
-            return Response({'message': 'Candidate not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        if ApplyedJobs.objects.filter(candidate=candidate, job=job).exists():
-            return Response({'message': 'You have already applied for this job.'}, status=status.HTTP_200_OK)
-
-        ApplyedJobs.objects.create(candidate=candidate, job=job)
-        return Response({'message': 'You have successfully applied for the job.'}, status=status.HTTP_200_OK)
 
 
 
@@ -433,3 +397,58 @@ class ApplicationStatusView(APIView):
             return Response({"error": "Job application not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from .serializer import *
+from user_account.models import *
+from Empjob.models import *
+
+class GetQuestions(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, job_id):
+        print(job_id)
+        try:
+            questions = Question.objects.filter(job=job_id)
+            print(questions)
+            serializer = QuestionSerializer(questions, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+
+class Applyjob(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, job_id):
+        print('Job ID:', job_id)
+        print('Request Data:', request.data)
+        user = request.user
+        try:
+            job = Jobs.objects.get(id=job_id)
+            candidate = Candidate.objects.get(user=user)
+            if ApplyedJobs.objects.filter(candidate=candidate, job=job).exists():
+                return Response({'message': 'You have already applied for this job.'}, status=status.HTTP_200_OK)
+
+            application = ApplyedJobs.objects.create(candidate=candidate, job=job)
+            answers_data = request.data.get('answers', [])
+            for answer in answers_data:
+                question_id = answer.get('question')
+                answer_text = answer.get('answer_text')
+                try:
+                    question = Question.objects.get(id=question_id, job=job)
+                    Answer.objects.create(
+                        candidate=candidate,
+                        question=question,
+                        answer_text=answer_text
+                    )
+                except Question.DoesNotExist:
+                    return Response({'message': f'Question {question_id} not found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({'message': 'You have successfully applied for the job.'}, status=status.HTTP_200_OK)
+        except Jobs.DoesNotExist:
+            return Response({'message': 'Job not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Candidate.DoesNotExist:
+            return Response({'message': 'Candidate not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

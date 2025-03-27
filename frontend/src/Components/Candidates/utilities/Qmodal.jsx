@@ -1,48 +1,74 @@
+// Qmodal.jsx
 import React from 'react';
-import { IoMdClose } from "react-icons/io";
-import './QModal.css';
+import './Qmodal.css';
 
-function Qmodal({ setModal, questions, setAnswers, answers, handleApply }) {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleApply(answers);
-    setModal(false);
+const Qmodal = ({ setModal, questions, setAnswers, answers, handleApply }) => {
+  const handleAnswerChange = (questionId, value) => {
+    setAnswers(prev => ({
+      ...prev,
+      [questionId]: value
+    }));
+  };
+
+  const handleSubmit = () => {
+    const formattedAnswers = Object.entries(answers).map(([questionId, answer_text]) => ({
+      question: parseInt(questionId),
+      answer_text
+    }));
+    handleApply(formattedAnswers);
   };
 
   return (
-    <div className="modal-overlay" onClick={() => setModal(false)}>
-      <div className="modal-container" onClick={e => e.stopPropagation()}>
-        <button className="modal-close-button" onClick={() => setModal(false)}>
-          <IoMdClose size={30} />
-        </button>
-        
-        <div className="modal-content">
-          <h1>Application Questions</h1>
-          <form onSubmit={handleSubmit}>
-            {questions.map((question) => (
-              <div key={question.id} className="question-group">
-                <label>{question.text}</label>
-                <input
-                  type="text"
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h2>Application Questions</h2>
+        {questions.length > 0 ? (
+          questions.map((question, index) => (
+            <div key={index} className="question-item">
+              <label>{question.text}</label>
+              {question.question_type === 'TEXT' && (
+                <textarea
                   value={answers[question.id] || ''}
-                  onChange={(e) => 
-                    setAnswers(prev => ({
-                      ...prev,
-                      [question.id]: e.target.value
-                    }))
-                  }
-                  required
+                  onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                  placeholder="Type your answer here..."
                 />
-              </div>
-            ))}
-            <button type="submit" className="submit-button">
-              Submit Application
-            </button>
-          </form>
+              )}
+              {question.question_type === 'MCQ' && (
+                <select
+                  value={answers[question.id] || ''}
+                  onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                >
+                  <option value="">Select an option</option>
+                  {Object.entries(question.options || {}).map(([key, value]) => (
+                    <option key={key} value={key}>{`${key}: ${value}`}</option>
+                  ))}
+                </select>
+              )}
+              {question.question_type === 'CODE' && (
+                <textarea
+                  value={answers[question.id] || ''}
+                  onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                  placeholder="Write your code here..."
+                  className="code-input"
+                />
+              )}
+            </div>
+          ))
+        ) : (
+          <p>No questions available</p>
+        )}
+        <div className="modal-buttons">
+          <button onClick={() => setModal(false)}>Cancel</button>
+          <button 
+            onClick={handleSubmit}
+            disabled={Object.keys(answers).length !== questions.length}
+          >
+            Submit Application
+          </button>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Qmodal;

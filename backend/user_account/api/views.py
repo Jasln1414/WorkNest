@@ -24,7 +24,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!EMPLOYER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-import logging
+import logging 
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 

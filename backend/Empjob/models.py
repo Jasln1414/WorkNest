@@ -43,10 +43,21 @@ class ApplyedJobs(models.Model):
 
 
 
-class Question(models.Model):
-    job = models.ForeignKey(Jobs, on_delete=models.CASCADE, related_name='questions')
-    text = models.TextField()
 
+class Question(models.Model):
+    QUESTION_TYPES = (
+        ('TEXT', 'Text Answer'),
+        ('MCQ', 'Multiple Choice'),
+        ('CODE', 'Code Answer'),
+    )
+    
+    job = models.ForeignKey(Jobs, on_delete=models.CASCADE, related_name='questions')
+    text = models.TextField()  # The question itself
+    question_type = models.CharField(max_length=4, choices=QUESTION_TYPES, default='TEXT')
+    options = models.JSONField(null=True, blank=True)  # For MCQs, store options as JSON
+    
+    def __str__(self):
+        return self.text[:50]
 
 class Answer(models.Model):
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='answers')
