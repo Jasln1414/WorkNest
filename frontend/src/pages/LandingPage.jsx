@@ -75,7 +75,7 @@ const LandingPage = () => {
       <div className="container-land">
         <div className="Post-job">
           <img src={logo} alt="Find Job" />
-          <button onClick={handleFindJobClick}>FIND JOB</button>
+          <button onClick={handleFindJobClick}>FIND JOly</button>
         </div>
 
         <div className="Post-job">
