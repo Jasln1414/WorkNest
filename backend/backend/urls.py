@@ -15,6 +15,7 @@ urlpatterns = [
     path('dashboard/', include("Admin.api.urls")),
     path('csrf/', csrf_token_view, name='csrf_token'),
    path('chat/', include("chat.api.urls")),  # Changed from 'chat/' to 'api/chat/'
+   path('api/payment/',include("payment.urls")),
 
 ]
 

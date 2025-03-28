@@ -15,6 +15,8 @@ function PostJob() {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [questions, setQuestions] = useState([{ text: '', question_type: 'TEXT', options: null }]);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState(null);
   const baseURL = 'http://127.0.0.1:8000/';
   const token = localStorage.getItem('access');
   const navigate = useNavigate();
@@ -28,21 +30,89 @@ function PostJob() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleSubmit = async (values) => {
+  // Load Razorpay script dynamically
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  
+  const handlePayment = async (orderData, formValues) => {
+    const isScriptLoaded = await loadRazorpayScript();
+    if (!isScriptLoaded) {
+      Swal.fire('Error', 'Failed to load payment gateway', 'error');
+      return;
+    }
+  
+    const options = {
+      key: orderData.key,
+      amount: orderData.amount,
+      currency: 'INR',
+      order_id: orderData.order_id,
+      handler: async (response) => {
+        try {
+          const verifyResponse = await axios.post(
+            `${baseURL}api/payment/verify-payment/`,
+            {
+              payment_id: response.razorpay_payment_id,
+              order_id: response.razorpay_order_id,
+              signature: response.razorpay_signature,
+              transaction_id: response.razorpay_payment_id,
+              method: 'razorpay',
+            },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+  
+          if (verifyResponse.data.success) {
+            // Pass all payment details to handleSubmit
+            await handleSubmit(formValues, {
+              payment_id: response.razorpay_payment_id,
+              order_id: response.razorpay_order_id,
+              signature: response.razorpay_signature,
+            });
+          }
+        } catch (error) {
+          Swal.fire('Error', 'Payment verification failed', 'error');
+        }
+      },
+      prefill: {
+        email: localStorage.getItem('user_email') || '',
+        contact: localStorage.getItem('user_phone') || '',
+      },
+      theme: { color: '#3399cc' },
+    };
+  
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
+  
+  const handleSubmit = async (values, paymentData = null) => {
     const formattedQuestions = questions
-      .filter(q => q.text.trim() !== '')
-      .map(q => ({
+      .filter((q) => q.text.trim() !== '')
+      .map((q) => ({
         text: q.text,
         question_type: q.question_type,
-        ...(q.question_type === 'MCQ' && q.options ? { options: q.options } : {})
+        ...(q.question_type === 'MCQ' && q.options ? { options: q.options } : {}),
       }));
-
+  
     const formData = {
       ...values,
       lpa: `${values.saleryfrom}-${values.saleryto}`,
-      questions: formattedQuestions
+      questions: formattedQuestions,
+      ...(paymentData && {
+        razorpay_payment_id: paymentData.payment_id,
+        razorpay_order_id: paymentData.order_id,
+        razorpay_signature: paymentData.signature,
+      }),
     };
-
+  
     try {
       const response = await axios.post(`${baseURL}api/empjob/postjob/`, formData, {
         headers: {
@@ -50,33 +120,62 @@ function PostJob() {
           'Content-Type': 'application/json',
         },
       });
-
-      if (response.status === 200 || response.status === 201) {
+  
+      if (response.status === 201) {
         Swal.fire({
           title: 'Success!',
           text: 'Job posted successfully',
-          icon: 'success'
+          icon: 'success',
         }).then(() => {
           navigate('/employer/Emphome');
         });
       }
     } catch (error) {
-      Swal.fire({
-        title: 'Error!',
-        text: error.response?.data?.message || 'Failed to post job',
-        icon: 'error'
-      });
+      if (error.response?.status === 402) {
+        setPaymentDetails({
+          order_id: error.response.data.order_id,
+          amount: error.response.data.amount,
+          key: error.response.data.key,
+        });
+        setShowPaymentModal(true);
+        await handlePayment(error.response.data, values);
+      } else {
+        Swal.fire({
+          title: 'Error!',
+          text: error.response?.data?.error || 'Failed to post job',
+          icon: 'error',
+        });
+      }
     }
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <div className="post-job-container">
-      {/* Sidebar/Drawer */}
       {isSmallScreen ? (
         <>
           <button onClick={toggleDrawer} className="drawer-toggle-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
             </svg>
           </button>
           <Drawer open={isOpen} onClose={toggleDrawer} direction="left" className="drawer">
@@ -89,16 +188,12 @@ function PostJob() {
 
       <div className="post-job-content">
         {showQuestionModal && (
-          <Qmodal 
-            setModal={setShowQuestionModal} 
-            questions={questions} 
-            setQuestions={setQuestions}
-          />
+          <Qmodal setModal={setShowQuestionModal} questions={questions} setQuestions={setQuestions} />
         )}
 
         <div className="post-job-form-wrapper">
           <h1>Post A Job</h1>
-          
+
           <Formik
             initialValues={initialValue}
             validationSchema={PostJobValidationSchema}
@@ -107,34 +202,30 @@ function PostJob() {
             {({ isSubmitting }) => (
               <Form className="post-job-form">
                 <div className="form-grid">
-                  {/* Job Title */}
                   <div className="input-group">
                     <Field name="title" placeholder=" " />
                     <label>Job Title</label>
                     <ErrorMessage name="title" component="div" className="error-message" />
                   </div>
 
-                  {/* Location */}
                   <div className="input-group">
                     <Field name="location" placeholder=" " />
                     <label>Location</label>
                     <ErrorMessage name="location" component="div" className="error-message" />
                   </div>
 
-                  {/* Salary Range */}
                   <div className="input-group">
                     <Field name="saleryfrom" type="number" placeholder=" " />
                     <label>Salary From (LPA)</label>
                     <ErrorMessage name="saleryfrom" component="div" className="error-message" />
                   </div>
-                  
+
                   <div className="input-group">
                     <Field name="saleryto" type="number" placeholder=" " />
                     <label>Salary To (LPA)</label>
                     <ErrorMessage name="saleryto" component="div" className="error-message" />
                   </div>
 
-                  {/* Job Type */}
                   <div className="input-group">
                     <Field as="select" name="jobtype">
                       <option value="">Select Job Type</option>
@@ -145,7 +236,6 @@ function PostJob() {
                     <ErrorMessage name="jobtype" component="div" className="error-message" />
                   </div>
 
-                  {/* Job Mode */}
                   <div className="input-group">
                     <Field as="select" name="jobmode">
                       <option value="">Select Job Mode</option>
@@ -157,7 +247,6 @@ function PostJob() {
                     <ErrorMessage name="jobmode" component="div" className="error-message" />
                   </div>
 
-                  {/* Experience */}
                   <div className="input-group">
                     <Field as="select" name="experience">
                       <option value="">Select Experience</option>
@@ -171,7 +260,6 @@ function PostJob() {
                     <ErrorMessage name="experience" component="div" className="error-message" />
                   </div>
 
-                  {/* Apply Before */}
                   <div className="input-group">
                     <Field type="date" name="applyBefore" />
                     <label>Apply Before</label>
@@ -179,14 +267,13 @@ function PostJob() {
                   </div>
                 </div>
 
-                {/* About & Responsibility */}
                 <div className="text-area-group">
                   <div className="input-group">
                     <Field as="textarea" name="about" rows="4" placeholder=" " />
                     <label>About the Job</label>
                     <ErrorMessage name="about" component="div" className="error-message" />
                   </div>
-                  
+
                   <div className="input-group">
                     <Field as="textarea" name="responsibility" rows="4" placeholder=" " />
                     <label>Responsibilities</label>
@@ -194,23 +281,21 @@ function PostJob() {
                   </div>
                 </div>
 
-                {/* Questions Section */}
                 <div className="questions-section">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setShowQuestionModal(true)}
                     className="add-questions-button"
                   >
                     Add Screening Questions
                   </button>
-                  {questions.some(q => q.text.trim()) && (
+                  {questions.some((q) => q.text.trim()) && (
                     <p className="questions-count">
-                      {questions.filter(q => q.text.trim()).length} question(s) added
+                      {questions.filter((q) => q.text.trim()).length} question(s) added
                     </p>
                   )}
                 </div>
 
-                {/* Submit Button */}
                 <button type="submit" disabled={isSubmitting} className="submit-button">
                   {isSubmitting ? 'Posting...' : 'Post Job'}
                 </button>

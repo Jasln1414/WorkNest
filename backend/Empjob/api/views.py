@@ -5,6 +5,7 @@ from rest_framework import status
 from .serializer import *
 from user_account.models import *
 from Empjob.models import *
+from payment.models import *
 
 
 
@@ -15,12 +16,98 @@ def csrf_token_view(request):
     token = get_token(request)
     return JsonResponse({'csrfToken': token})
 
+import razorpay
+from django.conf import settings
+
+# Initialize client correctly
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+import logging
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+import razorpay
+
+from django.conf import settings
+
+logger = logging.getLogger(__name__)
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+import logging
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+import razorpay
+
+from django.conf import settings
+
+logger = logging.getLogger(__name__)
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 class PostJob(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            user = request.user
+            if user.user_type != 'employer':
+                return Response({"error": "Only employers can post jobs"}, status=status.HTTP_403_FORBIDDEN)
+
+            employer = Employer.objects.get(user=user)
+            job_count = Jobs.objects.filter(employer=employer).count()
+
+            if job_count >= 2:
+                # Check if a successful payment exists instead of re-verifying
+                if 'razorpay_payment_id' not in request.data:
+                    order = razorpay_client.order.create({
+                        "amount": 200 * 100,
+                        "currency": "INR",
+                        "payment_capture": 1
+                    })
+                    return Response({
+                        "payment_required": True,
+                        "message": "Payment required for additional job postings",
+                        "order_id": order['id'],
+                        "amount": order['amount'],
+                        "key": settings.RAZORPAY_KEY_ID
+                    }, status=status.HTTP_402_PAYMENT_REQUIRED)
+
+                # Check if payment is recorded
+                payment_id = request.data['razorpay_payment_id']
+                if not Payment.objects.filter(
+                    transaction_id=payment_id,
+                    employer=employer,
+                    status='success'
+                ).exists():
+                    return Response({"error": "Invalid or unverified payment"}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer = PostJobSerializer(data=request.data, context={'employer': employer})
+            if serializer.is_valid():
+                job = serializer.save()
+                return Response({"message": "Job posted successfully"}, status=status.HTTP_201_CREATED)
+            logger.error(f"Serializer errors: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Employer.DoesNotExist:
+            return Response({"error": "Employer profile not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+"""class PostJob(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -53,7 +140,7 @@ class PostJob(APIView):
             return Response(
                 {"message": f"An error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            )"""
         
 class EditJob(APIView):
     permission_classes=[AllowAny]

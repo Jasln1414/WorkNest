@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     # additional providers (e.g., Facebook, Google)
     'allauth.socialaccount.providers.google',
     'chat',
+    'payment',
 ]
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
@@ -192,6 +193,7 @@ REST_FRAMEWORK = {
 }
 # JWT settings
 SIMPLE_JWT = {
+    'LEEWAY': 10,
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=50),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "ROTATE_REFRESH_TOKENS": True,
@@ -251,6 +253,8 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+RAZORPAY_KEY_ID='rzp_test_mbBRJooIj2vCOA'
+RAZORPAY_KEY_SECRET='ETDX3cJVDZ41ivU4TTAZ86vO'
 
 
 
