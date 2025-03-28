@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RiMessage2Fill } from 'react-icons/ri';
-//import ChatModal from './ChatModal';
-//import './StatusJob.css'; // Import your custom CSS file
+import ChatModal from './ChatModal';
+import '../../../Styles/Job/StatusJob.css';
 
 function StatusJob({ selectedJob, toggleDrawer }) {
   const [step, setStep] = useState(0);
@@ -9,105 +9,104 @@ function StatusJob({ selectedJob, toggleDrawer }) {
   const baseURL = 'http://127.0.0.1:8000';
 
   useEffect(() => {
-    if (selectedJob && selectedJob.status) {
-      switch (selectedJob.status) {
-        case 'Application Send':
-          setStep(1);
-          break;
-        case 'Application Viewd':
-          setStep(2);
-          break;
-        case 'Resume Viewd':
-          setStep(3);
-          break;
-        case 'Pending':
-          setStep(4);
-          break;
-        case 'Accepted':
-          setStep(5);
-          break;
-        case 'Rejected':
-          setStep(6);
-          break;
-        default:
-          setStep(0);
-          break;
-      }
+    setStep(0); // Reset step first
+    if (selectedJob?.status) {
+      const statusSteps = {
+        'Application Send': 1,
+        'Application Viewed': 2,
+        'Resume Viewed': 3,
+        'Pending': 4,
+        'ShortListed': 5,
+        'Accepted': 5,
+        'Rejected': 6,
+      };
+      setStep(statusSteps[selectedJob.status] || 0);
     }
-  }, [selectedJob]);
+  }, [selectedJob]); // This dependency ensures useEffect runs when selectedJob changes
+  console.log('Selected Job Updated:', selectedJob);
+  if (!selectedJob) return null;
 
-  if (!selectedJob) {
-    return null;
-  }
+  const handleChat = () => setChat(true);
 
-  const handleChat = () => {
-    setChat(true);
-  };
-
-  const profile_pic = baseURL + selectedJob.job.employer.profile_pic;
-  const userName = selectedJob.job.employer.user_full_name;
-  const candidate_id = selectedJob.candidate;
-  const employer_id = selectedJob.job.employer.id;
-  const candidate_name = selectedJob.candidate_name;
-
+  // Removed key from the container div as it might prevent proper updates
   return (
     <div className="status-job-container">
       <div className="job-card">
         {chat && (
           <ChatModal
-            candidate_name={candidate_name}
-            profile_pic={profile_pic}
-            userName={userName}
+            candidate_name={selectedJob.candidate_name}
+            profile_pic={`${baseURL}${selectedJob.job.employer.profile_pic}`}
+            userName={selectedJob.job.employer.user_full_name}
             setChat={setChat}
-            candidate_id={candidate_id}
-            employer_id={employer_id}
+            candidate_id={selectedJob.candidate}
+            employer_id={selectedJob.job.employer.id}
           />
         )}
-        <div className="chat-icon">
-          <RiMessage2Fill size={25} className="cursor-pointer" onClick={handleChat} />
+        
+        <div className="chat-icon" onClick={handleChat}>
+          <RiMessage2Fill size={25} />
         </div>
 
         <div className="job-header">
-          <p className="job-title">{selectedJob.job.title}</p>
-          <span className="employer-name">{selectedJob.job.employer.user_full_name}</span>
+          <h2>{selectedJob.job.title}</h2>
+          <p>{selectedJob.job.employer.user_full_name}</p>
         </div>
-        <div className="divider"></div>
-        <span className="status-title">Application Status</span>
 
-        <div className="status-steps">
-          <div className={`step ${step >= 1 ? 'completed' : ''}`}>
-            <div className="step-icon">
-              <svg className="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <p className="step-label">Application Sent</p>
-          </div>
-          <div className={`step ${step >= 2 ? 'completed' : ''}`}>
-            <div className="step-icon">
-              <svg className="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <p className="step-label">Application Viewed</p>
-          </div>
-          <div className={`step ${step >= 3 ? 'completed' : ''}`}>
-            <div className="step-icon">
-              <svg className="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <p className="step-label">Resume Viewed</p>
-          </div>
-          <div className={`step ${step === 4 ? 'pending' : step === 5 ? 'completed' : step === 6 ? 'rejected' : ''}`}>
-            <div className="step-icon">
-              <svg className="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <p className={`step-label ${step >= 4 ? 'bold' : ''}`}>
-              {step >= 4 ? selectedJob.status : 'Recruiter Action'}
-            </p>
+        <div className="status-tracker">
+          <h3>Application Status</h3>
+          <div className="progress-steps">
+            {[
+              { label: "Sent", step: 1 },
+              { label: "Viewed", step: 2 },
+              { label: "Resume", step: 3 },
+              { 
+                label: step >= 4 ? selectedJob.status : "Review", 
+                step: 4,
+                status: selectedJob.status
+              },
+            ].map(({ label, step: stepValue, status }, index) => {
+              let stepClass = '';
+              if (step >= stepValue) {
+                if (stepValue === 4) {
+                  switch (status) {
+                    case 'Pending':
+                      stepClass = 'pending';
+                      break;
+                    case 'ShortListed':
+                      stepClass = 'shortlisted';
+                      break;
+                    case 'Accepted':
+                      stepClass = 'completed';
+                      break;
+                    case 'Rejected':
+                      stepClass = 'rejected';
+                      break;
+                    default:
+                      stepClass = '';
+                  }
+                } else {
+                  stepClass = 'completed';
+                }
+              }
+              
+              return (
+                <div key={`step-${index}`} className="step-container">
+                  <div className={`step-circle ${stepClass}`}>
+                    {step >= stepValue ? (
+                      <svg viewBox="0 0 24 24">
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      <span>{index + 1}</span>
+                    )}
+                  </div>
+                  <p className="step-label">{label}</p>
+                  {index < 3 && (
+                    <div className={`connector ${step > stepValue ? 'active' : ''}`}></div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -115,19 +114,19 @@ function StatusJob({ selectedJob, toggleDrawer }) {
       <div className="job-details">
         <div className="details-section">
           <span className="section-title">Job Description</span>
-          <p className="section-content">{selectedJob.job.about}</p>
+          <p className="section-content">{selectedJob.job.about || 'Not specified'}</p>
         </div>
         <div className="details-section">
           <span className="section-title">Job Type:</span>
-          <p className="section-content">{selectedJob.job.jobtype}</p>
+          <p className="section-content">{selectedJob.job.jobtype || 'Not specified'}</p>
         </div>
         <div className="details-section">
           <span className="section-title">Job Mode:</span>
-          <p className="section-content">{selectedJob.job.jobmode}</p>
+          <p className="section-content">{selectedJob.job.jobmode || 'Not specified'}</p>
         </div>
         <div className="details-section">
           <span className="section-title">Responsibilities</span>
-          <p className="section-content">{selectedJob.job.responsibility}</p>
+          <p className="section-content">{selectedJob.job.responsibility || 'Not specified'}</p>
         </div>
       </div>
     </div>

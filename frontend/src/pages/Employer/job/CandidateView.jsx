@@ -1,12 +1,10 @@
-// src/Components/Employer/CandidateView.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import ChatModal from './ChatModal'; // Assuming ChatModal is in the same directory
+import ChatModal from './ChatModal';
 import '../../../Styles/USER/Home.css';
 
 const CandidateView = ({ selectedJob, setChange, current, questions }) => {
-  console.log('Current application data:', current);
   const baseURL = 'http://127.0.0.1:8000';
   const token = localStorage.getItem('access');
   const [appStatus, setAppStatus] = useState(current?.status || 'Application Send');
@@ -23,7 +21,6 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
   const employerId = selectedJob?.employer_id;
   const empName = selectedJob?.employer_name;
 
-  // Function to handle status change
   const changeStatus = async (action) => {
     try {
       const response = await axios.post(
@@ -33,7 +30,7 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
-            'Content-Type': 'application/json', // Changed to JSON since it's a POST with JSON data
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -59,12 +56,10 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
     }
   };
 
-  // Function to handle resume viewing
   const handleResume = () => {
-    changeStatus('Resume Viewd'); // Match the typo in your model choices
+    changeStatus('Resume Viewed'); // Corrected typo from 'Resume Viewd'
   };
 
-  // Function to handle chat modal
   const handleChat = () => {
     setChat(true);
   };
@@ -82,7 +77,6 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
         />
       )}
 
-      {/* Action Buttons */}
       <div className="candidate-actions">
         <button
           className={`action-button ${appStatus === 'Pending' ? 'pending-button active' : 'pending-button'}`}
@@ -94,7 +88,13 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
           className={`action-button ${appStatus === 'ShortListed' ? 'accept-button active' : 'accept-button'}`}
           onClick={() => changeStatus('ShortListed')}
         >
-          ShortListed
+          ShortList
+        </button>
+        <button
+          className={`action-button ${appStatus === 'Accepted' ? 'accept-button active' : 'accept-button'}`}
+          onClick={() => changeStatus('Accepted')}
+        >
+          Accept
         </button>
         <button
           className={`action-button ${appStatus === 'Rejected' ? 'reject-button active' : 'reject-button'}`}
@@ -107,7 +107,6 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
         </button>
       </div>
 
-      {/* Candidate Profile Section */}
       <div className="candidate-info-section">
         <h2 className="section-title">Candidate Info</h2>
         <div className="candidate-profile">
@@ -142,7 +141,6 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
         </div>
       </div>
 
-      {/* Education Section */}
       {current.candidate?.education?.length > 0 && (
         <div className="education-info-section">
           <h2 className="section-title">Education Info</h2>
@@ -175,7 +173,6 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
         </div>
       )}
 
-      {/* Links Section */}
       <div className="links-section">
         <h2 className="section-title">Links</h2>
         <div className="info-details">
@@ -224,7 +221,6 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
         </div>
       </div>
 
-      {/* Answers Section */}
       <div className="answers-section">
         <h2 className="section-title">Answers</h2>
         {answers.length > 0 ? (
@@ -252,7 +248,6 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
         )}
       </div>
 
-      {/* Back Button */}
       <button onClick={() => setChange(true)} className="back-btn">
         Back to Applications
       </button>

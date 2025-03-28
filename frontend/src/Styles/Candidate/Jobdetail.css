@@ -688,6 +688,19 @@
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Main Container */
 .status-job-container {
   max-width: 1000px;
@@ -754,37 +767,39 @@
   font-size: 14px;
   font-weight: 600;
   color: #2d2d2d;
- 
 }
 
+/* Status Steps Container */
 .status-steps {
   display: flex;
-  display:flex;
-  flex-direction:row;
-  align-items: center;
+  flex-direction: row; /* Steps are laid out horizontally */
+  align-items: flex-start; /* Align items at the top */
   position: relative;
   padding-bottom: 8px;
-  
 }
 
 .status-steps::before {
   content: "";
   position: absolute;
-  top: -1rem; /* Align with the center of the step circle */
-  left: 0;
-  right: 0;
+  top: 1px; /* Center the line vertically with the circles */
+  left: 18px; /* Adjust to align with the center of the first circle */
+  right: 18px; /* Adjust to align with the center of the last circle */
   height: 2px;
   background-color: #e1e4e8;
   z-index: 0;
 }
 
+/* Individual Status Step */
 .status-step {
   display: flex;
-  flex-direction: row;
+  flex-direction: column; /* Stack circle and label vertically */
+  align-items: center; /* Center align circle and label */
   position: relative;
   z-index: 1;
+  flex: 1; /* Distribute steps evenly */
 }
 
+/* Step Circle */
 .status-step .step-circle {
   width: 36px;
   height: 36px;
@@ -796,7 +811,8 @@
   transition: background-color 0.2s;
 }
 
-.status-step.active .step-circle {
+/* Status Colors */
+.status-step.completed .step-circle {
   background-color: #28a745; /* Green for completed steps */
 }
 
@@ -804,22 +820,32 @@
   background-color: #ffa500; /* Orange for pending steps */
 }
 
+.status-step.shortlisted .step-circle {
+  background-color: #17a2b8; /* Cyan/Teal for shortlisted */
+}
+
+.status-step.accepted .step-circle {
+  background-color: #28a745; /* Green for accepted */
+}
+
 .status-step.rejected .step-circle {
   background-color: #dc3545; /* Red for rejected steps */
 }
 
+/* Checkmark */
 .status-step .step-circle svg {
   width: 18px;
   height: 18px;
   color: #fff;
 }
 
+/* Step Label */
 .status-step .step-label {
   font-size: 12px;
   font-weight: 500;
   color: #666;
   text-align: center;
-  margin-top: 8px;
+  margin-top: 8px; /* Space between circle and label */
 }
 
 /* Job Details Card */
@@ -916,13 +942,10 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     padding-bottom: 16px;
-    display:flex;
-    flex-direction:row;
   }
 
   .status-step {
     min-width: 100px;
-
   }
 
   .job-type-mode {
@@ -939,8 +962,6 @@
   .status-job-card,
   .job-details-card {
     padding: 12px;
-    display:flex;
-    flex-direction:column;
   }
 
   .card-header h1 {
@@ -954,8 +975,6 @@
   .status-step .step-circle {
     width: 10px;
     height: 10px;
-    display:flex;
-    flex-direction:row;
   }
 
   .status-step .step-label {
@@ -976,327 +995,3 @@
     font-size: 13px;
   }
 }
-
-
-
-/* Main Container */
-.status-job-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 15px;
-  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
-  color: #333;
-  width: 100%;
-}
-
-/* Job Status Card */
-.status-job-card {
-  background-color: #fff;
-  border-radius: 6px;
-  border: 1px solid #e1e4e8;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
-  padding: 18px;
-  position: relative;
-  margin-bottom: 15px;
-}
-
-/* Chat Icon */
-.chat-icon {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  cursor: pointer;
-  color: #666;
-  transition: color 0.2s;
-}
-
-.chat-icon:hover {
-  color: #2557a7;
-}
-
-/* Card Header */
-.card-header {
-  margin-bottom: 20px;
-  padding-right: 40px; /* Space for chat icon */
-}
-
-.card-header h1 {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0 0 6px 0;
-  color: #2d2d2d;
-  word-wrap: break-word;
-}
-
-.card-header span {
-  font-size: 14px;
-  color: #666;
-}
-
-/* Status Tracker */
-.status-tracker {
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.status-tracker h2 {
-  font-size: 14px;
-  font-weight: 600;
-  color: #2d2d2d;
-  margin-bottom: 16px;
-}
-
-.status-steps {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  padding-bottom: 8px;
-}
-
-/* Remove the connecting line */
-/* .status-steps::before {
-  content: "";
-  position: absolute;
-  top: 18px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #e1e4e8;
-  z-index: 0;
-} */
-
-.status-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-}
-
-.status-step .step-circle {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #e1e4e8;
-  transition: background-color 0.2s;
-}
-
-.status-step.active .step-circle {
-  background-color: #28a745; /* Green for completed steps */
-}
-
-.status-step.pending .step-circle {
-  background-color: #ffa500; /* Orange for pending steps */
-}
-
-.status-step.rejected .step-circle {
-  background-color: #dc3545; /* Red for rejected steps */
-}
-
-.status-step .step-circle svg {
-  width: 18px;
-  height: 18px;
-  color: #fff;
-}
-
-.status-step .step-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: #666;
-  text-align: center;
-  margin-top: 8px;
-}
-
-/* Job Details Card */
-.job-details-card {
-  background-color: #fff;
-  border-radius: 6px;
-  border: 1px solid #e1e4e8;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
-  padding: 18px;
-}
-
-.job-details-card h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #2d2d2d;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #e1e4e8;
-}
-
-/* Job Description */
-.job-description {
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.job-description h4 {
-  font-size: 14px;
-  font-weight: 600;
-  color: #2d2d2d;
-  margin-bottom: 8px;
-}
-
-.job-description p {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.5;
-}
-
-/* Job Type and Mode */
-.job-type-mode {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.job-type,
-.job-mode {
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  padding: 16px;
-  flex: 1;
-}
-
-.job-type h4,
-.job-mode h4 {
-  font-size: 14px;
-  font-weight: 600;
-  color: #2d2d2d;
-  margin-bottom: 8px;
-}
-
-.job-type p,
-.job-mode p {
-  font-size: 14px;
-  color: #666;
-}
-
-/* Responsibilities */
-.responsibilities {
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  padding: 16px;
-}
-
-.responsibilities h4 {
-  font-size: 14px;
-  font-weight: 600;
-  color: #2d2d2d;
-  margin-bottom: 8px;
-}
-
-.responsibilities p {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.5;
-}
-
-/* Responsive Breakpoints */
-@media (max-width: 768px) {
-  .status-steps {
-    flex-wrap: wrap; /* Allow steps to wrap into multiple rows */
-    justify-content: center; /* Center steps horizontally */
-    gap: 12px; /* Add spacing between steps */
-    padding-bottom: 16px;
-  }
-
-  .status-step {
-    min-width: 80px; /* Reduce width for small screens */
-  }
-
-  .job-type-mode {
-    flex-direction: column;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .status-job-container {
-    padding: 10px;
-  }
-
-  .status-job-card,
-  .job-details-card {
-    padding: 12px;
-  }
-
-  .card-header h1 {
-    font-size: 20px;
-  }
-
-  .card-header span {
-    font-size: 13px;
-  }
-
-  .status-step .step-circle {
-    width: 24px; /* Smaller circle for small screens */
-    height: 24px;
-  }
-
-  .status-step .step-label {
-    font-size: 10px; /* Smaller label for small screens */
-  }
-
-  .job-description h4,
-  .job-type h4,
-  .job-mode h4,
-  .responsibilities h4 {
-    font-size: 13px;
-  }
-
-  .job-description p,
-  .job-type p,
-  .job-mode p,
-  .responsibilities p {
-    font-size: 13px;
-  }
-}
-
-
-/* Main Container */
-.status-job-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 15px;
-  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
-  color: #333;
-  width: 100%;
-  overflow-x: auto; /* Enable horizontal scrolling */
-}
-
-/* Custom Scrollbar for WebKit browsers (Chrome, Safari) */
-.status-job-container::-webkit-scrollbar {
-  height: 8px; /* Height of the horizontal scrollbar */
-}
-
-.status-job-container::-webkit-scrollbar-track {
-  background: #f9f9f9; /* Track color */
-  border-radius: 4px;
-}
-
-.status-job-container::-webkit-scrollbar-thumb {
-  background: #e1e4e8; /* Thumb color */
-  border-radius: 4px;
-}
-
-.status-job-container::-webkit-scrollbar-thumb:hover {
-  background: #c1c4c8; /* Thumb color on hover */
-}
-
-/* Custom Scrollbar for Firefox */
-.status-job-container {
-  scrollbar-width: thin; /* Thin scrollbar */
-  scrollbar-color: #e1e4e8 #f9f9f9; /* Thumb and track color */
-}
-
-

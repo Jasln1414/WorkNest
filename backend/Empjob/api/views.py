@@ -461,11 +461,26 @@ class GetApplicationjob(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
         
-
-
-
-
 class ApplicationStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, job_id):
+        action = request.data.get('action')
+        try:
+            applied_job = ApplyedJobs.objects.get(id=job_id)
+            if applied_job:
+                applied_job.status = action  # e.g., "Accepted", "Rejected"
+                applied_job.save()
+                return Response({"message": "Status changed"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "No job available"}, status=status.HTTP_204_NO_CONTENT)
+        except ApplyedJobs.DoesNotExist:
+            return Response({"error": "Job application not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+"""class ApplicationStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, job_id):
@@ -483,7 +498,7 @@ class ApplicationStatusView(APIView):
         except ApplyedJobs.DoesNotExist:
             return Response({"error": "Job application not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)"""
         
 from rest_framework.views import APIView
 from rest_framework.response import Response
