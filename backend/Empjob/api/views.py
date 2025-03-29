@@ -554,3 +554,44 @@ class Applyjob(APIView):
             return Response({'message': 'Candidate not found.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# jobs/views.py
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_application(request, job_id):
+    # Check if the authenticated candidate has applied to the job
+    has_applied = ApplyedJobs.objects.filter(job_id=job_id, candidate__user=request.user).exists()
+    return Response({"has_applied": has_applied})
+
+
+
+
+"""# jobs/views.py
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+
+from user_account.models import Candidate
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_saved(request, job_id):
+    try:
+        if not Jobs.objects.filter(id=job_id).exists():
+            return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        candidate = Candidate.objects.get(user=request.user)
+        is_saved = SavedJobs.objects.filter(job_id=job_id, candidate=candidate).exists()
+        return Response({"is_saved": is_saved}, status=status.HTTP_200_OK)
+    except Candidate.DoesNotExist:
+        return Response({"error": "Candidate profile not found for this user"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Debug: Confirm view is loaded
+print("check_saved view loaded")"""

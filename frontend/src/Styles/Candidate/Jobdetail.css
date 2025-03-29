@@ -995,3 +995,148 @@
     font-size: 13px;
   }
 }
+/* Styles/Candidate/jobdetail.css */
+
+/* Existing styles (assumed) */
+.job-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.job-detail-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.job-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.apply-button, .save-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.apply-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.apply-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.save-button {
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.save-button:hover:not(.saved-active) {
+  background-color: #e9ecef;
+  transform: scale(1.05);
+}
+
+.save-button.saved-active {
+  background-color: #ffca2c; /* Gold for saved */
+  color: #333;
+  border: none;
+}
+
+/* Applied badge styles */
+.applied-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  background-color: #e6ffe6;
+  color: #28a745;
+  border: 1px solid #28a745;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.applied-icon, .action-icon {
+  font-size: 16px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .job-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .apply-button, .save-button, .applied-badge {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .job-detail-card {
+    padding: 15px;
+  }
+
+  .action-item {
+    font-size: 12px;
+  }
+
+  .apply-button, .save-button, .applied-badge {
+    font-size: 14px;
+  }
+
+  .applied-icon, .action-icon {
+    font-size: 14px;
+  }
+}

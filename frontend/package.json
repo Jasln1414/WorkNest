@@ -35,6 +35,7 @@
     "react-responsive": "^10.0.1",
     "react-router-dom": "^7.3.0",
     "react-toastify": "^11.0.5",
+    "redux-persist": "^6.0.0",
     "sweetalert2": "^11.17.2",
     "tailwindcss": "^4.0.14",
     "websocket": "^1.0.35",

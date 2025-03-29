@@ -1,4 +1,5 @@
-import React, { useEffect,useState } from "react";
+// src/App.js
+import React, { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
 import axios from "axios";
 import LandingPage from "./pages/LandingPage";
@@ -83,13 +84,10 @@ const AppLayout = () => {
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [email, setEmail] = useState('');
 
-  // Fetch CSRF token when the app loads
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/get-csrf-token/')
       .then(response => {
-        // Set the CSRF token in axios defaults
         axios.defaults.headers.common['X-CSRFToken'] = response.data.csrfToken;
-        // Also set it in cookies if needed
         document.cookie = `csrftoken=${response.data.csrfToken}; path=/`;
         console.log('CSRF token set successfully');
       })
@@ -120,8 +118,8 @@ const AppLayout = () => {
 
   const handleOtpSuccess = () => {
     console.log("OTP verification successful in AppLayout");
-    setShowResetPasswordModal(true); // Show Reset Password Modal
-    setShowForgotPasswordModal(false); // Close Forgot Password Modal
+    setShowResetPasswordModal(true);
+    setShowForgotPasswordModal(false);
   };
 
   return (
@@ -130,37 +128,29 @@ const AppLayout = () => {
       <ConditionalHeader>
         <Outlet />
       </ConditionalHeader>
-
       <Footer />
 
-      {/* Login Modal */}
       <LoginModal
         isOpen={showLoginModal}
         onClose={toggleLoginModal}
         switchToSignup={switchToSignup}
         toggleLoginModal={toggleLoginModal}
       />
-
-      {/* Signup Modal */}
       <SignupModal
         isOpen={showSignupModal}
         onClose={toggleSignupModal}
         switchToLogin={switchToLogin}
       />
-
-      {/* Forgot Password Modal */}
       <ForgotPasswordModal
         isOpen={showForgotPasswordModal}
         closeModal={() => setShowForgotPasswordModal(false)}
-        onOtpSuccess={handleOtpSuccess} // Make sure this is passed correctly
-        setEmail={setEmail} // Pass setEmail to store the user's email
+        onOtpSuccess={handleOtpSuccess}
+        setEmail={setEmail}
       />
-
-      {/* Reset Password Modal */}
       <ResetPasswordModal
         isOpen={showResetPasswordModal}
         closeModal={() => setShowResetPasswordModal(false)}
-        email={email} // Pass the user's email to the Reset Password Modal
+        email={email}
       />
     </>
   );
@@ -171,20 +161,18 @@ const router = createBrowserRouter([
   { 
     path: "/", 
     element: <AppLayout />, 
-    errorElement: <ErrorBoundary />, // Global error boundary
+    errorElement: <ErrorBoundary />,
     children: [
       { path: "/", element: <LandingPage /> },
       { path: "/employer/*", element: <EmployerWrapper /> },
       { path: "/admin/*", element: <AdminWrapper /> },
       { path: "/candidate/*", element: <CandidateWrapper /> },
-      { path: "/reset_password/:id", element: <ResetPasswordModal /> }, // Keep this route
-      
+      { path: "/reset_password/:id", element: <ResetPasswordModal /> },
       { path: "*", element: <div>Page Not Found</div> }
     ]
   }
 ]);
 
-// App Component
 function App() {
   return <RouterProvider router={router} />;
 }

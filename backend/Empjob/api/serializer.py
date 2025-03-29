@@ -125,7 +125,7 @@ class SavedJobSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SavedJobs
-        fields = ['candidate', 'job']
+        fields = '__all__'
 
 class ApplyedJobSerializer(serializers.ModelSerializer):
     job = JobSerializer()

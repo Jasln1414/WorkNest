@@ -1,117 +1,27 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
-import isAuthUser from '../../utils/isAuthUser';
-import { set_Authentication } from '../../Redux/Authentication/authenticationSlice';
-import { set_user_basic_details } from '../../Redux/UserDetails/userBasicDetailsSlice';
 import CandidateHeader from './CandidateHeader';
-import ProfileCreation from './CandidateProfileCreation';
 import CandidateHome from './FindJob';
+import ProfileCreation from './CandidateProfileCreation';
 import Profile from './ProfileView';
 import JobDetail from './Job/CandidateJobDeatail';
-import ApplyedJob from '../Cndidates/Job/ApplyJob';
+import ApplyedJob from './Job/ApplyJob';
 import SavedJobs from './Job/SavedJobs';
-import Message from '../Cndidates/Message/Message';
-
-//import JobListingWithFilters from './utilities/Filter';
-
+import Message from './Message/Message';
 
 function CandidateWrapper() {
-  const baseURL = 'http://127.0.0.1:8000';
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const authentication_user = useSelector((state) => state.authentication_user);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const checkAuthAndFetchUserDetails = async () => {
-    console.log('Token:', localStorage.getItem('access'));
-    console.log('Current Path:', window.location.pathname);
-    console.log('Authentication State:', authentication_user);
-
-    const token = localStorage.getItem('access');
-
-    if (!token) {
-      console.warn('No token found, redirecting to login');
-      navigate('/');
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      // Check if the user is authenticated
-      const authResult = await isAuthUser();
-      console.log('Authentication Result:', authResult);
-
-      if (!authResult.isAuthenticated) {
-        console.warn('Not authenticated, redirecting to login');
-        navigate('/');
-        setIsLoading(false);
-        return;
-      }
-
-      // Fetch user details
-      const response = await axios.get(`${baseURL}api/account/user/details`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-
-      console.log('User Details Response:', response.data);
-
-      if (response.status === 200) {
-        // Update authentication state
-        dispatch(
-          set_Authentication({
-            name: response.data.data.full_name,
-            email: response.data.data.email,
-            isAuthenticated: true,
-            usertype: response.data.data.usertype,
-          })
-        );
-
-        // Update user basic details
-        dispatch(
-          set_user_basic_details({
-            profile_pic: response.data.profile_pic,
-          })
-        );
-
-        setIsLoading(false);
-        return;
-      }
-
-      // If the response is not successful, redirect to login
-      navigate('/');
-      setIsLoading(false);
-
-    } catch (error) {
-      console.error('Authentication Detailed Error:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
-
-      navigate('/');
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
-    console.log('Effect Triggered - Current Auth State:', authentication_user);
-
-    if (!authentication_user.isAuthenticated) {
-      checkAuthAndFetchUserDetails();
-    } else {
-      setIsLoading(false);
+    const token = localStorage.getItem('access');
+    if (!token || !authentication_user.isAuthenticated) {
+      navigate('/');
     }
-  }, [authentication_user.isAuthenticated]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  }, [authentication_user.isAuthenticated, navigate]);
 
   return (
     <div>
@@ -120,11 +30,9 @@ function CandidateWrapper() {
         <Route index element={<CandidateHome />} />
         <Route path="find-job" element={<CandidateHome />} />
         <Route path="/find-job/job/:jobId" element={<JobDetail />} />
-        <Route path='/applyedjobs' element={<ApplyedJob/>} ></Route>
-        <Route path='/savedjobs' element={<SavedJobs/>}></Route>
-        <Route path='/messages' element={<Message/>}></Route>
-       
-        
+        <Route path="/applyedjobs" element={<ApplyedJob />} />
+        <Route path="/savedjobs" element={<SavedJobs />} />
+        <Route path="/messages" element={<Message />} />
         <Route
           path="profile-creation"
           element={

@@ -229,17 +229,17 @@ const CandidateView = ({ selectedJob, setChange, current, questions }) => {
               const question = questions.find((q) => q.id === answer.question) || {};
               return (
                 <li key={answer.id} className="answer-item">
-                  <strong>{question.text || 'Unknown Question'}:</strong>
-                  {question.question_type === 'MCQ' ? (
-                    <span>
-                      {question.options
-                        ? `${answer.answer_text}: ${question.options[answer.answer_text]}`
-                        : answer.answer_text}
-                    </span>
-                  ) : (
-                    <pre>{answer.answer_text}</pre>
-                  )}
-                </li>
+                <strong>{question.text || 'Unknown Question'}:</strong>
+                {question.question_type === 'MCQ' ? (
+                  <span>
+                    {question.options
+                      ? `${answer.answer_text}: ${question.options[answer.answer_text]}`
+                      : answer.answer_text}
+                  </span>
+                ) : (
+                  <pre>{answer.answer_text}</pre>
+                )}
+              </li>
               );
             })}
           </ul>

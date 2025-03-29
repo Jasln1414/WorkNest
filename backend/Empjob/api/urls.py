@@ -23,11 +23,12 @@ urlpatterns = [
    
 
     path('getjobs/questions/<int:job_id>/',views.GetQuestions.as_view(),name="getjob_detailS"),
-   
+    path('check-application/<int:job_id>/', views.check_application, name='check_application'),
     path('getjobs/status/<int:job_id>/',views.GetJobStatus.as_view(),name="getjob_detail"),
-    
+   
     path('savejob/<int:job_id>/',views.SavejobStatus.as_view(),name="savejob"),
     path('savedjobs/',views.SavedJobsView.as_view(),name="savedjobs"),
+   # path('check-saved/<int:job_id>/', views.check_saved, name='check_saved'),
      path('applicationStatus/<int:job_id>/',views.ApplicationStatusView.as_view(),name='applicationStatus'),
    
     path('search/', JobSearchView.as_view(), name='job-search'),

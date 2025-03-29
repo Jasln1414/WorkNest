@@ -4,42 +4,52 @@ from django.utils import timezone
 # Create your models here.
 
 class Jobs(models.Model):
-    title=models.CharField(max_length=60,blank=True, null=True)
-    location=models.CharField(max_length=100, blank=True,null=True)
-    lpa=models.CharField(max_length=20,blank=True,null=True)
-    jobtype=models.CharField(max_length=30,blank=True,null=True)
-    jobmode=models.CharField(max_length=30,blank=True,null=True)
+    title = models.CharField(max_length=60, blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    lpa = models.CharField(max_length=20, blank=True, null=True)
+    jobtype = models.CharField(max_length=30, blank=True, null=True)
+    jobmode = models.CharField(max_length=30, blank=True, null=True)
     experience = models.CharField(max_length=50)
-    applyBefore=models.DateField(blank=True,null=True)
-    posteDate=models.DateTimeField(auto_now_add=True)
-    about=models.TextField(blank=True,null=True)
-    responsibility=models.TextField(blank=True,null=True)
-    active=models.BooleanField(default=True)
-    industry=models.CharField(blank=True,null=True)
-    employer=models.ForeignKey(Employer,on_delete=models.CASCADE, related_name="employer_jobs")
+    applyBefore = models.DateField(blank=True, null=True)
+    posteDate = models.DateTimeField(auto_now_add=True)  # Tracks job creation
+    about = models.TextField(blank=True, null=True)
+    responsibility = models.TextField(blank=True, null=True)
+    active = models.BooleanField(default=True)
+    industry = models.CharField(blank=True, null=True)
+    employer = models.ForeignKey(Employer, on_delete=models.CASCADE, related_name="employer_jobs")
 
     def __str__(self):
         return self.title or f"Job {self.id}"
 
+
+
 class SavedJobs(models.Model):
-    candidate = models.ForeignKey(Candidate,on_delete=models.CASCADE)
-    job=models.ForeignKey(Jobs,on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    job = models.ForeignKey(Jobs, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ('candidate', 'job')  # Optional: Prevents duplicate saves
 
+    def __str__(self):
+        return f"{self.candidate} saved {self.job}"
 
 
 class ApplyedJobs(models.Model):
-    choice=(
-        ("Application Send","Application Send"),
-        ("Application Viewd","Application Viewd"),
-        ("Resume Viewd","Resume Viewd"),
-       
+    choice = (
+        ("Application Send", "Application Send"),
+        ("Application Viewd", "Application Viewed"),  # Fixed typo
+        ("Resume Viewd", "Resume Viewed"),           # Fixed typo
     )
-    candidate = models.ForeignKey(Candidate,on_delete=models.CASCADE)
-    job=models.ForeignKey(Jobs,on_delete=models.CASCADE)
-    status=models.CharField(max_length=20,choices=choice, default="Application Send")
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    job = models.ForeignKey(Jobs, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=choice, default="Application Send")
     applyed_on = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('candidate', 'job')  # Ensures a candidate can’t apply to the same job twice
+
+    def __str__(self):
+        return f"{self.candidate} - {self.job}"
 
 
 

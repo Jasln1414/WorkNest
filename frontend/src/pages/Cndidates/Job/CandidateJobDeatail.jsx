@@ -1,17 +1,13 @@
-
-
 import '../../../Styles/Candidate/jobdetail.css';
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaSuitcase } from "react-icons/fa";
+import { FaSuitcase, FaCheckCircle, FaBookmark } from "react-icons/fa"; // Added FaBookmark for "Saved"
 import { MdCurrencyRupee, MdDateRange } from "react-icons/md";
 import { SlLocationPin } from "react-icons/sl";
 import { formatDistanceToNow } from 'date-fns';
 import Swal from 'sweetalert2';
 import Qmodal from '../../../Components/Candidates/utilities/Qmodal';
-import '../../../Styles/Candidate/jobdetail.css';
 
 const JobHeader = ({ jobData, image }) => (
   <div className="job-header">
@@ -42,7 +38,7 @@ const JobMeta = ({ jobData }) => (
   </div>
 );
 
-const JobActions = ({ jobData, handleApplyClick, handleSave, isSaved }) => (
+const JobActions = ({ jobData, handleApplyClick, handleSave, isSaved, hasApplied }) => (
   <div className="job-actions">
     <div className="action-item">
       <MdDateRange />
@@ -52,11 +48,18 @@ const JobActions = ({ jobData, handleApplyClick, handleSave, isSaved }) => (
       <span>Apply Before: {jobData.applyBefore}</span>
     </div>
     <div className="action-buttons">
-      <button className="apply-button" onClick={handleApplyClick}>
-        Apply
-      </button>
-      <button className="save-button" onClick={handleSave}>
-        {isSaved ? 'Unsave' : 'Save'}
+      {hasApplied ? (
+        <div className="applied-badge">
+          <FaCheckCircle className="applied-icon" />
+          <span>You have already applied!</span>
+        </div>
+      ) : (
+        <button className="apply-button" onClick={handleApplyClick}>
+          <FaCheckCircle className="action-icon" /> Apply
+        </button>
+      )}
+      <button className={`save-button ${isSaved ? 'saved-active' : ''}`} onClick={handleSave}>
+        <FaBookmark className="action-icon" /> {isSaved ? 'Saved' : 'Save'}
       </button>
     </div>
   </div>
@@ -92,6 +95,7 @@ function JobDetail() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [isSaved, setIsSaved] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
   const [modal, setModal] = useState(false);
   const [userid, setUserid] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -124,8 +128,15 @@ function JobDetail() {
         });
         const questionsData = Array.isArray(questionsResponse.data) ? questionsResponse.data : (questionsResponse.data?.questions || []);
         setQuestions(questionsData);
+
+        const applicationStatusResponse = await axios.get(`${baseURL}/api/empjob/check-application/${jobId}/`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setHasApplied(applicationStatusResponse.data.has_applied);
+
+       
       } catch (error) {
-        setError('Failed to load job details');
+        setError('Failed to load job details or application status');
       } finally {
         setLoading(false);
       }
@@ -158,6 +169,15 @@ function JobDetail() {
   };
 
   const handleApplyClick = () => {
+    if (hasApplied) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Already Applied',
+        text: 'You have already applied to this job!',
+        timer: 1500
+      });
+      return;
+    }
     if (questions.length > 0) {
       setModal(true);
     } else {
@@ -175,6 +195,7 @@ function JobDetail() {
       );
       setModal(false);
       setAnswers({});
+      setHasApplied(true);
       Swal.fire({
         icon: "success",
         title: response.data.message || 'Application submitted!',
@@ -214,6 +235,7 @@ function JobDetail() {
           handleApplyClick={handleApplyClick}
           handleSave={handleSave} 
           isSaved={isSaved}
+          hasApplied={hasApplied}
         />
       </div>
       <JobDescription jobData={jobData} />
