@@ -266,7 +266,7 @@ const handleJobStatusChange = async (action) => {
             <div className="eh-no-jobs-message">
               <h3 className="eh-no-jobs-title">Add your first job</h3>
               <p className="eh-no-jobs-text">There are currently no job listings. Post a job to start attracting candidates.</p>
-              <Link to={'/employer/profile/'}>
+              <Link to={'/employer/profile_creation/'}>
                 <button className="eh-post-job-button">Create Profile</button>
               </Link>
             </div>

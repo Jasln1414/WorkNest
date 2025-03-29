@@ -55,6 +55,22 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jobs
         fields = "__all__"
+        depth = 1
+    applications = serializers.SerializerMethodField()
+    can_edit = serializers.SerializerMethodField()
+    
+   
+       
+    
+    def get_applications(self, obj):
+        applications = ApplyedJobs.objects.filter(job=obj)
+        return ApplyedJobSerializer(applications, many=True).data
+    
+    def get_can_edit(self, obj):
+        request = self.context.get('request')
+        if request:
+            return obj.employer.user == request.user or request.user.is_staff
+        return False
     
     def get_questions(self, obj):
         questions = Question.objects.filter(job=obj)
@@ -138,3 +154,4 @@ class ApplyedJobSerializer(serializers.ModelSerializer):
     def get_candidate_name(self, obj):
         candidate = Candidate.objects.get(id=obj.candidate_id)  
         return candidate.user.full_name
+    

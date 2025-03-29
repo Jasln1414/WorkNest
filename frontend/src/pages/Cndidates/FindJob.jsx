@@ -7,7 +7,6 @@ import SearchBar from './utilities/SearchBox';
 import QuickFilterDropdowns from './utilities/Filter';
 import '../../Styles/LandingPage.css';
 import '../../Styles/USER/Home.css';
-import { Link } from "react-router-dom"; // Add this import
 
 function CandidateHome() {
   const baseURL = 'http://127.0.0.1:8000';
@@ -25,17 +24,16 @@ function CandidateHome() {
   });
 
   const [filters, setFilters] = useState({
-    jobType: '',
-    jobMode: '',
+    jobtype: '',
+    jobmode: '',
     experience: '',
-    salaryRange: '',
+    lpa: '',
     location: '',
   });
 
   const itemsPerPage = 6;
   const token = localStorage.getItem('access');
 
-  // Fetch all jobs on component mount
   const fetchAllJobs = useCallback(async () => {
     setLoading(true);
     setSearchPerformed(false);
@@ -50,23 +48,21 @@ function CandidateHome() {
 
       if (response.status === 200) {
         const jobs = Array.isArray(response.data) ? response.data : [];
-        console.log("Fetched Jobs:", jobs); // Debugging line
         setJobData(jobs);
         setFilteredJobs(jobs);
         setError(null);
       } else {
-        setError('Failed to fetch job data. Please try again later.');
+        setError('Failed to fetch job data.');
       }
     } catch (error) {
-      console.error('Error fetching job data:', error);
-      setError('An error occurred while fetching job data. Please try again later.');
+      console.error('Error fetching jobs:', error);
+      setError('An error occurred while fetching jobs.');
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, baseURL]);
 
-  // Handle search with filters
-  const handleSearch = useCallback(() => {
+  const handleSearch = useCallback((updatedFilters = filters) => {
     if (isSearching) return;
 
     setIsSearching(true);
@@ -75,19 +71,14 @@ function CandidateHome() {
     setCurrentPage(1);
 
     const queryParams = new URLSearchParams();
-
-    // Add search parameters
     if (searchParams.keyword) queryParams.append('search', searchParams.keyword);
     if (searchParams.location) queryParams.append('location', searchParams.location);
+    if (updatedFilters.jobtype) queryParams.append('jobtype', updatedFilters.jobtype);
+    if (updatedFilters.jobmode) queryParams.append('jobmode', updatedFilters.jobmode);
+    if (updatedFilters.experience) queryParams.append('experience', updatedFilters.experience);
+    if (updatedFilters.lpa) queryParams.append('lpa', updatedFilters.lpa);
+    if (updatedFilters.location && !searchParams.location) queryParams.append('location', updatedFilters.location);
 
-    // Add filter parameters
-    if (filters.jobType) queryParams.append('jobtype', filters.jobType);
-    if (filters.jobMode) queryParams.append('jobmode', filters.jobMode);
-    if (filters.experience) queryParams.append('experience', filters.experience);
-    if (filters.salaryRange) queryParams.append('salary', filters.salaryRange);
-    if (filters.location && !searchParams.location) queryParams.append('location', filters.location);
-
-    // Execute the search
     axios
       .get(`${baseURL}/api/empjob/search/?${queryParams.toString()}`, {
         headers: {
@@ -98,28 +89,22 @@ function CandidateHome() {
       })
       .then((response) => {
         if (response.status === 200) {
-          let jobs = [];
-          if (Array.isArray(response.data)) {
-            jobs = response.data;
-          } else if (response.data.results && Array.isArray(response.data.results)) {
-            jobs = response.data.results;
-          } else if (typeof response.data === 'object' && Object.keys(response.data).length > 0) {
-            jobs = Object.values(response.data);
-          }
+          const jobs = Array.isArray(response.data) 
+            ? response.data 
+            : response.data.results && Array.isArray(response.data.results) 
+              ? response.data.results 
+              : [];
           setFilteredJobs(jobs);
           setError(null);
         } else {
-          setError('Failed to fetch job data. Please try again later.');
+          setError('Failed to fetch jobs.');
+          setFilteredJobs(jobData);
         }
       })
       .catch((error) => {
-        console.error('Error fetching job data:', error);
-        if (error.response && error.response.status === 500) {
-          setError('Server error. There might be an issue with your search criteria.');
-          setFilteredJobs(jobData); // Fall back to showing all jobs
-        } else {
-          setError('An error occurred while fetching job data. Please try again later.');
-        }
+        console.error('Search error:', error);
+        setError('Error during search. Showing all jobs.');
+        setFilteredJobs(jobData);
       })
       .finally(() => {
         setLoading(false);
@@ -127,16 +112,16 @@ function CandidateHome() {
       });
   }, [searchParams, filters, token, jobData, isSearching, baseURL]);
 
-  // Reset all filters
   const resetFilters = () => {
-    setFilters({
-      jobType: '',
-      jobMode: '',
+    const resetFilters = {
+      jobtype: '',
+      jobmode: '',
       experience: '',
-      salaryRange: '',
+      lpa: '',
       location: '',
-    });
-    handleSearch(); // Trigger search after reset
+    };
+    setFilters(resetFilters);
+    handleSearch(resetFilters);
   };
 
   useEffect(() => {
@@ -186,12 +171,14 @@ function CandidateHome() {
         filters={filters}
         setFilters={setFilters}
         handleSearch={handleSearch}
-        resetFilters={resetFilters}
       />
 
       {error && (
         <div className="error-container-h1233">
           <p className="error-text-h1233">{error}</p>
+          <button onClick={resetFilters} className="reset-filters-button">
+            Reset Filters
+          </button>
         </div>
       )}
 
@@ -207,25 +194,22 @@ function CandidateHome() {
 
         <div className="job-cards-container-h1233">
           {getCurrentJobs().length > 0 ? (
-            getCurrentJobs().map((job) => {
-              console.log("Job Data:", job); // Debugging line
-              return (
-                <JobCard 
-                id={job.id} 
-                img={job.employer.profile_pic} 
-                title={job.title} 
-                posted={job.posteDate} // Pass actual date
-                applybefore={job.applyBefore} 
-                empname={job.employer.name} 
-                experience={job.experience} 
-                jobmode={job.jobmode} 
-                jobtype={job.jobtype} 
-                location={job.location} 
-                salary={job.lpa} 
+            getCurrentJobs().map((job) => (
+              <JobCard
+                key={job.id}
+                id={job.id}
+                img={job.employer?.profile_pic}
+                title={job.title}
+                posted={job.posteDate}
+                applybefore={job.applyBefore}
+                empname={job.employer?.name}
+                experience={job.experience}
+                jobmode={job.jobmode}
+                jobtype={job.jobtype}
+                location={job.location}
+                salary={job.lpa}
               />
-              
-              );
-            })
+            ))
           ) : (
             <div className="no-jobs-message-h1233">
               <p>No jobs match your current filters</p>
@@ -236,7 +220,11 @@ function CandidateHome() {
         </div>
 
         {totalPages > 1 && (
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         )}
       </div>
     </div>

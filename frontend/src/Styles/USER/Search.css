@@ -118,7 +118,7 @@
     border-radius: 0;
     height: 100%;
     white-space: nowrap;
-    margin: 3px;
+    
     
     margin-right: 0%;
   }
@@ -294,7 +294,7 @@
   
     .search-button {
       font-size: 14px; /* Smaller font size for mobile */
-      padding: 10px; /* Adjust padding */
+       /* Adjust padding */
     }
   }
 /* Search.css - Improved and consolidated */
@@ -370,7 +370,7 @@
   transition: background-color 0.2s;
   white-space: nowrap;
   height: calc(100% - 6px);
-  margin: 3px;
+  
   border-radius: 4px;
 }
 
@@ -638,4 +638,12 @@
     font-size: 12px; /* Even smaller font size for very small screens */
     padding: 6px 8px; /* Further reduced padding */
   }
+}
+button.search-button{
+  margin:0%;
+  height:100%;
+  border-radius-left:0%;
+}
+.search-input-container{
+  border-radius:-16px;
 }

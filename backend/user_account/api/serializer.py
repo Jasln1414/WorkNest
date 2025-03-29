@@ -9,14 +9,30 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ('password',)
         
 class CandidateSerializer(serializers.ModelSerializer):
+    profile_pic = serializers.SerializerMethodField()
+
     class Meta:
         model = Candidate
         fields = '__all__'
 
+    def get_profile_pic(self, obj):
+        if obj.profile_pic:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.profile_pic.url)
+        return None
+
 class EmployerSerializer(serializers.ModelSerializer):
+    profile_pic = serializers.SerializerMethodField()
+
     class Meta:
         model = Employer
         fields = '__all__'
+
+    def get_profile_pic(self, obj):
+        if obj.profile_pic:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.profile_pic.url)
+        return None
 
 class CandidateRegisterSerializer(serializers.ModelSerializer):
     class Meta:

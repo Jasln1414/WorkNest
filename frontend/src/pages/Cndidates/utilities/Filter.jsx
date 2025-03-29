@@ -7,7 +7,7 @@ const QuickFilterDropdowns = ({ filters, setFilters, handleSearch }) => {
 
   const filterOptions = [
     {
-      key: "jobMode",
+      key: "jobmode",
       label: "Job Mode",
       options: [
         { label: "Any Mode", value: "" },
@@ -17,13 +17,12 @@ const QuickFilterDropdowns = ({ filters, setFilters, handleSearch }) => {
       ],
     },
     {
-      key: "jobType",
+      key: "jobtype",
       label: "Job Type",
       options: [
         { label: "Any Type", value: "" },
         { label: "Full Time", value: "Full Time" },
         { label: "Part Time", value: "Part Time" },
-        { label: "Contract", value: "Contract" },
       ],
     },
     {
@@ -39,14 +38,14 @@ const QuickFilterDropdowns = ({ filters, setFilters, handleSearch }) => {
       ],
     },
     {
-      key: "salaryRange",
-      label: "Salary Range",
+      key: "lpa",
+      label: "Salary Range (LPA)",
       options: [
         { label: "Any Salary", value: "" },
         { label: "0 - 3 LPA", value: "0-3" },
         { label: "3 - 6 LPA", value: "3-6" },
         { label: "6 - 10 LPA", value: "6-10" },
-        { label: "10+ LPA", value: "10-0" },
+        { label: "10+ LPA", value: "10-999" },
       ],
     },
     {
@@ -63,70 +62,47 @@ const QuickFilterDropdowns = ({ filters, setFilters, handleSearch }) => {
     },
   ];
 
-  // Handle dropdown selection
   const handleDropdownChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
-    
-    // Trigger search immediately
-    setTimeout(() => {
-      handleSearch();
-    }, 0);
-    
-    // Close the dropdown after selection
+    console.log(`Sending filter - ${key}: "${value}"`); // Enhanced logging
+    setTimeout(() => handleSearch(newFilters), 0);
     setOpenDropdown(null);
   };
 
-  // Handle reset for individual filter
   const handleResetFilter = (key, event) => {
-    event.stopPropagation(); // Stop event propagation
+    event.stopPropagation();
     const newFilters = { ...filters, [key]: "" };
     setFilters(newFilters);
-    
-    // Trigger search immediately
-    setTimeout(() => {
-      handleSearch();
-    }, 0);
+    console.log(`Reset filter - ${key}`); // Logging reset
+    setTimeout(() => handleSearch(newFilters), 0);
   };
 
-  // Toggle dropdown open/close
   const toggleDropdown = (key) => {
     setOpenDropdown(openDropdown === key ? null : key);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (
-        dropdownContainerRef.current &&
-        !dropdownContainerRef.current.contains(event.target)
-      ) {
+    const handleClickOutside = (event) => {
+      if (dropdownContainerRef.current && !dropdownContainerRef.current.contains(event.target)) {
         setOpenDropdown(null);
       }
-    }
-
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Get appropriate label to display on the button
   const getButtonLabel = (filter) => {
-    if (!filters[filter.key]) {
-      return filter.label;
-    }
+    if (!filters[filter.key]) return filter.label;
     const option = filter.options.find((opt) => opt.value === filters[filter.key]);
     return option ? option.label : filter.label;
   };
 
-  // Check if a filter has an active selection
-  const isFilterActive = (key) => {
-    return filters[key] !== "" && filters[key] !== undefined;
-  };
+  const isFilterActive = (key) => filters[key] !== "" && filters[key] !== undefined;
 
-  // Close dropdown only
   const handleCloseDropdown = (e) => {
-    e.stopPropagation(); // Stop event propagation
-    setOpenDropdown(null); // Close the dropdown
+    e.stopPropagation();
+    setOpenDropdown(null);
   };
 
   return (
@@ -152,10 +128,7 @@ const QuickFilterDropdowns = ({ filters, setFilters, handleSearch }) => {
             <div className="dropdown-menu">
               <div className="dropdown-header">
                 <span>{filter.label}</span>
-                <button
-                  className="dropdown-close-button"
-                  onClick={handleCloseDropdown}
-                >
+                <button className="dropdown-close-button" onClick={handleCloseDropdown}>
                   ×
                 </button>
               </div>

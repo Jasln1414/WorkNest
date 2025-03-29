@@ -17,8 +17,5 @@ urlpatterns = [
    path('chat/', include("chat.api.urls")),  # Changed from 'chat/' to 'api/chat/'
    path('api/payment/',include("payment.urls")),
 
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# Serve media files during development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

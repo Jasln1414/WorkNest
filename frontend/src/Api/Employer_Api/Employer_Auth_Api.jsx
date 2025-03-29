@@ -67,110 +67,91 @@ import {jwtDecode} from "jwt-decode";
 
 import Swal from 'sweetalert2'; // Import SweetAlert
 
-export const EmployerLoginApi = async (formData, dispatch, set_Authentication, navigate) => {
-  console.log("📌 FormData:", formData);
 
+export const EmployerLoginApi = async (formData, dispatch, set_Authentication, navigate) => {
   try {
-    const response = await BaseApi.post("/api/account/Emplogin/", formData);
-    console.log("✅ API Response:", response);
+    const response = await BaseApi.post("/api/account/Emplogin/", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    });
 
     if (response.status === 200) {
       const { access_token, refresh_token, email, isAdmin, usertype, user_data } = response.data;
 
       if (!access_token || !refresh_token) {
-        console.error("❌ Missing authentication tokens!");
         Swal.fire({
           icon: 'error',
           title: 'Authentication Failed',
-          text: 'Authentication failed. Please try again.',
+          text: 'Missing authentication tokens!',
         });
         return { success: false };
       }
 
-      // Store tokens in localStorage
+      // Store tokens
       localStorage.setItem("access", access_token);
       localStorage.setItem("refresh", refresh_token);
 
-      // Decode JWT token
+      // Decode token
       const decodedToken = jwtDecode(access_token);
-      console.log("🔍 Decoded Token:", decodedToken);
 
-      // Extract profile picture URL from user_data
-      const baseURL = "http://127.0.0.1:8000"; // Replace with your backend URL
-      const profilePic = user_data?.profile_pic ? `${baseURL}${user_data.profile_pic}` : null;
-      console.log("Profile Picture URL:", profilePic); // Debugging
+      // Handle profile picture URL
+      const baseURL = "http://127.0.0.1:8000";
+      let profilePic = null;
+      
+      if (user_data?.profile_pic) {
+        profilePic = user_data.profile_pic.startsWith('http')
+          ? user_data.profile_pic
+          : `${baseURL}${user_data.profile_pic.startsWith('/') ? '' : '/'}${user_data.profile_pic}`;
+      }
 
-      // Update Redux state with profile picture
-      dispatch(
-        set_Authentication({
-          name: decodedToken.name || "Unknown",
-          email: email,
-          isAuthenticated: true,
-          isAdmin: isAdmin,
-          usertype: usertype,
-          profilePic: profilePic, // Ensure this is added
-        })
-      );
+      // Update Redux state
+      dispatch(set_Authentication({
+        name: decodedToken.name || "Unknown",
+        email: email,
+        isAuthenticated: true,
+        isAdmin: isAdmin,
+        usertype: usertype,
+        profilePic: profilePic,
+      }));
 
-      // Store profile picture in localStorage (optional)
+      // Store in localStorage
       if (profilePic) {
         localStorage.setItem("profilePic", profilePic);
       }
 
-      // Success SweetAlert
-      Swal.fire({
-        icon: 'success',
-        title: 'Login Successful!',
-        text: 'You have successfully logged in.',
-        timer: 2000, // Auto-close after 2 seconds
-        showConfirmButton: false,
-      });
-
-      if (response.data.user_data.completed === false) {
+      // Redirect based on profile completion
+      if (response.data.user_data?.completed === false) {
         navigate('/employer/profile_creation/');
       } else {
         navigate('/employer/EmpHome/');
       }
 
       return { success: true };
-    } else {
-      console.warn("⚠️ Unexpected status code:", response.status);
-      Swal.fire({
-        icon: 'error',
-        title: 'Login Failed',
-        text: 'Login failed. Please try again.',
-      });
-      return { success: false };
     }
   } catch (error) {
-    console.error("❌ Login Error:", error);
-
-    if (error.response) {
-      console.error("🚨 Error Response:", error.response);
+    console.error("Login Error:", error);
+    
+    if (error.response?.status === 403) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Account Not Approved',
+        text: 'Your employer account needs admin approval before you can login.',
+      });
+    } else {
       Swal.fire({
         icon: 'error',
         title: 'Login Failed',
-        text: error.response.data.detail || 'You have to approved by admin.',
-      });
-    } else if (error.request) {
-      console.error("📡 No response from server:", error.request);
-      Swal.fire({
-        icon: 'error',
-        title: 'Server Error',
-        text: 'Server is not responding. Please try again later.',
-      });
-    } else {
-      console.error("⚙️ Error setting up request:", error.message);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong. Please try again.',
+        text: error.response?.data?.detail || 'Login failed. Please try again.',
       });
     }
-
+    
     return { success: false };
   }
 };
+
+
+
 
 
 export const UserVerifyOtpApi = async (otpData) => {

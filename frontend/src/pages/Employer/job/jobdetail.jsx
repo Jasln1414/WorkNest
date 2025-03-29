@@ -1,365 +1,235 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Formik, Form, Field } from 'formik';
-import axios from 'axios';
-import Swal from 'sweetalert2';
 import SideBar from '../SideBar';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import JobDetailModal from '../../../Components/Employer/Employjobdetail';
-
-// Configure axios defaults for CSRF
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.withCredentials = true;
+//import '../../Styles/USER/Search.css';
 
 function JobDetail() {
-  const baseURL = 'http://127.0.0.1:8000';
+  const baseURL = import.meta.env.VITE_API_BASEURL || 'http://127.0.0.1:8000';
   const token = localStorage.getItem('access');
   const { jobId } = useParams();
-  const [jobData, setJobData] = useState({});
-  const [status, setStatus] = useState(false);
+  const navigate = useNavigate();
+  
+  const [jobData, setJobData] = useState(null);
   const [modal, setModal] = useState(false);
+  const [loading, setLoading] = useState({
+    page: true,
+    action: false,
+    modal: false
+  });
+  const [error, setError] = useState(null);
 
   // Fetch job data
-  useEffect(() => {
-    const fetchJobData = async () => {
-      try {
-        const response = await axios.get(`${baseURL}/api/empjob/getjobs/detail/${jobId}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          setJobData(response.data);
-          setStatus(response.data.active);
-        }
-      } catch (error) {
-        console.error('Error fetching job data:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to fetch job details. Please try again later.',
-        });
-      }
-    };
-
-    if (token && jobId) {
-      fetchJobData();
-    }
-  }, [jobId, token, baseURL]);
-
-  // Handle job status change
-  const handleJobStatusChange = async (action) => {
+  const fetchJobData = async () => {
+    setLoading(prev => ({ ...prev, page: true }));
+    setError(null);
     try {
-      const isActivating = action === 'activate';
-      const response = await axios.post(
-        `${baseURL}/api/empjob/getjobs/status/${jobId}/`,
-        { active: isActivating },
+      console.log('Token:', token); // Debug token
+      const response = await axios.get(
+        `${baseURL}/api/empjob/getjobs/detail/${jobId}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
           },
-          withCredentials: true,
+        }
+      );
+
+      console.log('Job data:', response.data); // Debug response
+      if (response.status === 200) {
+        setJobData(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching job data:', error);
+      setError('Failed to fetch job details. Please try again.');
+      if (error.response?.status === 401) {
+        toast.error('Session expired. Please log in again.', { position: 'top-center' });
+        navigate('/employer/login'); // Adjust the login path as needed
+      }
+    } finally {
+      setLoading(prev => ({ ...prev, page: false }));
+    }
+  };
+
+  // Handle job status change (activate/deactivate)
+  const handleJobStatusChange = async (action) => {
+    try {
+      setLoading(prev => ({ ...prev, action: true }));
+      
+      const response = await axios.post(
+        `${baseURL}/api/empjob/getjobs/status/${jobId}/`,
+        { action },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
         }
       );
 
       if (response.status === 200) {
-        setStatus(isActivating);
-        Swal.fire({
-          icon: 'success',
-          title: isActivating ? 'Activated' : 'Deactivated',
-          text: `The job has been successfully ${action}d.`,
+        // Update the job status in the local state
+        setJobData(prev => ({
+          ...prev,
+          active: action === 'activate'
+        }));
+        toast.success(`Job successfully ${action}d.`, {
+          position: 'top-center',
+          autoClose: 2000
         });
       }
     } catch (error) {
       console.error('Error updating job status:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to update job status. Please try again later.',
+      toast.error('Failed to update job status. Please try again.', {
+        position: 'top-center'
       });
+    } finally {
+      setLoading(prev => ({ ...prev, action: false }));
     }
   };
 
-  // Handle deactivate
-  const handleDeactivate = () => {
-    Swal.fire({
-      title: 'Do you want to deactivate this job?',
-      showDenyButton: true,
-      confirmButtonText: 'Deactivate',
-      denyButtonText: 'Cancel',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        handleJobStatusChange('deactivate');
-      }
-    });
+  // Handle modal operations
+  const handleModalUpdate = async () => {
+    try {
+      setLoading(prev => ({ ...prev, modal: true }));
+      const response = await axios.get(
+        `${baseURL}/api/empjob/getjobs/detail/${jobId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
+        }
+      );
+      setJobData(response.data);
+      toast.success('Job updated successfully', {
+        position: 'top-center',
+        autoClose: 2000
+      });
+    } catch (error) {
+      console.error('Error refreshing job data:', error);
+      toast.error('Failed to refresh job details', {
+        position: 'top-center'
+      });
+    } finally {
+      setLoading(prev => ({ ...prev, modal: false }));
+      setModal(false);
+    }
   };
 
-  // Handle activate
-  const handleActivate = () => {
-    Swal.fire({
-      title: 'Do you want to activate this job?',
-      showDenyButton: true,
-      confirmButtonText: 'Activate',
-      denyButtonText: 'Cancel',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        handleJobStatusChange('activate');
-      }
-    });
-  };
-
-  // CSS for responsive layout
-  const styles = {
-    container: {
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100vh',
-      backgroundColor: '#f3f4f6',
-    },
-    contentWrapper: {
-      flex: 1,
-      padding: '1rem',
-      display: 'flex',
-      justifyContent: 'center',
-    },
-    formContainer: {
-      width: '100%',
-      maxWidth: '900px',
-      margin: '0 auto',
-    },
-    title: {
-      fontSize: '1.5rem',
-      fontWeight: 'bold',
-      marginBottom: '1.5rem',
-      textAlign: 'center',
-    },
-    card: {
-      backgroundColor: 'white',
-      borderRadius: '0.5rem',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-      padding: '1.5rem',
-    },
-    jobTitle: {
-      fontSize: '1.25rem',
-      fontWeight: '600',
-      marginBottom: '1rem',
-      textAlign: 'center',
-    },
-    detailsGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-      gap: '1.5rem',
-      marginBottom: '1.5rem',
-    },
-    detailItem: {
-      marginBottom: '1rem',
-      paddingBottom: '0.5rem',
-      borderBottom: '1px solid #e5e7eb',
-    },
-    label: {
-      fontWeight: '500',
-      marginRight: '0.5rem',
-    },
-    activeText: {
-      color: '#10b981',
-      marginLeft: '0.5rem',
-    },
-    inactiveText: {
-      color: '#ef4444',
-      marginLeft: '0.5rem',
-    },
-    section: {
-      marginTop: '1.5rem',
-      padding: '1rem',
-      backgroundColor: '#f9fafb',
-      borderRadius: '0.25rem',
-      border: '1px solid #e5e7eb',
-    },
-    sectionTitle: {
-      fontWeight: '500',
-      paddingBottom: '0.5rem',
-      borderBottom: '1px solid #e5e7eb',
-      marginBottom: '0.5rem',
-    },
-    sectionText: {
-      color: '#4b5563',
-    },
-    buttonGroup: {
-      marginTop: '1.5rem',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '0.75rem',
-    },
-    button: {
-      padding: '0.5rem 1rem',
-      borderRadius: '0.25rem',
-      fontWeight: '500',
-      cursor: 'pointer',
-      border: 'none',
-      width: '100%',
-      maxWidth: '200px',
-    },
-    editButton: {
-      backgroundColor: '#3b82f6',
-      color: 'white',
-    },
-    deactivateButton: {
-      backgroundColor: '#ef4444',
-      color: 'white',
-    },
-    activateButton: {
-      backgroundColor: '#10b981',
-      color: 'white',
-    },
-    '@media (min-width: 768px)': {
-      container: {
-        flexDirection: 'row',
-      },
-      buttonGroup: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-      },
-    },
-  };
-
-  // Apply media query styles for larger screens
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 768px)');
-    const handleChange = (e) => {
-      if (e.matches) {
-        document.getElementById('job-container').style.flexDirection = 'row';
-        document.getElementById('button-group').style.flexDirection = 'row';
-      } else {
-        document.getElementById('job-container').style.flexDirection = 'column';
-        document.getElementById('button-group').style.flexDirection = 'column';
-      }
-    };
+    if (!token) {
+      navigate('/employer/login'); // Redirect to login if token is missing
+    } else {
+      fetchJobData();
+    }
+  }, [token, jobId, baseURL, navigate]);
 
-    mediaQuery.addEventListener('change', handleChange);
-    handleChange(mediaQuery);
+  if (loading.page && !jobData) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading job details...</p>
+      </div>
+    );
+  }
 
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  if (error || !jobData) {
+    return (
+      <div className="error-container">
+        <p className="error-message">{error || 'Job not found'}</p>
+        <button onClick={fetchJobData} className="retry-button">
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div id="job-container" style={styles.container}>
-      <SideBar />
+    <div className="job-detail-container-employer" style={{ marginLeft: '30vh',marginTop:'3vh' }}>
+      <div>
+        <SideBar />
+      </div>
 
-      <div style={styles.contentWrapper}>
-        {modal && <JobDetailModal setModal={setModal} jobData={jobData} />}
-        
-        <div style={styles.formContainer}>
-          <h1 style={styles.title}>Job Details</h1>
+      <div className="job-detail-content">
+        {modal && <JobDetailModal setModal={setModal} jobData={jobData} onUpdate={handleModalUpdate} />}
+      
+        <div className="job-detail-card">
+          <h1 className="job-detail-title">Job Details</h1>
           
-          <Formik
-            initialValues={jobData}
-            enableReinitialize
-          >
-            {() => (
-              <Form style={styles.card}>
-                <h2 style={styles.jobTitle}>{jobData?.title}</h2>
-                
-                <div style={styles.detailsGrid}>
-                  <div>
-                    <div style={styles.detailItem}>
-                      <span style={styles.label}>Location:</span>
-                      <Field name="location" disabled component="span">
-                        {jobData?.location}
-                      </Field>
-                    </div>
-                    <div style={styles.detailItem}>
-                      <span style={styles.label}>Salary:</span>
-                      <Field name="lpa" disabled component="span">
-                        {jobData?.lpa} LPA
-                      </Field>
-                    </div>
-                    <div style={styles.detailItem}>
-                      <span style={styles.label}>Job Type:</span>
-                      <Field name="jobtype" disabled component="span">
-                        {jobData?.jobtype}
-                      </Field>
-                    </div>
-                    <div style={styles.detailItem}>
-                      <span style={styles.label}>Job Mode:</span>
-                      <Field name="jobmode" disabled component="span">
-                        {jobData?.jobmode}
-                      </Field>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div style={styles.detailItem}>
-                      <span style={styles.label}>Experience:</span>
-                      <Field name="experience" disabled component="span">
-                        {jobData?.experience}
-                      </Field>
-                    </div>
-                    <div style={styles.detailItem}>
-                      <span style={styles.label}>Date Posted:</span>
-                      <Field name="postedDate" disabled component="span">
-                        {jobData?.postedDate}
-                      </Field>
-                    </div>
-                    <div style={styles.detailItem}>
-                      <span style={styles.label}>Apply Before:</span>
-                      <Field name="applyBefore" disabled component="span">
-                        {jobData?.applyBefore}
-                      </Field>
-                    </div>
-                    <div style={styles.detailItem}>
-                      <span style={styles.label}>Status:</span>
-                      <Field name="status" disabled component="span">
-                        {status ? (
-                          <span style={styles.activeText}>Active</span>
-                        ) : (
-                          <span style={styles.inactiveText}>Expired</span>
-                        )}
-                      </Field>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>About Job:</h3>
-                  <p style={styles.sectionText}>{jobData?.about}</p>
-                </div>
-
-                <div style={styles.section}>
-                  <h3 style={styles.sectionTitle}>Responsibilities:</h3>
-                  <p style={styles.sectionText}>{jobData?.responsibility}</p>
-                </div>
-
-                <div id="button-group" style={styles.buttonGroup}>
-                  <button
-                    type="button"
-                    onClick={() => setModal(true)}
-                    style={{...styles.button, ...styles.editButton}}
-                  >
-                    Edit
-                  </button>
-                  {status ? (
-                    <button
-                      type="button"
-                      onClick={handleDeactivate}
-                      style={{...styles.button, ...styles.deactivateButton}}
-                    >
-                      Deactivate
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleActivate}
-                      style={{...styles.button, ...styles.activateButton}}
-                    >
-                      Activate
-                    </button>
-                  )}
-                </div>
-              </Form>
-            )}
-          </Formik>
+          <div className="job-detail-info">
+            <h2 className="job-title">{jobData.title}</h2>
+            <p className="job-status">
+              <span className="bold-text">Status:</span>
+              {jobData.active ? (
+                <span className="status-active"  style={{ color: jobData.active ? 'white' : 'white' }}>Active</span>
+              ) : (
+                <span className="status-expired"  style={{ color: jobData.active ? 'white' : 'white' }}>Inactive</span>
+              )}
+            </p>
+            
+            {/* Additional job details */}
+            <p className="job-location">
+              <span className="bold-text">Location:</span> {jobData.location}
+            </p>
+            <p className="job-salary">
+              <span className="bold-text">Salary:</span> {jobData.lpa} LPA
+            </p>
+            <div className="job-meta" style={{ backgroundColor: '#fffff' }}>
+              <p className="job-type" style={{ backgroundColor: 'white' }}>
+                <span className="bold-text" style={{ backgroundColor: 'white' }}>Job Type:</span> {jobData.jobtype}
+              </p>
+              <p className="job-mode" style={{ backgroundColor: 'white' }}>
+              <span className="bold-text" >
+  Job Mode:
+</span> {jobData.jobmode}
+              </p>
+              <p className="job-experience">
+                <span className="bold-text">Experience:</span> {jobData.experience}
+              </p>
+            </div>
+            
+            <div className="job-dates">
+              <p className="job-posted-date">
+                <span className="bold-text">Posted:</span> {new Date(jobData.posteDate).toLocaleDateString()}
+              </p>
+              <p className="job-apply-before">
+                <span className="bold-text">Apply Before:</span> {new Date(jobData.applyBefore).toLocaleDateString()}
+              </p>
+            </div>
+            
+            <div className="job-description">
+              <p className="job-info-label">About Job:</p>
+              <p>{jobData.about}</p>
+            </div>
+            
+            <div className="job-description">
+              <p className="job-info-label">Responsibilities:</p>
+              <p>{jobData.responsibility}</p>
+            </div>
+          </div>
+          
+          <div className="job-actions">
+            <button 
+              className="edit-button" 
+              onClick={() => setModal(true)}
+              disabled={loading.action || loading.modal}
+            >
+              {loading.modal ? 'Saving...' : 'Edit'}
+            </button>
+            
+            <button 
+  style={{ color: jobData.active ? 'white' : 'white' }}
+  onClick={() => handleJobStatusChange(jobData.active ? 'deactivate' : 'activate')}
+  className={jobData.active ? 'deactivate-button' : 'activate-button'}
+  disabled={loading.action}
+>
+  {loading.action ? 'Processing...' : (jobData.active ? 'Deactivate' : 'Activate')}
+</button>
+          </div>
         </div>
       </div>
     </div>

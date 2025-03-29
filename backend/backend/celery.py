@@ -1,4 +1,4 @@
-from __future__ import absolute_import, unicode_literals
+""""from __future__ import absolute_import, unicode_literals
 import os
 import logging
 from celery import Celery
@@ -33,4 +33,4 @@ logger.info(f'Broker URL: {app.conf.broker_url}')
 
 
 
-# celery -A backend.celery worker --pool=solo  -l info
+# celery -A backend.celery worker --pool=solo  -l info""""
