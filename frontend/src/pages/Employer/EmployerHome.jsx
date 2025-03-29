@@ -19,7 +19,7 @@ function EmpHome() {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [jobsPerPage, setJobsPerPage] = useState(6);
+  const [jobsPerPage, setJobsPerPage] = useState(8);
 
   const token = localStorage.getItem('access');
   const dispatch = useDispatch();

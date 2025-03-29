@@ -2,7 +2,7 @@ import '../../../Styles/Candidate/jobdetail.css';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaSuitcase, FaCheckCircle, FaBookmark } from "react-icons/fa"; // Added FaBookmark for "Saved"
+import { FaSuitcase, FaCheckCircle, FaBookmark } from "react-icons/fa";
 import { MdCurrencyRupee, MdDateRange } from "react-icons/md";
 import { SlLocationPin } from "react-icons/sl";
 import { formatDistanceToNow } from 'date-fns';
@@ -134,7 +134,6 @@ function JobDetail() {
         });
         setHasApplied(applicationStatusResponse.data.has_applied);
 
-       
       } catch (error) {
         setError('Failed to load job details or application status');
       } finally {
@@ -214,7 +213,14 @@ function JobDetail() {
   if (error) return <div className="error">{error}</div>;
   if (!jobData) return <div className="error">Job not found</div>;
 
-  const image = jobData.employer?.profile_pic ? `${baseURL}${jobData.employer.profile_pic}` : '';
+  // Fixed image URL construction
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${baseURL}${imagePath.startsWith('/') ? imagePath.substring(1) : imagePath}`;
+  };
+
+  const image = getImageUrl(jobData?.employer?.profile_pic);
 
   return (
     <div className="job-detail-container">

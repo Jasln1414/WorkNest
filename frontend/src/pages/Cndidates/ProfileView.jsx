@@ -12,9 +12,8 @@ function Profile() {
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State for modal visibility
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Function to fetch profile data
   const fetchProfileData = async () => {
     setLoading(true);
     try {
@@ -38,7 +37,6 @@ function Profile() {
     }
   };
 
-  // Function to refresh profile data after updates
   const refreshProfile = () => {
     fetchProfileData();
   };
@@ -56,7 +54,6 @@ function Profile() {
     }
   }, [profileData]);
 
-  // Function to handle the edit button click
   const handleEditProfile = () => {
     setIsEditModalOpen(true);
   };
@@ -81,21 +78,22 @@ function Profile() {
     );
   }
 
+  // Fixed image URL construction
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${baseURL}${imagePath.startsWith('/') ? imagePath.substring(1) : imagePath}`;
+  };
+
+  const image = getImageUrl(profileData.profile_pic);
+
   return (
     <div className="ep-main-container">
-     
-
-      {/* Profile Details Section */}
       <div className="ep-content-wrapper">
-        {/* Profile header with avatar and name */}
         <div className="ep-header-section">
           <div className="ep-avatar-wrapper">
             <img
-              src={
-                profileData.profile_pic
-                  ? `${baseURL}${profileData.profile_pic}`
-                  : "/default-avatar.png"
-              }
+              src={image || "/default-avatar.png"}
               alt="Profile"
               className="ep-avatar-image"
             />
@@ -106,7 +104,6 @@ function Profile() {
               {profileData.place || "Location not specified"}
             </p>
           </div>
-          {/* Add Edit Profile Button */}
           <div className="ep-edit-button-container">
             <button className="ep-edit-button" onClick={handleEditProfile}>
               Edit Profile
@@ -114,7 +111,6 @@ function Profile() {
           </div>
         </div>
 
-        {/* Personal Information Section */}
         <div className="ep-info-row">
           <div className="ep-detail-block">
             <div className="ep-block-header">
@@ -155,7 +151,7 @@ function Profile() {
                 <div className="ep-data-text">
                   <strong>Resume:</strong>
                   <a
-                    href={`${baseURL}${profileData.resume}`}
+                    href={getImageUrl(profileData.resume)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ep-external-link"
@@ -168,7 +164,6 @@ function Profile() {
           </div>
         </div>
 
-        {/* Social Links */}
         <div className="ep-detail-block ep-full-width">
           <div className="ep-block-header">
             <h3 className="ep-block-heading">Social Links</h3>
@@ -211,7 +206,6 @@ function Profile() {
           </div>
         </div>
 
-        {/* Skills Section */}
         <div className="ep-detail-block ep-full-width">
           <div className="ep-block-header">
             <h3 className="ep-block-heading">Skills</h3>
@@ -229,44 +223,39 @@ function Profile() {
           </div>
         </div>
 
-       
+        <div className="ep-detail-block ep-full-width">
+          <div className="ep-block-header">
+            <h3 className="ep-block-heading">Education</h3>
+          </div>
+          {eduData.length > 0 ? (
+            <table className="ep-education-table">
+              <thead>
+                <tr>
+                  <th>Education</th>
+                  <th>Specialization</th>
+                  <th>College</th>
+                  <th>Year Completed</th>
+                  <th>Mark</th>
+                </tr>
+              </thead>
+              <tbody>
+                {eduData.map((edu, index) => (
+                  <tr key={index} className="ep-education-item">
+                    <td>{edu.education}</td>
+                    <td>{edu.specilization}</td>
+                    <td>{edu.college}</td>
+                    <td>{new Date(edu.completed).getFullYear()}</td>
+                    <td>{edu.mark}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="ep-no-data">No education details added yet</p>
+          )}
+        </div>
+      </div>
 
-
-
-       {/* Education Section */}
-<div className="ep-detail-block ep-full-width">
-  <div className="ep-block-header">
-    <h3 className="ep-block-heading">Education</h3>
-  </div>
-  {eduData.length > 0 ? (
-    <table className="ep-education-table">
-      <thead>
-        <tr>
-          <th>Education</th>
-          <th>Specialization</th>
-          <th>College</th>
-          <th>Year Completed</th>
-          <th>Mark</th>
-        </tr>
-      </thead>
-      <tbody>
-        {eduData.map((edu, index) => (
-          <tr key={index} className="ep-education-item">
-            <td>{edu.education}</td>
-            <td>{edu.specilization}</td>
-            <td>{edu.college}</td>
-            <td>{new Date(edu.completed).getFullYear()}</td>
-            <td>{edu.mark}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  ) : (
-    <p className="ep-no-data">No education details added yet</p>
-  )}
-</div>
-</div>
-      {/* Edit Profile Modal */}
       {isEditModalOpen && (
         <EditProfileModal
           isOpen={isEditModalOpen}

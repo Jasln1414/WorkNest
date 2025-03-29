@@ -22,16 +22,24 @@ class CandidateSerializer(serializers.ModelSerializer):
         return None
 
 class EmployerSerializer(serializers.ModelSerializer):
+    user_full_name = serializers.CharField(source='user.full_name', read_only=True)
+    user_email = serializers.CharField(source='user.email', read_only=True)
+    user_id = serializers.CharField(source='user.id', read_only=True)
     profile_pic = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = Employer
-        fields = '__all__'
-
+        fields = [
+            'profile_pic', 'user_id', 'user_email', 'phone', 'id', 'industry',
+            'user_full_name', 'headquarters', 'address', 'about', 'website_link'
+        ]
+    
     def get_profile_pic(self, obj):
         if obj.profile_pic:
             request = self.context.get('request')
-            return request.build_absolute_uri(obj.profile_pic.url)
+            if request:
+                return request.build_absolute_uri(obj.profile_pic.url)
+            return obj.profile_pic.url
         return None
 
 class CandidateRegisterSerializer(serializers.ModelSerializer):

@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from rest_framework import serializers
 from Empjob.models import Jobs, Question,Answer
+from user_account.api.serializer import *
 
 
 
@@ -24,9 +25,8 @@ class PostJobSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Jobs
-        fields = ['title', 'location', 'lpa', 'jobtype', 'jobmode', 'experience',
-                 'applyBefore', 'about', 'responsibility', 'industry', 'questions']
-    
+        fields = '__all__'
+        depth = 1  
     def create(self, validated_data):
         questions_data = validated_data.pop('questions', [])
         employer = self.context['employer']
@@ -37,44 +37,62 @@ class PostJobSerializer(serializers.ModelSerializer):
             Question.objects.create(job=job, **question_data)
             
         return job
+from rest_framework import serializers
+from user_account.models import Employer
+from Empjob.models import Jobs, Question, ApplyedJobs
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class EmployerSerializer(serializers.ModelSerializer):
     user_full_name = serializers.CharField(source='user.full_name', read_only=True)
-    user_email = serializers.CharField(source='user.email')
-    user_id = serializers.CharField(source='user.id')
+    user_email = serializers.CharField(source='user.email', read_only=True)
+    user_id = serializers.CharField(source='user.id', read_only=True)
+    profile_pic = serializers.SerializerMethodField()
     
     class Meta:
         model = Employer
-        fields = ['profile_pic', 'user_id', 'user_email', 'phone', 'id', 'industry', 
-                 'user_full_name', 'headquarters', 'address', 'about', 'website_link']
+        fields = [
+            'profile_pic', 'user_id', 'user_email', 'phone', 'id', 'industry',
+            'user_full_name', 'headquarters', 'address', 'about', 'website_link'
+        ]
+    
+    def get_profile_pic(self, obj):
+        if obj.profile_pic:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.profile_pic.url)
+            return obj.profile_pic.url
+        return None
+
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['id', 'text', 'question_type']
 
 class JobSerializer(serializers.ModelSerializer):
     employer = EmployerSerializer()
     questions = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = Jobs
-        fields = "__all__"
-        depth = 1
-    applications = serializers.SerializerMethodField()
+    applications_count = serializers.SerializerMethodField()
     can_edit = serializers.SerializerMethodField()
     
-   
-       
-    
-    def get_applications(self, obj):
-        applications = ApplyedJobs.objects.filter(job=obj)
-        return ApplyedJobSerializer(applications, many=True).data
-    
+
+    class Meta:
+        model = Jobs
+        fields = '__all__'
+    def get_questions(self, obj):
+        questions = Question.objects.filter(job=obj)
+        return QuestionSerializer(questions, many=True).data
+
+    def get_applications_count(self, obj):
+        return ApplyedJobs.objects.filter(job=obj).count()
+
     def get_can_edit(self, obj):
         request = self.context.get('request')
         if request:
             return obj.employer.user == request.user or request.user.is_staff
         return False
-    
-    def get_questions(self, obj):
-        questions = Question.objects.filter(job=obj)
-        return QuestionSerializer(questions, many=True).data
+   
 
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:

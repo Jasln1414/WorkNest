@@ -18,6 +18,14 @@ function EmployerProfileView() {
   const [error, setError] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  // Utility function to properly construct image URLs
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return logo; // Fallback to default logo if no image
+    if (imagePath.startsWith('http')) return imagePath; // Already absolute URL
+    // Handle relative URLs (remove leading slash if present)
+    return `${baseURL}${imagePath.startsWith('/') ? imagePath.substring(1) : imagePath}`;
+  };
+
   // Function to get CSRF token from cookies
   const getCookie = (name) => {
     let cookieValue = null;
@@ -49,7 +57,7 @@ function EmployerProfileView() {
         const response = await axios.get(`${baseURL}api/empjob/profile/`, {
           headers: {
             Authorization: `Bearer ${token}`,
-            'X-CSRFToken': csrfToken, // Include CSRF token in headers
+            'X-CSRFToken': csrfToken,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -97,7 +105,7 @@ function EmployerProfileView() {
       const response = await axios.put(`${baseURL}api/account/employer/profile/update/`, updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-CSRFToken': csrfToken, // Include CSRF token in headers
+          'X-CSRFToken': csrfToken,
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
@@ -145,7 +153,7 @@ function EmployerProfileView() {
         <div className="ep-header-section">
           <div className="ep-avatar-wrapper">
             <img
-              src={profileData.profile_pic ? `${baseURL}${profileData.profile_pic}` : logo}
+              src={getImageUrl(profileData.profile_pic)}
               alt="Employer Profile"
               className="ep-avatar-image"
             />

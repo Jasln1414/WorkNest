@@ -1,34 +1,49 @@
+# Standard library imports
+import logging
+
+# Django imports
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+from django.db.models import Q
+from django.conf import settings
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+
+logger = logging.getLogger(__name__)
+# DRF imports
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import status,generics
+from rest_framework import status, generics
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.pagination import PageNumberPagination
+
+# Third-party imports
+import razorpay
+from django_filters import rest_framework as filters # type: ignore
+from django_filters.rest_framework import DjangoFilterBackend # type: ignore
+
+# Local imports
 from .serializer import *
 from user_account.models import *
 from Empjob.models import *
 from payment.models import *
-from django.middleware.csrf import get_token
-from django.http import JsonResponse
-import razorpay
-from django.conf import settings
-import logging
-from rest_framework.decorators import api_view, permission_classes
-from django_filters import rest_framework as filters # type: ignore
-from django.db.models import Q
-from django_filters.rest_framework import DjangoFilterBackend # type: ignore
-
 
 logger = logging.getLogger(__name__)
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+from django.middleware.csrf import get_token
+from django.http import JsonResponse
 
 def csrf_token_view(request):
     token = get_token(request)
     return JsonResponse({'csrfToken': token})
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.http import JsonResponse
 
+# Utility Views
 @ensure_csrf_cookie
 def get_csrf_token(request):
     return JsonResponse({'csrfToken': get_token(request)})
+
+# Job Views
 class PostJob(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -78,65 +93,52 @@ class PostJob(APIView):
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class EditJob(APIView):
-    permission_classes=[AllowAny]
-    def post(self,request):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
         jobId = request.data.get("jobId")
         try:
-            job = Jobs.objects.get(id = jobId)
+            job = Jobs.objects.get(id=jobId)
         except Jobs.DoesNotExist:
-            return Response({"message":"something went wrong"},status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+            return Response({"message":"something went wrong"}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         
         serializer = PostJobSerializer(instance=job, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
 class ProfileView(APIView):
-    """
-    API endpoint to retrieve user profile information.
-    Returns different profile data based on user type (candidate or employer).
-    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        
         try:
-            # Check if user is a candidate
             candidate = Candidate.objects.get(user=user)
             serializer = CandidateSerializer(candidate, context={'request': request})
             return Response({
                 'user_type': 'candidate',
                 'data': serializer.data
             }, status=status.HTTP_200_OK)
-            
         except Candidate.DoesNotExist:
             try:
-                # Check if user is an employer
                 employer = Employer.objects.get(user=user)
                 serializer = EmployerSerializer(employer, context={'request': request})
                 return Response({
                     'user_type': 'employer',
                     'data': serializer.data
                 }, status=status.HTTP_200_OK)
-                
             except Employer.DoesNotExist:
-                # User is neither candidate nor employer
                 return Response({
                     "message": "User profile not found",
                     "detail": "No candidate or employer profile exists for this user"
                 }, status=status.HTTP_404_NOT_FOUND)
 
-
-
-
-
-
-
 class GetJob(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self,request):
-        user=request.user
+    
+    def get(self, request):
+        user = request.user
         try:
             employer = Employer.objects.get(user=user)
             jobs = Jobs.objects.filter(employer=employer)
@@ -149,34 +151,68 @@ class GetJob(APIView):
             return Response({"error": "Employer not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 class GetAllJob(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
+            # Check if the user is an employer
             if request.user.user_type == "employer":
+                # Fetch the employer instance linked to the user
                 employer = Employer.objects.get(user=request.user)
+                # Filter jobs by the employer
                 jobs = Jobs.objects.filter(employer=employer)
             else:
+                # User is a candidate or admin: return all jobs
                 jobs = Jobs.objects.all()
+
+            # Debugging: Print the jobs queryset
+            print("Jobs Queryset:", jobs)
 
             serializer = JobSerializer(jobs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Employer.DoesNotExist:
             return Response({"error": "Employer profile not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
+            print("Error:", e)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+
 
 class GetJobDetail(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self,request,job_id):
-        try:    
-            job=Jobs.objects.get(id=job_id)
-            serializer=JobSerializer(job)
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        except:
-            return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    
+    def get(self, request, job_id):
+        try:
+            # Get the job with related employer data
+            job = Jobs.objects.select_related('employer', 'employer__user').get(id=job_id)
+            
+            # Pass the request to serializer for absolute URLs
+            serializer = JobSerializer(job, context={'request': request})
+            
+            # Debug logging
+            logger.info(f"Serialized job data: {serializer.data}")
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            
+        except Jobs.DoesNotExist:
+            logger.error(f"Job not found with id: {job_id}")
+            return Response(
+                {"error": "Job not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            logger.error(f"Error in GetJobDetail: {str(e)}", exc_info=True)
+            return Response(
+                {"error": "An error occurred while fetching job details"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+
+
+
 
 class GetApplyedjob(APIView):
     permission_classes = [IsAuthenticated]
@@ -194,12 +230,13 @@ class GetApplyedjob(APIView):
             return Response({"message": str(e)}, status=500)
 
 class GetApplicationjob(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
-        user=request.user
+        user = request.user
         try:
-            employer=Employer.objects.get(user=user)
-            jobs = Jobs.objects.filter(employer=employer,active=True)  
+            employer = Employer.objects.get(user=user)
+            jobs = Jobs.objects.filter(employer=employer, active=True)
             serializer = ApplicationSerializer(jobs, many=True)
             return Response({'data': serializer.data}, status=status.HTTP_200_OK)
         except Exception as e:
@@ -239,16 +276,7 @@ class JobSearchView(generics.ListAPIView):
     serializer_class = JobSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = JobFilter
-
-    def list(self, request, *args, **kwargs):
-        try:
-            return super().list(request, *args, **kwargs)
-        except Exception as e:
-            logger.error(f"Error in JobSearchView: {str(e)}", exc_info=True)
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
+    pagination_class = PageNumberPagination
 
 class GetJobStatus(APIView):
     permission_classes = [IsAuthenticated]
@@ -280,18 +308,63 @@ class GetJobStatus(APIView):
             serializer = JobSerializer(job, context={'request': request})
             return Response({
                 "message": message,
-                "job": serializer.data  # Consistent with frontend expectation
+                "job": serializer.data
             }, status=status.HTTP_200_OK)
             
         except Jobs.DoesNotExist:
             return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!SAVED JOB
 
+class GetJobStatus(APIView):
+    permission_classes= [IsAuthenticated]
+    def post(self,request,job_id):
+        print(request.headers)
+        action = request.data.get('action')
+        try:
+            job=Jobs.objects.get(id=job_id)
+            if action == 'deactivate':
+                job.active = False
+            elif action == 'activate':
+                job.active = True
+            job.save()
+            return Response({"message","job Status change"},status=status.HTTP_200_OK)
+        except:
+             return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+class SavejobStatus(APIView):
+    permission_classes= [IsAuthenticated]
+    def post(self,request,job_id):
+        action = request.data.get('action')
+        user = request.user
+        try:
+            job = Jobs.objects.get(id=job_id)
+            candidate= Candidate.objects.get(user=user)
+            if action == 'save':
 
+                if not SavedJobs.objects.filter(candidate=candidate, job=job).exists():
+                    SavedJobs.objects.create(candidate=candidate, job=job)
+                    return Response({"message": "Job saved successfully"}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({"message": "Job is already saved"}, status=status.HTTP_200_OK)
 
+            elif action == 'unsave':
+                saved_job = SavedJobs.objects.filter(candidate=candidate, job=job).first()
+                if saved_job:
+                    saved_job.delete()
+                    return Response({"message": "Job unsaved successfully"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"message": "Job is not saved"}, status=status.HTTP_404_NOT_FOUND)
 
+            else:
+                return Response({"message": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
 
-
+        except Jobs.DoesNotExist:
+            return Response({"message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Candidate.DoesNotExist:
+            return Response({"message": "Candidate not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class SavedJobsView(APIView):
     permission_classes=[IsAuthenticated]
@@ -308,8 +381,24 @@ class SavedJobsView(APIView):
         except Exception as e:
             return Response({"error": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class ApplicationStatusView(APIView):
     permission_classes = [IsAuthenticated]
+    
     def post(self, request, job_id):
         action = request.data.get('action')
         try:
@@ -327,6 +416,7 @@ class ApplicationStatusView(APIView):
 
 class GetQuestions(APIView):
     permission_classes = [IsAuthenticated]
+    
     def get(self, request, job_id):
         try:
             questions = Question.objects.filter(job=job_id)
@@ -337,6 +427,7 @@ class GetQuestions(APIView):
 
 class Applyjob(APIView):
     permission_classes = [IsAuthenticated]
+    
     def post(self, request, job_id):
         user = request.user
         try:

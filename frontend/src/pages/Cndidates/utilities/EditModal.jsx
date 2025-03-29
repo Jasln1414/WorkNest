@@ -23,7 +23,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
   const [resume, setResume] = useState({ resume: null });
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
-  // Set up initial form values based on profileData
   const [initialValues, setInitialValues] = useState({
     username: profileData?.user_name || "",
     email: profileData?.email || "",
@@ -40,7 +39,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
     github: profileData?.github || "",
   });
 
-  // Parse skills from profileData when component mounts or profileData changes
   useEffect(() => {
     if (profileData?.skills) {
       const skillArray = profileData.skills.split(",").map(skill => skill.trim());
@@ -48,7 +46,12 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
     }
   }, [profileData]);
 
-  // Skill management
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${baseURL}${imagePath.startsWith('/') ? imagePath.substring(1) : imagePath}`;
+  };
+
   const handleSkill = (e) => setSkill(e.target.value);
   const handleAddSkill = () => {
     if (skill.trim() !== "") {
@@ -60,7 +63,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
     setSkills(skills.filter((_, i) => i !== index));
   };
 
-  // Profile picture handling
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -73,13 +75,11 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
     }
   };
 
-  // Cropped image handling
   const handleCropSubmit = (croppedUrl) => {
     setCroppedImageUrl(croppedUrl);
     setModal(false);
   };
 
-  // Resume handling
   const handleResumeChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -91,7 +91,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
     }
   };
 
-  // Convert base64 image to file
   useEffect(() => {
     const convertBase64ToImage = (base64String) => {
       if (!base64String) return;
@@ -111,7 +110,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
     convertBase64ToImage(croppedImageUrl);
   }, [croppedImageUrl]);
 
-  // Handle form submission for profile update
   const handleSubmit = async (values, { setSubmitting }) => {
     if (skills.length === 0) {
       toast.error("Please add at least one skill.", { position: "top-center" });
@@ -126,26 +124,19 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
     formData.append("dob", values.dob);
     formData.append("Gender", values.gender);
     
-    // Only append profile_pic if a new one was selected
     if (profile_pic) {
       formData.append("profile_pic", profile_pic);
     }
-    
-    // Education details
+
     formData.append("education", values.education);
     formData.append("specilization", values.specilization);
     formData.append("college", values.college);
     formData.append("completed", values.completed);
     formData.append("mark", values.mark);
-    
-    // Skills
     formData.append("skills", skillString);
-    
-    // Social links
     formData.append("linkedin", values.linkedin);
     formData.append("github", values.github);
     
-    // Only append resume if a new one was selected
     if (resume.resume) {
       formData.append("resume", resume.resume, resume.resume.name);
     }
@@ -163,8 +154,8 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
       if (response.status === 200) {
         setIsSpinner(false);
         toast.success("Profile updated successfully!", { position: "top-center" });
-        refreshProfile(); // Refresh the profile data
-        onClose(); // Close the modal
+        refreshProfile();
+        onClose();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -181,7 +172,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
     }
   };
 
-  // Handle profile deletion
   const handleDeleteProfile = async () => {
     setIsSpinner(true);
     try {
@@ -195,8 +185,8 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
       if (response.status === 200) {
         setIsSpinner(false);
         toast.success("Profile deleted successfully!", { position: "top-center" });
-        localStorage.removeItem("access"); // Clear token
-        window.location.href = "/login"; // Redirect to login
+        localStorage.removeItem("access");
+        window.location.href = "/login";
       }
     } catch (error) {
       console.error("Error:", error);
@@ -257,7 +247,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
           >
             {({ errors, touched, isSubmitting }) => (
               <Form className="ep-modal-content">
-                {/* Personal Info Tab */}
                 {activeTab === 'personal' && (
                   <div className="ep-tab-content">
                     <div className="ep-profile-picture">
@@ -265,7 +254,7 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
                         <img
                           src={
                             croppedImageUrl || 
-                            (profileData.profile_pic ? `${baseURL}${profileData.profile_pic}` : "/default-avatar.png")
+                            (profileData.profile_pic ? getImageUrl(profileData.profile_pic) : "/default-avatar.png")
                           }
                           alt="Profile"
                           className="ep-avatar-preview"
@@ -331,7 +320,7 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
                           <div className="ep-current-resume">
                             <span>Current: </span>
                             <a
-                              href={`${baseURL}${profileData.resume}`}
+                              href={getImageUrl(profileData.resume)}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -345,7 +334,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
                   </div>
                 )}
                 
-                {/* Education Tab */}
                 {activeTab === 'education' && (
                   <div className="ep-tab-content">
                     <div className="ep-form-group">
@@ -388,40 +376,25 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
                   </div>
                 )}
                 
-                {/* Skills and Links Tab */}
-{activeTab === 'skills' && (
-    <div className="ep-tab-content">
-        <div className="ep-form-group">
-            <label>Skills</label>
-            <div className="unique-skill-input"> {/* Unique class name */}
-                <input 
-                    type="text" 
-                    value={skill} 
-                    onChange={handleSkill} 
-                    placeholder="Type here" 
-                />
-                <button 
-                    type="button" 
-                    onClick={handleAddSkill} 
-                    className="unique-add-skill-btn" 
-                >
-                    Add
-                </button>
-            </div>
-       
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
+                {activeTab === 'skills' && (
+                  <div className="ep-tab-content">
+                    <div className="ep-form-group">
+                      <label>Skills</label>
+                      <div className="unique-skill-input">
+                        <input 
+                          type="text" 
+                          value={skill} 
+                          onChange={handleSkill} 
+                          placeholder="Type here" 
+                        />
+                        <button 
+                          type="button" 
+                          onClick={handleAddSkill} 
+                          className="unique-add-skill-btn" 
+                        >
+                          Add
+                        </button>
+                      </div>
                       <div className="ep-skills-list">
                         {skills.map((skill, index) => (
                           <div key={index} className="ep-skill-item">
@@ -458,13 +431,13 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
                   </button>
                   
                   <div className="ep-save-cancel">
-  <button type="button" className="ep-cancel-button" onClick={onClose}>
-    Cancel
-  </button>
-  <button type="submit" className="ep-save-button" disabled={isSubmitting}>
-    {isSubmitting ? "Saving..." : "Save"}
-  </button>
-</div>
+                    <button type="button" className="ep-cancel-button" onClick={onClose}>
+                      Cancel
+                    </button>
+                    <button type="submit" className="ep-save-button" disabled={isSubmitting}>
+                      {isSubmitting ? "Saving..." : "Save"}
+                    </button>
+                  </div>
                 </div>
               </Form>
             )}
@@ -472,7 +445,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
         </div>
       </div>
       
-      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="ep-confirm-overlay">
           <div className="ep-confirm-modal">
@@ -496,7 +468,6 @@ function EditProfileModal({ isOpen, onClose, profileData, refreshProfile }) {
         </div>
       )}
       
-      {/* Profile Picture Crop Modal */}
       {modal && (
         <ProfilepicModal
           setCroppedImageUrl={setCroppedImageUrl}
